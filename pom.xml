@@ -12,6 +12,7 @@
     <name>Real Time Stock Trading Simulator</name>
 
     <modules>
+        <module>web</module>
     </modules>
 
     <properties>
