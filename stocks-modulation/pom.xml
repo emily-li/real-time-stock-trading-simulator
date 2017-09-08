@@ -10,6 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>stocks-modulation</artifactId>
-
+    <name>Stocks Modulation</name>
 
 </project>
