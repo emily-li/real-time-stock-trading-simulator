@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stock-generation</artifactId>
-    <name>Stock Generation</name>
+    <artifactId>stocks-generation</artifactId>
+    <name>Stocks Generation</name>
 
 </project>
