@@ -14,7 +14,7 @@
     <modules>
         <module>web</module>
         <module>stocks</module>
-        <module>stockgeneration</module>
+        <module>stocks-generation</module>
     </modules>
 
     <properties>
