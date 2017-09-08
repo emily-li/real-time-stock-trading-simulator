@@ -12,4 +12,11 @@
     <artifactId>stocks-generation</artifactId>
     <name>Stocks Generation</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>stocks</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
 </project>

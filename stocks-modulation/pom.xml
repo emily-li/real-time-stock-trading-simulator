@@ -12,4 +12,11 @@
     <artifactId>stocks-modulation</artifactId>
     <name>Stocks Modulation</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>stocks</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
 </project>
