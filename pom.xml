@@ -13,6 +13,7 @@
 
     <modules>
         <module>web</module>
+        <module>stocks</module>
     </modules>
 
     <properties>
