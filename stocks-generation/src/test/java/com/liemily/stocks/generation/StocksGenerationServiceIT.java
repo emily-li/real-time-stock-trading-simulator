@@ -48,4 +48,34 @@ public class StocksGenerationServiceIT {
     public void testStocksFailIfAlreadyExist() {
 
     }
+
+    /**
+     * S.S06 - Stocks should have field ‘Open’ with field ‘Value’ as of 0800
+     * This test only checks as of functionality for the open field
+     *
+     * @see StocksGenerationServiceTest for mocking of the time
+     */
+    @Test
+    public void testStocksOpenAsOf() {
+
+    }
+
+    /**
+     * S.S07 - Stocks should have field ‘Close’ with field ‘Value’ as of 1630
+     * This test only checks as of functionality for the close field
+     *
+     * @see StocksGenerationServiceTest for mocking of the time
+     */
+    @Test
+    public void testStocksCloseAsOf() {
+
+    }
+
+    /**
+     * S.S08 - Stocks should have field ‘Gains’, calculated as ‘Value – Open’ when ‘Value’ is updated
+     */
+    @Test
+    public void testStocksGains() {
+
+    }
 }
