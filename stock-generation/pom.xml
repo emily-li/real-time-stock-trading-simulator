@@ -9,13 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stocks-generation</artifactId>
-    <name>Stocks Generation</name>
+    <artifactId>stock-generation</artifactId>
+    <name>Stock Generation</name>
+
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+    </build>
 
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>stocks</artifactId>
+            <artifactId>stock</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
