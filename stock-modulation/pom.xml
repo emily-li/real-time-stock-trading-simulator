@@ -6,16 +6,17 @@
         <artifactId>real-time-stock-trading-simulator</artifactId>
         <groupId>com.liemily</groupId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stocks-modulation</artifactId>
-    <name>Stocks Modulation</name>
+    <artifactId>stock-modulation</artifactId>
+    <name>Stock Modulation</name>
 
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>stocks</artifactId>
+            <artifactId>stock</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
