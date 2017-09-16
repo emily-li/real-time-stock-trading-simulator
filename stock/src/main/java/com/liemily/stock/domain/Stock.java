@@ -9,6 +9,7 @@ public class Stock {
     @Id
     private String symbol;
     private BigDecimal value;
+    private int volume;
 
     private Stock() {
     }
@@ -20,5 +21,9 @@ public class Stock {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public int getVolume() {
+        return volume;
     }
 }

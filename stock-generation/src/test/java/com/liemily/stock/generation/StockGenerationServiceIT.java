@@ -81,7 +81,8 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksGeneratedWithFieldVolume() {
-
+        int volume = persistedStock.getVolume();
+        assertTrue(volume >= 0);
     }
 
     /**
