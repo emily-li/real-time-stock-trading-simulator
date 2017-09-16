@@ -12,4 +12,11 @@
     <artifactId>real-time-stock-trading-simulator-web</artifactId>
     <name>Web</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>1.5.7.RELEASE</version>
+        </dependency>
+    </dependencies>
 </project>
