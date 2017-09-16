@@ -90,7 +90,9 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksVolumeGeneratedWithRequirementsRange() {
-
+        int volume = persistedStock.getVolume();
+        assertTrue(volume >= 2000000);
+        assertTrue(volume <= 1000000000);
     }
 
     /**

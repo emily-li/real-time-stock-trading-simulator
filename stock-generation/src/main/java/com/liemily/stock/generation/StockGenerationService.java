@@ -21,7 +21,7 @@ public class StockGenerationService {
 
 
     void generateStock(String stockId) {
-        Stock stock = new Stock(stockId, new BigDecimal(550));
+        Stock stock = new Stock(stockId, new BigDecimal(550), 2500000);
         stockRepository.save(stock);
     }
 }

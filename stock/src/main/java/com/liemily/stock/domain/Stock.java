@@ -14,9 +14,10 @@ public class Stock {
     private Stock() {
     }
 
-    public Stock(String symbol, BigDecimal value) {
+    public Stock(String symbol, BigDecimal value, int volume) {
         this.symbol = symbol;
         this.value = value;
+        this.volume = volume;
     }
 
     public BigDecimal getValue() {
