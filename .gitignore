@@ -27,3 +27,6 @@ hs_err_pid*
 
 # Locks from the docs folder
 .~lock*
+
+# Personal application.properties file (to avoid committing usernames and passwords, etc.)
+application-default.properties
