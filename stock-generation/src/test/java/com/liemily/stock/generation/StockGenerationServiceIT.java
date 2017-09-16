@@ -2,11 +2,19 @@ package com.liemily.stock.generation;
 
 import com.liemily.stock.StockRepository;
 import com.liemily.stock.domain.Stock;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -17,7 +25,11 @@ import static org.junit.Assert.assertNotNull;
  * Interacts with MySQL database for testing
  * Please see "docs/FDM05-05 Functional Test Plan.doc" for documentation
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class StockGenerationServiceIT {
+    private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
+
     @Autowired
     private StockGenerationService stockGenerationService;
 
@@ -33,7 +45,11 @@ public class StockGenerationServiceIT {
 
     @After
     public void tearDown() {
-        stockRepository.delete(stockId);
+        try {
+            stockRepository.delete(stockId);
+        } catch (EmptyResultDataAccessException e) {
+            logger.info("Failed to delete stock as it was already deleted: " + stockId);
+        }
     }
 
     /**
