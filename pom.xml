@@ -13,15 +13,16 @@
 
     <modules>
         <module>real-time-stock-trading-simulator-web</module>
-        <module>stocks</module>
-        <module>stocks-generation</module>
-        <module>stocks-modulation</module>
+        <module>stock</module>
+        <module>stock-generation</module>
+        <module>stock-modulation</module>
     </modules>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>4.3.11.RELEASE</spring.version>
+        <spring.version.jpa>1.11.7.RELEASE</spring.version.jpa>
     </properties>
 
     <dependencies>
