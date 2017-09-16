@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * StockGenerationService Integration Test
@@ -37,10 +37,13 @@ public class StockGenerationServiceIT {
     private StockRepository stockRepository;
 
     private String stockId;
+    private Stock persistedStock;
 
     @Before
     public void setup() {
         stockId = UUID.randomUUID().toString();
+        stockGenerationService.generateStock(stockId);
+        persistedStock = stockRepository.findOne(stockId);
     }
 
     @After
@@ -57,10 +60,7 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksGeneratedWithFieldValue() {
-        stockGenerationService.generateStock(stockId);
-
-        Stock stock = stockRepository.findOne(stockId);
-        BigDecimal value = stock.getValue();
+        BigDecimal value = persistedStock.getValue();
         assertNotNull(value);
     }
 
@@ -69,7 +69,11 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksValuesGeneratedWithRequirementsRange() {
-
+        BigDecimal value = persistedStock.getValue();
+        boolean ge5 = value.compareTo(new BigDecimal(5)) >= 0;
+        boolean le550 = value.compareTo(new BigDecimal(550)) <= 0;
+        assertTrue(ge5);
+        assertTrue(le550);
     }
 
     /**
