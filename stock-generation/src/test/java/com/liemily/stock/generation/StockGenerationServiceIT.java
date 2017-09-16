@@ -2,6 +2,7 @@ package com.liemily.stock.generation;
 
 import com.liemily.stock.StockRepository;
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.generation.exceptions.StockGenerationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -40,7 +41,7 @@ public class StockGenerationServiceIT {
     private Stock persistedStock;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         stockId = UUID.randomUUID().toString();
         stockGenerationService.generateStock(stockId);
         persistedStock = stockRepository.findOne(stockId);
@@ -98,9 +99,9 @@ public class StockGenerationServiceIT {
     /**
      * S.S05 - Stock generation should fail if the stocks already exist
      */
-    @Test
-    public void testStocksFailIfAlreadyExist() {
-
+    @Test(expected = StockGenerationException.class)
+    public void testStocksFailIfAlreadyExist() throws StockGenerationException {
+        stockGenerationService.generateStock(stockId);
     }
 
     /**
