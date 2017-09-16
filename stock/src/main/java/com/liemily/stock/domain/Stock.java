@@ -10,6 +10,14 @@ public class Stock {
     private String symbol;
     private BigDecimal value;
 
+    private Stock() {
+    }
+
+    public Stock(String symbol, BigDecimal value) {
+        this.symbol = symbol;
+        this.value = value;
+    }
+
     public BigDecimal getValue() {
         return value;
     }
