@@ -1,7 +1,8 @@
 package com.liemily.stock.generation;
 
 import com.liemily.stock.StockRepository;
-import com.liemily.stock.domain.Stock;
+import com.liemily.stock.StockViewRepository;
+import com.liemily.stock.domain.StockView;
 import com.liemily.stock.generation.exceptions.StockGenerationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -35,15 +36,17 @@ public class StockGenerationServiceIT {
     private StockGenerationService stockGenerationService;
     @Autowired
     private StockRepository stockRepository;
+    @Autowired
+    private StockViewRepository stockViewRepository;
 
     private String stockId;
-    private Stock persistedStock;
+    private StockView persistedStockView;
 
     @Before
     public void setup() throws Exception {
         stockId = UUID.randomUUID().toString();
         stockGenerationService.generateStock(stockId);
-        persistedStock = stockRepository.findOne(stockId);
+        persistedStockView = stockViewRepository.findOne(stockId);
     }
 
     @After
@@ -60,7 +63,7 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksGeneratedWithFieldValue() {
-        BigDecimal value = persistedStock.getValue();
+        BigDecimal value = persistedStockView.getValue();
         assertNotNull(value);
     }
 
@@ -69,7 +72,7 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksValuesGeneratedWithRequirementsRange() {
-        BigDecimal value = persistedStock.getValue();
+        BigDecimal value = persistedStockView.getValue();
         boolean ge5 = value.compareTo(new BigDecimal(5)) >= 0;
         boolean le550 = value.compareTo(new BigDecimal(550)) <= 0;
         assertTrue(ge5);
@@ -81,7 +84,7 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksGeneratedWithFieldVolume() {
-        int volume = persistedStock.getVolume();
+        int volume = persistedStockView.getVolume();
         assertTrue(volume >= 0);
     }
 
@@ -90,7 +93,7 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksVolumeGeneratedWithRequirementsRange() {
-        int volume = persistedStock.getVolume();
+        int volume = persistedStockView.getVolume();
         assertTrue(volume >= 2000000);
         assertTrue(volume <= 1000000000);
     }
@@ -111,8 +114,8 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksOpenAsOf() {
-        persistedStock = stockRepository.findOne("test");
-        BigDecimal openValue = persistedStock.getStockAsOfDetails().getOpenValue();
+        persistedStockView = stockViewRepository.findOne("test");
+        BigDecimal openValue = persistedStockView.getOpenValue();
         assertTrue(openValue.compareTo(new BigDecimal(1.5)) == 0);
     }
 
@@ -124,8 +127,8 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksCloseAsOf() {
-        persistedStock = stockRepository.findOne("test");
-        BigDecimal closeValue = persistedStock.getStockAsOfDetails().getCloseValue();
+        persistedStockView = stockViewRepository.findOne("test");
+        BigDecimal closeValue = persistedStockView.getCloseValue();
         assertTrue(closeValue.compareTo(new BigDecimal(0.5)) == 0);
     }
 

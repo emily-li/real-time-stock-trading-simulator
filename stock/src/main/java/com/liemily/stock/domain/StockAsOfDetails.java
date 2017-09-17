@@ -8,17 +8,17 @@ import java.math.BigDecimal;
  * Created by Emily Li on 17/09/2017.
  */
 @Entity
-public class StockAsOfDetails {
+class StockAsOfDetails {
     @Id
     private String symbol;
     private BigDecimal openValue;
     private BigDecimal closeValue;
 
-    public BigDecimal getOpenValue() {
+    BigDecimal getOpenValue() {
         return openValue;
     }
 
-    public BigDecimal getCloseValue() {
+    BigDecimal getCloseValue() {
         return closeValue;
     }
 }

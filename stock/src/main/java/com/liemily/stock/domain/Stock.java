@@ -2,8 +2,6 @@ package com.liemily.stock.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import java.math.BigDecimal;
 
 @Entity
@@ -12,10 +10,6 @@ public class Stock {
     private String symbol;
     private BigDecimal value;
     private int volume;
-
-    @OneToOne
-    @PrimaryKeyJoinColumn
-    private StockAsOfDetails stockAsOfDetails;
 
     private Stock() {
     }
@@ -32,9 +26,5 @@ public class Stock {
 
     public int getVolume() {
         return volume;
-    }
-
-    public StockAsOfDetails getStockAsOfDetails() {
-        return stockAsOfDetails;
     }
 }
