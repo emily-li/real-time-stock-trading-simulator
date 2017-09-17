@@ -21,7 +21,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Long running test to test functionality of MySQL event
@@ -78,7 +79,7 @@ public class LongRunningStockDetailsEventIT {
      */
     @Test
     public void testStocksCloseAsOf1630() throws Exception {
-        long initialDelay = getScheduleTime(22, 57, 30).getSeconds();
+        long initialDelay = getScheduleTime(16, 29, 30).getSeconds();
 
         logger.info("Running StockCloseTester in " + initialDelay + " seconds");
         StockCloseTester stockCloseTester = new StockCloseTester();
@@ -98,19 +99,12 @@ public class LongRunningStockDetailsEventIT {
         @Override
         public Boolean call() throws Exception {
             logger.info("Starting " + getClass().getSimpleName());
+
             StockView stockView = stockViewRepository.findOne(stockSymbol);
-            assertNull(stockView.getOpen());
-            logger.info("Successfully asserted open value was null for " + stockSymbol + " at " + LocalDateTime.now());
-
-            logger.info("Waiting " + TEST_WAIT_BEFORE_EVENT_MS + "ms to allow MySQL scheduled event to update open value to run");
-            Thread.sleep(TEST_WAIT_BEFORE_EVENT_MS);
-
-            logger.info("Testing open is now " + EXPECTED_VALUE);
-            stockView = stockViewRepository.findOne(stockSymbol);
             assertNotNull(stockView.getOpen());
             assertTrue(stockView.getOpen().compareTo(EXPECTED_VALUE) == 0);
-            logger.info("Successfully asserted open is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
 
+            logger.info("Successfully asserted open is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
             return true;
         }
     }
@@ -119,19 +113,12 @@ public class LongRunningStockDetailsEventIT {
         @Override
         public Boolean call() throws Exception {
             logger.info("Starting " + getClass().getSimpleName());
+
             StockView stockView = stockViewRepository.findOne(stockSymbol);
-            assertNull(stockView.getOpen());
-            logger.info("Successfully asserted close value was null for " + stockSymbol + " at " + LocalDateTime.now());
-
-            logger.info("Waiting " + TEST_WAIT_BEFORE_EVENT_MS + "ms to allow MySQL scheduled event to update close value to run");
-            Thread.sleep(TEST_WAIT_BEFORE_EVENT_MS);
-
-            logger.info("Testing close is now " + EXPECTED_VALUE);
-            stockView = stockViewRepository.findOne(stockSymbol);
             assertNotNull(stockView.getClose());
             assertTrue(stockView.getClose().compareTo(EXPECTED_VALUE) == 0);
-            logger.info("Successfully asserted close is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
 
+            logger.info("Successfully asserted close is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
             return true;
         }
     }
