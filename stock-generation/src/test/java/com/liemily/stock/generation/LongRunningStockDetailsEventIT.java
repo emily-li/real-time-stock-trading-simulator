@@ -65,7 +65,7 @@ public class LongRunningStockDetailsEventIT {
      */
     @Test
     public void testStocksOpenAsOf0800() throws Exception {
-        long initialDelay = getScheduleTime(0, 0, 30).getSeconds();
+        long initialDelay = getScheduleTime(7, 59, 30).getSeconds();
 
         logger.info("Running StockOpenTester in " + initialDelay + " seconds");
         StockOpenTester stockOpenTester = new StockOpenTester();
