@@ -11,13 +11,13 @@ CREATE TABLE stock (
 
 CREATE TABLE stock_as_of_details (
     symbol        VARCHAR(50)     NOT NULL  PRIMARY KEY,
-    open_value    DECIMAL(65,2),
-    close_value   DECIMAL(65,2)
+    open          DECIMAL(65,2),
+    close         DECIMAL(65,2)
 );
 
 CREATE VIEW stock_view AS
-    SELECT stock.symbol, (open_value - value) AS gains
-    FROM stock INNER JOIN stock_details;
+    SELECT stock.symbol, (value - open) AS gains
+    FROM stock INNER JOIN stock_as_of_details;
 
 CREATE EVENT stock_as_of_details_update
 	ON SCHEDULE AT curdate() + INTERVAL 8 HOUR

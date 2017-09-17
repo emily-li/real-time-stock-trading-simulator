@@ -13,13 +13,17 @@ import java.math.BigDecimal;
 public class StockView {
     @Id
     private String symbol;
-    private String gains;
+    private BigDecimal gains;
     @OneToOne
     @PrimaryKeyJoinColumn
     private Stock stock;
     @OneToOne
     @PrimaryKeyJoinColumn
     private StockAsOfDetails stockAsOfDetails;
+
+    public BigDecimal getGains() {
+        return gains;
+    }
 
     public BigDecimal getValue() {
         return stock.getValue();
@@ -29,11 +33,11 @@ public class StockView {
         return stock.getVolume();
     }
 
-    public BigDecimal getOpenValue() {
-        return stockAsOfDetails.getOpenValue();
+    public BigDecimal getOpen() {
+        return stockAsOfDetails.getOpen();
     }
 
-    public BigDecimal getCloseValue() {
-        return stockAsOfDetails.getCloseValue();
+    public BigDecimal getClose() {
+        return stockAsOfDetails.getClose();
     }
 }

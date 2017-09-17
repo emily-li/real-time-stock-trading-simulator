@@ -11,14 +11,14 @@ import java.math.BigDecimal;
 class StockAsOfDetails {
     @Id
     private String symbol;
-    private BigDecimal openValue;
-    private BigDecimal closeValue;
+    private BigDecimal open;
+    private BigDecimal close;
 
-    BigDecimal getOpenValue() {
-        return openValue;
+    public BigDecimal getOpen() {
+        return open;
     }
 
-    BigDecimal getCloseValue() {
-        return closeValue;
+    public BigDecimal getClose() {
+        return close;
     }
 }
