@@ -19,8 +19,7 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * StockGenerationService Integration Test
@@ -140,5 +139,12 @@ public class StockGenerationServiceIT {
         persistedStockView = stockViewRepository.findOne("test");
         BigDecimal gains = persistedStockView.getGains();
         assertTrue(gains.compareTo(new BigDecimal("-0.3")) == 0);
+    }
+
+    @Test
+    public void testNewStockDetailsNull() {
+        assertNull(persistedStockView.getOpen());
+        assertNull(persistedStockView.getClose());
+        assertNull(persistedStockView.getGains());
     }
 }
