@@ -33,7 +33,6 @@ public class StockGenerationServiceIT {
 
     @Autowired
     private StockGenerationService stockGenerationService;
-
     @Autowired
     private StockRepository stockRepository;
 
@@ -112,7 +111,9 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksOpenAsOf() {
-
+        persistedStock = stockRepository.findOne("test");
+        BigDecimal openValue = persistedStock.getStockDetails().getOpenValue();
+        assertTrue(openValue.compareTo(new BigDecimal(1.5)) == 0);
     }
 
     /**
