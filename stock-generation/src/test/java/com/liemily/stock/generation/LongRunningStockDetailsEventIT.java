@@ -2,7 +2,11 @@ package com.liemily.stock.generation;
 
 import org.junit.Test;
 
-public class StockGenerationServiceTest {
+/**
+ * Long running test to test functionality of MySQL event
+ * Intended to update the open and close values of the stocks
+ */
+public class LongRunningStockDetailsEventIT {
 
     /**
      * S.S06 - Stocks should have field 'Open' with field 'Value' as of 0800
