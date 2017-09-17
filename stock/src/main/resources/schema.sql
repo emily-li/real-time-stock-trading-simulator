@@ -25,7 +25,7 @@ CREATE VIEW stock_view AS
 CREATE EVENT stock_as_of_details_open_update
 	ON SCHEDULE
 	EVERY 1 DAY
-	STARTS curdate() + 8 HOUR
+	STARTS curdate() + INTERVAL 8 HOUR
     DO
 		INSERT INTO stock_as_of_details (symbol, open)
         SELECT symbol, value FROM stock
@@ -34,7 +34,7 @@ CREATE EVENT stock_as_of_details_open_update
 CREATE EVENT stock_as_of_details_close_update
 	ON SCHEDULE
 	EVERY 1 DAY
-	STARTS curdate() + 16 HOUR + INTERVAL 30 MINUTE
+	STARTS curdate() + INTERVAL 16 HOUR + INTERVAL 30 MINUTE
     DO
 		INSERT INTO stock_as_of_details (symbol, close)
         SELECT symbol, value FROM stock
