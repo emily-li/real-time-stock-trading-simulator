@@ -116,11 +116,6 @@ public class StockGenerationServiceIT {
         assertTrue(openValue.compareTo(new BigDecimal(1.5)) == 0);
     }
 
-    @Test
-    public void testStocksOpenChange() {
-
-    }
-
     /**
      * S.S07 - Stocks should have field ‘Close’ with field ‘Value’ as of 1630
      * This test only checks as of functionality for the close field
