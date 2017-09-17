@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * Created by Emily Li on 17/09/2017.
  */
 @Entity
-public class StockDetails {
+public class StockAsOfDetails {
     @Id
     private String symbol;
     private BigDecimal openValue;

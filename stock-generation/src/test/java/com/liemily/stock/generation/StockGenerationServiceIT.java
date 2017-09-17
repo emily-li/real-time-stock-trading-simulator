@@ -112,7 +112,7 @@ public class StockGenerationServiceIT {
     @Test
     public void testStocksOpenAsOf() {
         persistedStock = stockRepository.findOne("test");
-        BigDecimal openValue = persistedStock.getStockDetails().getOpenValue();
+        BigDecimal openValue = persistedStock.getStockAsOfDetails().getOpenValue();
         assertTrue(openValue.compareTo(new BigDecimal(1.5)) == 0);
     }
 
@@ -125,7 +125,7 @@ public class StockGenerationServiceIT {
     @Test
     public void testStocksCloseAsOf() {
         persistedStock = stockRepository.findOne("test");
-        BigDecimal closeValue = persistedStock.getStockDetails().getCloseValue();
+        BigDecimal closeValue = persistedStock.getStockAsOfDetails().getCloseValue();
         assertTrue(closeValue.compareTo(new BigDecimal(0.5)) == 0);
     }
 

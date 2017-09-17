@@ -15,7 +15,7 @@ public class Stock {
 
     @OneToOne
     @PrimaryKeyJoinColumn
-    private StockDetails stockDetails;
+    private StockAsOfDetails stockAsOfDetails;
 
     private Stock() {
     }
@@ -34,7 +34,7 @@ public class Stock {
         return volume;
     }
 
-    public StockDetails getStockDetails() {
-        return stockDetails;
+    public StockAsOfDetails getStockAsOfDetails() {
+        return stockAsOfDetails;
     }
 }
