@@ -20,8 +20,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.assertNotNull;
+import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class LongRunningStockDetailsEventIT {
-    private static final long TEST_WAIT_BEFORE_EVENT_MS = 60 * 1000;
+    private static final long AWAIT_UPDATE_TIMEOUT_S = 60;
     private static final BigDecimal EXPECTED_VALUE = new BigDecimal(1);
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -100,8 +101,23 @@ public class LongRunningStockDetailsEventIT {
         public Boolean call() throws Exception {
             logger.info("Starting " + getClass().getSimpleName());
 
+            final AtomicBoolean openUpdated = new AtomicBoolean(false);
+            new Runnable() {
+                @Override
+                public void run() {
+                    while (!openUpdated.get()) {
+                        StockView stockView = stockViewRepository.findOne(stockSymbol);
+                        if (stockView.getOpen() != null) {
+                            openUpdated.set(true);
+                        }
+                    }
+                }
+            }.run();
+
+            logger.info("Waiting maximum of " + AWAIT_UPDATE_TIMEOUT_S + "s for open to update");
+            await().atMost(AWAIT_UPDATE_TIMEOUT_S, TimeUnit.SECONDS).untilTrue(openUpdated);
+
             StockView stockView = stockViewRepository.findOne(stockSymbol);
-            assertNotNull(stockView.getOpen());
             assertTrue(stockView.getOpen().compareTo(EXPECTED_VALUE) == 0);
 
             logger.info("Successfully asserted open is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
@@ -114,8 +130,23 @@ public class LongRunningStockDetailsEventIT {
         public Boolean call() throws Exception {
             logger.info("Starting " + getClass().getSimpleName());
 
+            final AtomicBoolean closeUpdated = new AtomicBoolean(false);
+            new Runnable() {
+                @Override
+                public void run() {
+                    while (!closeUpdated.get()) {
+                        StockView stockView = stockViewRepository.findOne(stockSymbol);
+                        if (stockView.getClose() != null) {
+                            closeUpdated.set(true);
+                        }
+                    }
+                }
+            }.run();
+
+            logger.info("Waiting maximum of " + AWAIT_UPDATE_TIMEOUT_S + "s for close to update");
+            await().atMost(AWAIT_UPDATE_TIMEOUT_S, TimeUnit.SECONDS).untilTrue(closeUpdated);
+
             StockView stockView = stockViewRepository.findOne(stockSymbol);
-            assertNotNull(stockView.getClose());
             assertTrue(stockView.getClose().compareTo(EXPECTED_VALUE) == 0);
 
             logger.info("Successfully asserted close is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
