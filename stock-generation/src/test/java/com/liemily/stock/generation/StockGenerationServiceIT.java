@@ -124,7 +124,9 @@ public class StockGenerationServiceIT {
      */
     @Test
     public void testStocksCloseAsOf() {
-
+        persistedStock = stockRepository.findOne("test");
+        BigDecimal closeValue = persistedStock.getStockDetails().getCloseValue();
+        assertTrue(closeValue.compareTo(new BigDecimal(0.5)) == 0);
     }
 
     /**

@@ -12,8 +12,13 @@ public class StockDetails {
     @Id
     private String symbol;
     private BigDecimal openValue;
+    private BigDecimal closeValue;
 
     public BigDecimal getOpenValue() {
         return openValue;
+    }
+
+    public BigDecimal getCloseValue() {
+        return closeValue;
     }
 }
