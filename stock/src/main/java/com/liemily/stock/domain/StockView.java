@@ -34,10 +34,10 @@ public class StockView {
     }
 
     public BigDecimal getOpen() {
-        return stockAsOfDetails.getOpen();
+        return stockAsOfDetails == null ? null : stockAsOfDetails.getOpen();
     }
 
     public BigDecimal getClose() {
-        return stockAsOfDetails.getClose();
+        return stockAsOfDetails == null ? null : stockAsOfDetails.getClose();
     }
 }
