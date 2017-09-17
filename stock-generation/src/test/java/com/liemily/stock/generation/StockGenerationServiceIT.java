@@ -107,7 +107,7 @@ public class StockGenerationServiceIT {
      * S.S06 - Stocks should have field ‘Open’ with field ‘Value’ as of 0800
      * This test only checks as of functionality for the open field
      *
-     * @see StockGenerationServiceTest for mocking of the time
+     * @see StockGenerationServiceTest for assertion check of the time
      */
     @Test
     public void testStocksOpenAsOf() {
@@ -116,11 +116,16 @@ public class StockGenerationServiceIT {
         assertTrue(openValue.compareTo(new BigDecimal(1.5)) == 0);
     }
 
+    @Test
+    public void testStocksOpenChange() {
+
+    }
+
     /**
      * S.S07 - Stocks should have field ‘Close’ with field ‘Value’ as of 1630
      * This test only checks as of functionality for the close field
      *
-     * @see StockGenerationServiceTest for mocking of the time
+     * @see StockGenerationServiceTest for assertion check of the time
      */
     @Test
     public void testStocksCloseAsOf() {
