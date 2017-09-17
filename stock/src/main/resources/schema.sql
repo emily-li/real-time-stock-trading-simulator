@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS stock;
 DROP TABLE IF EXISTS stock_as_of_details;
 DROP VIEW  IF EXISTS stock_view;
-DROP EVENT IF EXISTS stock_as_of_details_update;
+DROP EVENT IF EXISTS stock_as_of_details_open_update;
+DROP EVENT IF EXISTS stock_as_of_details_close_update;
 
 SET GLOBAL event_scheduler = ON;
 
@@ -21,11 +22,20 @@ CREATE VIEW stock_view AS
     SELECT stock.symbol, (value - open) AS gains
     FROM stock LEFT JOIN stock_as_of_details ON stock.symbol=stock_as_of_details.symbol;
 
-CREATE EVENT stock_as_of_details_update
+CREATE EVENT stock_as_of_details_open_update
 	ON SCHEDULE
 	EVERY 1 DAY
-	STARTS curdate() + INTERVAL 8 HOUR
+	STARTS curdate() + 8 HOUR
     DO
 		INSERT INTO stock_as_of_details (symbol, open)
         SELECT symbol, value FROM stock
         ON DUPLICATE KEY UPDATE open=value;
+
+CREATE EVENT stock_as_of_details_close_update
+	ON SCHEDULE
+	EVERY 1 DAY
+	STARTS curdate() + 16 HOUR + INTERVAL 30 MINUTE
+    DO
+		INSERT INTO stock_as_of_details (symbol, close)
+        SELECT symbol, value FROM stock
+        ON DUPLICATE KEY UPDATE close=value;

@@ -63,16 +63,11 @@ public class LongRunningStockDetailsEventIT {
      */
     @Test
     public void testStocksOpenAsOf0800() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime runTime = LocalDateTime.now().withHour(7).withMinute(59).withSecond(30);
-        runTime = runTime.compareTo(now) > 0 ? runTime : runTime.plusDays(1);
+        long initialDelay = getScheduleTime(7, 59, 30).getSeconds();
 
-        Duration duration = Duration.between(now, runTime);
-        long initalDelay = duration.getSeconds();
-
-        logger.info("Running StockOpenTester in " + initalDelay + " seconds");
+        logger.info("Running StockOpenTester in " + initialDelay + " seconds");
         StockOpenTester stockOpenTester = new StockOpenTester();
-        Future<Boolean> testResult = scheduledExecutorService.schedule(stockOpenTester, initalDelay, TimeUnit.SECONDS);
+        Future<Boolean> testResult = scheduledExecutorService.schedule(stockOpenTester, initialDelay, TimeUnit.SECONDS);
         assertTrue(testResult.get());
     }
 
@@ -82,7 +77,21 @@ public class LongRunningStockDetailsEventIT {
      * @see StockGenerationServiceIT for integration testing of the as of functionality
      */
     @Test
-    public void testStocksCloseAsOf1630() {
+    public void testStocksCloseAsOf1630() throws Exception {
+        long initialDelay = getScheduleTime(22, 57, 30).getSeconds();
+
+        logger.info("Running StockCloseTester in " + initialDelay + " seconds");
+        StockCloseTester stockCloseTester = new StockCloseTester();
+        Future<Boolean> testResult = scheduledExecutorService.schedule(stockCloseTester, initialDelay, TimeUnit.SECONDS);
+        assertTrue(testResult.get());
+    }
+
+    private Duration getScheduleTime(int hour, int minute, int second) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime runTime = LocalDateTime.now().withHour(hour).withMinute(minute).withSecond(second);
+        runTime = runTime.compareTo(now) > 0 ? runTime : runTime.plusDays(1);
+
+        return Duration.between(now, runTime);
     }
 
     private class StockOpenTester implements Callable<Boolean> {
@@ -101,6 +110,27 @@ public class LongRunningStockDetailsEventIT {
             assertNotNull(stockView.getOpen());
             assertTrue(stockView.getOpen().compareTo(EXPECTED_VALUE) == 0);
             logger.info("Successfully asserted open is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
+
+            return true;
+        }
+    }
+
+    private class StockCloseTester implements Callable<Boolean> {
+        @Override
+        public Boolean call() throws Exception {
+            logger.info("Starting " + getClass().getSimpleName());
+            StockView stockView = stockViewRepository.findOne(stockSymbol);
+            assertNull(stockView.getOpen());
+            logger.info("Successfully asserted close value was null for " + stockSymbol + " at " + LocalDateTime.now());
+
+            logger.info("Waiting " + TEST_WAIT_BEFORE_EVENT_MS + "ms to allow MySQL scheduled event to update close value to run");
+            Thread.sleep(TEST_WAIT_BEFORE_EVENT_MS);
+
+            logger.info("Testing close is now " + EXPECTED_VALUE);
+            stockView = stockViewRepository.findOne(stockSymbol);
+            assertNotNull(stockView.getClose());
+            assertTrue(stockView.getClose().compareTo(EXPECTED_VALUE) == 0);
+            logger.info("Successfully asserted close is now " + EXPECTED_VALUE + " at " + LocalDateTime.now());
 
             return true;
         }
