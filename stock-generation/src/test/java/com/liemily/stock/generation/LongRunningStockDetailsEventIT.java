@@ -65,7 +65,7 @@ public class LongRunningStockDetailsEventIT {
      */
     @Test
     public void testStocksOpenAsOf0800() throws Exception {
-        long initialDelay = getScheduleTime(7, 59, 30).getSeconds();
+        long initialDelay = getScheduleTime(0, 0, 30).getSeconds();
 
         logger.info("Running StockOpenTester in " + initialDelay + " seconds");
         StockOpenTester stockOpenTester = new StockOpenTester();
@@ -91,7 +91,7 @@ public class LongRunningStockDetailsEventIT {
     private Duration getScheduleTime(int hour, int minute, int second) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime runTime = LocalDateTime.now().withHour(hour).withMinute(minute).withSecond(second);
-        runTime = runTime.compareTo(now) > 0 ? runTime : runTime.plusDays(1);
+        //runTime = runTime.compareTo(now) > 0 ? runTime : runTime.plusDays(1);
 
         return Duration.between(now, runTime);
     }
@@ -102,17 +102,14 @@ public class LongRunningStockDetailsEventIT {
             logger.info("Starting " + getClass().getSimpleName());
 
             final AtomicBoolean openUpdated = new AtomicBoolean(false);
-            new Runnable() {
-                @Override
-                public void run() {
-                    while (!openUpdated.get()) {
-                        StockView stockView = stockViewRepository.findOne(stockSymbol);
-                        if (stockView.getOpen() != null) {
-                            openUpdated.set(true);
-                        }
+            new Thread(() -> {
+                while (!openUpdated.get()) {
+                    StockView stockView = stockViewRepository.findOne(stockSymbol);
+                    if (stockView.getOpen() != null) {
+                        openUpdated.set(true);
                     }
                 }
-            }.run();
+            }).start();
 
             logger.info("Waiting maximum of " + AWAIT_UPDATE_TIMEOUT_S + "s for open to update");
             await().atMost(AWAIT_UPDATE_TIMEOUT_S, TimeUnit.SECONDS).untilTrue(openUpdated);
@@ -131,17 +128,14 @@ public class LongRunningStockDetailsEventIT {
             logger.info("Starting " + getClass().getSimpleName());
 
             final AtomicBoolean closeUpdated = new AtomicBoolean(false);
-            new Runnable() {
-                @Override
-                public void run() {
-                    while (!closeUpdated.get()) {
-                        StockView stockView = stockViewRepository.findOne(stockSymbol);
-                        if (stockView.getClose() != null) {
-                            closeUpdated.set(true);
-                        }
+            new Thread(() -> {
+                while (!closeUpdated.get()) {
+                    StockView stockView = stockViewRepository.findOne(stockSymbol);
+                    if (stockView.getClose() != null) {
+                        closeUpdated.set(true);
                     }
                 }
-            }.run();
+            }).start();
 
             logger.info("Waiting maximum of " + AWAIT_UPDATE_TIMEOUT_S + "s for close to update");
             await().atMost(AWAIT_UPDATE_TIMEOUT_S, TimeUnit.SECONDS).untilTrue(closeUpdated);
