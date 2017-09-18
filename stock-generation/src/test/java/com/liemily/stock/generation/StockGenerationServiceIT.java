@@ -19,7 +19,8 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * StockGenerationService Integration Test
@@ -103,48 +104,5 @@ public class StockGenerationServiceIT {
     @Test(expected = StockGenerationException.class)
     public void testStocksFailIfAlreadyExist() throws StockGenerationException {
         stockGenerationService.generateStock(stockId);
-    }
-
-    /**
-     * S.S06 - Stocks should have field ‘Open’ with field ‘Value’ as of 0800
-     * This test only checks as of functionality for the open field
-     *
-     * @see LongRunningStockDetailsEventIT for assertion check of the time
-     */
-    @Test
-    public void testStocksOpenAsOf() {
-        persistedStockView = stockViewRepository.findOne("test");
-        BigDecimal open = persistedStockView.getOpen();
-        assertTrue(open.compareTo(new BigDecimal("1.5")) == 0);
-    }
-
-    /**
-     * S.S07 - Stocks should have field ‘Close’ with field ‘Value’ as of 1630
-     * This test only checks as of functionality for the close field
-     *
-     * @see LongRunningStockDetailsEventIT for assertion check of the time
-     */
-    @Test
-    public void testStocksCloseAsOf() {
-        persistedStockView = stockViewRepository.findOne("test");
-        BigDecimal close = persistedStockView.getClose();
-        assertTrue(close.compareTo(new BigDecimal("0.5")) == 0);
-    }
-
-    /**
-     * S.S08 - Stocks should have field ‘Gains’, calculated as ‘Value – Open’ when ‘Value’ is updated
-     */
-    @Test
-    public void testStocksGains() {
-        persistedStockView = stockViewRepository.findOne("test");
-        BigDecimal gains = persistedStockView.getGains();
-        assertTrue(gains.compareTo(new BigDecimal("-0.3")) == 0);
-    }
-
-    @Test
-    public void testNewStockDetailsNull() {
-        assertNull(persistedStockView.getOpen());
-        assertNull(persistedStockView.getClose());
-        assertNull(persistedStockView.getGains());
     }
 }
