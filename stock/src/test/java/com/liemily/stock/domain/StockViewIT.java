@@ -38,21 +38,19 @@ public class StockViewIT {
     }
 
     /**
-     * S.S06 - Stocks should have field ‘Open’ with field ‘Value’ as of 0800
+     * S.S06 - Stocks should have field ‘Open’ with field ‘Value’
      */
     @Test
     public void testStocksOpenAsOf() {
-        stockView = stockViewRepository.findOne("test");
         BigDecimal open = stockView.getOpen();
         assertTrue(open.compareTo(new BigDecimal("1.5")) == 0);
     }
 
     /**
-     * S.S07 - Stocks should have field ‘Close’ with field ‘Value’ as of 1630
+     * S.S07 - Stocks should have field ‘Close’ with field ‘Value’
      */
     @Test
     public void testStocksCloseAsOf() {
-        stockView = stockViewRepository.findOne("test");
         BigDecimal close = stockView.getClose();
         assertTrue(close.compareTo(new BigDecimal("0.5")) == 0);
     }
@@ -62,7 +60,6 @@ public class StockViewIT {
      */
     @Test
     public void testStocksGains() {
-        stockView = stockViewRepository.findOne("test");
         BigDecimal gains = stockView.getGains();
         assertTrue(gains.compareTo(new BigDecimal("-0.3")) == 0);
     }
