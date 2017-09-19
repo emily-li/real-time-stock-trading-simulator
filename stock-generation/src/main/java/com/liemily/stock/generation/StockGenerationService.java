@@ -1,8 +1,8 @@
 package com.liemily.stock.generation;
 
-import com.liemily.stock.StockRepository;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.generation.exceptions.StockGenerationException;
+import com.liemily.stock.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,7 @@
 package com.liemily.stock;
 
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.repository.StockRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

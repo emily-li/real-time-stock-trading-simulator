@@ -1,9 +1,9 @@
 package com.liemily.stock.generation;
 
-import com.liemily.stock.StockRepository;
-import com.liemily.stock.StockViewRepository;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.generation.exceptions.StockGenerationException;
+import com.liemily.stock.repository.StockRepository;
+import com.liemily.stock.repository.StockViewRepository;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.After;

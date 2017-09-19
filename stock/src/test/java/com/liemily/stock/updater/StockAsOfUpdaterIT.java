@@ -1,11 +1,11 @@
-package com.liemily.stock.domain;
+package com.liemily.stock.updater;
 
 import org.junit.Test;
 
 /**
- * Created by Emily Li on 18/09/2017.
+ * Created by Emily Li on 19/09/2017.
  */
-public class StockViewTest {
+public class StockAsOfUpdaterIT {
     /**
      * S.S06 - Stocks should have field 'Open' with field 'Value' as of 0800
      */
