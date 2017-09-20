@@ -56,7 +56,7 @@ public class StockAsOfUpdater {
         }
     }
 
-    private Duration getScheduleTime(String time) {
+    Duration getScheduleTime(String time) {
         LocalDateTime now = LocalDateTime.now();
 
         int[] splitTime = Stream.of(time.split(":")).mapToInt(Integer::parseInt).toArray();
