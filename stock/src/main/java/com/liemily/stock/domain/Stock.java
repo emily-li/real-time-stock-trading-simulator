@@ -31,4 +31,8 @@ public class Stock {
     public int getVolume() {
         return volume;
     }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
 }

@@ -1,7 +1,10 @@
 package com.liemily.stock.domain;
 
+import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.repository.StockRepository;
 import com.liemily.stock.repository.StockViewRepository;
+import com.liemily.stock.updater.STOCK_AS_OF;
+import com.liemily.stock.updater.StockAsOfUpdateRunnable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,12 +28,15 @@ public class StockViewIT {
     private StockRepository stockRepository;
     @Autowired
     private StockViewRepository stockViewRepository;
+    @Autowired
+    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
+    private String symbol;
     private StockView stockView;
 
     @Before
     public void setup() {
-        String symbol = UUID.randomUUID().toString();
+        symbol = UUID.randomUUID().toString();
         Stock stock = new Stock(symbol, new BigDecimal(1), 0);
         stockRepository.save(stock);
         stockView = stockViewRepository.findOne(symbol);
@@ -41,7 +47,16 @@ public class StockViewIT {
      */
     @Test
     public void testStocksGains() {
+        StockAsOfUpdateRunnable stockAsOfUpdateRunnable = new StockAsOfUpdateRunnable(stockRepository, stockAsOfDetailsRepository, STOCK_AS_OF.OPEN);
+        stockAsOfUpdateRunnable.run();
+
+        Stock stock = stockRepository.findOne(symbol);
+        stock.setValue(new BigDecimal("0.7"));
+        stockRepository.save(stock);
+
+        stockView = stockViewRepository.findOne(symbol);
         BigDecimal gains = stockView.getGains();
+
         assertTrue(gains.compareTo(new BigDecimal("-0.3")) == 0);
     }
 
