@@ -5,6 +5,7 @@ import com.liemily.stock.repository.StockRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,7 +28,7 @@ public class StockAsOfUpdaterTest {
 
     @Before
     public void setup() {
-        stockAsOfUpdater = spy(new StockAsOfUpdater(mock(StockRepository.class), mock(StockAsOfDetailsRepository.class), openTime, closeTime));
+        stockAsOfUpdater = Mockito.spy(new StockAsOfUpdater(mock(StockRepository.class), mock(StockAsOfDetailsRepository.class), openTime, closeTime));
         doCallRealMethod().when(stockAsOfUpdater).run();
         stockAsOfUpdater.run();
     }

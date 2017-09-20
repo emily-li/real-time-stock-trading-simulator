@@ -1,5 +1,6 @@
 package com.liemily.stock.updater;
 
+import com.jayway.awaitility.Awaitility;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.repository.StockAsOfDetailsRepository;
@@ -20,7 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -90,7 +90,7 @@ public class StockAsOfUpdaterIT {
     }
 
     private StockAsOfDetails getUpdatedStockAsOf(STOCK_AS_OF stockAsOf) throws Exception {
-        await().atMost(initialDelay + 1, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
+        Awaitility.await().atMost(initialDelay + 1, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
         return stockAsOfDetailsRepository.findOne(symbol);
     }
 

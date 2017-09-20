@@ -1,9 +1,9 @@
-package com.liemily.stock.domain;
+package com.liemily.stock.updater;
 
+import com.liemily.stock.domain.Stock;
+import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.repository.StockRepository;
-import com.liemily.stock.updater.STOCK_AS_OF;
-import com.liemily.stock.updater.StockAsOfUpdateRunnable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
