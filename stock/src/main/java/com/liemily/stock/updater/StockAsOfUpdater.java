@@ -41,7 +41,7 @@ public class StockAsOfUpdater {
     }
 
     @PostConstruct
-    private void run() {
+    void run() {
         setupScheduler();
     }
 
