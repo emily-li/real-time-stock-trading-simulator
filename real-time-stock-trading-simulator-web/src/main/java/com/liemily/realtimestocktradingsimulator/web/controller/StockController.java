@@ -2,12 +2,12 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import com.liemily.stock.StockService;
 import com.liemily.user.UserStockService;
-import com.liemily.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.security.Principal;
 
 /**
  * Created by Emily Li on 20/09/2017.
@@ -36,8 +36,8 @@ public class StockController {
 
     @RequestMapping("/stock/sell")
     public String addSellableStocks(Model model,
-                                    @ModelAttribute User user) {
-        model.addAttribute("stocks", userStockService.findByUsername(user.getUsername()));
+                                    Principal principal) {
+        model.addAttribute("stocks", userStockService.findByUsername(principal.getName()));
         return "stock";
     }
 }
