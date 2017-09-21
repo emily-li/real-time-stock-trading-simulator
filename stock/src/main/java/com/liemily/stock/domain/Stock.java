@@ -11,6 +11,7 @@ public class Stock {
     private BigDecimal value;
     private int volume;
 
+    @SuppressWarnings("unused")
     private Stock() {
     }
 
@@ -34,5 +35,26 @@ public class Stock {
 
     public void setValue(BigDecimal value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Stock stock = (Stock) o;
+
+        return stock.value.compareTo(value) == 0 && volume == stock.volume && (symbol != null ? symbol.equals(stock.symbol) : stock.symbol == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = symbol != null ? symbol.hashCode() : 0;
+        temp = Double.doubleToLongBits(value.doubleValue());
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + volume;
+        return result;
     }
 }
