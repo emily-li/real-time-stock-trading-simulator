@@ -10,4 +10,36 @@ import javax.persistence.Id;
 public class UserStock {
     @Id
     private String username;
+    private String symbol;
+    private int volume;
+
+    @SuppressWarnings("unused")
+    private UserStock() {
+    }
+
+    public UserStock(String username, String symbol, int volume) {
+        this.username = username;
+        this.symbol = symbol;
+        this.volume = volume;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserStock userStock = (UserStock) o;
+
+        if (volume != userStock.volume) return false;
+        if (username != null ? !username.equals(userStock.username) : userStock.username != null) return false;
+        return symbol != null ? symbol.equals(userStock.symbol) : userStock.symbol == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username != null ? username.hashCode() : 0;
+        result = 31 * result + (symbol != null ? symbol.hashCode() : 0);
+        result = 31 * result + volume;
+        return result;
+    }
 }
