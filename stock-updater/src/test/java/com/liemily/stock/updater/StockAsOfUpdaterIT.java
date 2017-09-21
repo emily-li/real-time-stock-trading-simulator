@@ -68,7 +68,7 @@ public class StockAsOfUpdaterIT {
         BigDecimal expectedValue = new BigDecimal(2);
         updateStock(expectedValue);
         StockAsOfDetails stockAsOfDetails = getUpdatedStockAsOf(STOCK_AS_OF.OPEN);
-        assertTrue(stockAsOfDetails.getOpen().compareTo(expectedValue) == 0);
+        assertTrue(stockAsOfDetails.getOpenValue().compareTo(expectedValue) == 0);
     }
 
     /**
@@ -81,7 +81,7 @@ public class StockAsOfUpdaterIT {
         BigDecimal expectedValue = new BigDecimal(3);
         updateStock(expectedValue);
         StockAsOfDetails stockAsOfDetails = getUpdatedStockAsOf(STOCK_AS_OF.CLOSE);
-        assertTrue(stockAsOfDetails.getClose().compareTo(expectedValue) == 0);
+        assertTrue(stockAsOfDetails.getCloseValue().compareTo(expectedValue) == 0);
     }
 
     private void updateStock(BigDecimal newValue) {
@@ -119,7 +119,7 @@ public class StockAsOfUpdaterIT {
             while (asOfValue == null) {
                 StockAsOfDetails stockAsOfDetails = stockAsOfDetailsRepository.findOne(symbol);
                 if (stockAsOfDetails != null) {
-                    asOfValue = stockAsOf.equals(STOCK_AS_OF.OPEN) ? stockAsOfDetails.getOpen() : stockAsOfDetails.getClose();
+                    asOfValue = stockAsOf.equals(STOCK_AS_OF.OPEN) ? stockAsOfDetails.getOpenValue() : stockAsOfDetails.getCloseValue();
                 }
             }
         }

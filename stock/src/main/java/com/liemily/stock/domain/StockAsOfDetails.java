@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 public class StockAsOfDetails {
     @Id
     private String symbol;
-    private BigDecimal open;
-    private BigDecimal close;
+    private BigDecimal openValue;
+    private BigDecimal closeValue;
     @OneToOne
     @PrimaryKeyJoinColumn
     private Stock stock;
@@ -31,23 +31,23 @@ public class StockAsOfDetails {
         return symbol;
     }
 
-    public BigDecimal getOpen() {
-        return open;
+    public BigDecimal getOpenValue() {
+        return openValue;
     }
 
-    public BigDecimal getClose() {
-        return close;
+    public void setOpenValue(BigDecimal openValue) {
+        this.openValue = openValue;
     }
 
     public BigDecimal getStockValue() {
         return stock.getValue();
     }
 
-    public void setOpen(BigDecimal open) {
-        this.open = open;
+    public BigDecimal getCloseValue() {
+        return closeValue;
     }
 
-    public void setClose(BigDecimal close) {
-        this.close = close;
+    public void setCloseValue(BigDecimal closeValue) {
+        this.closeValue = closeValue;
     }
 }

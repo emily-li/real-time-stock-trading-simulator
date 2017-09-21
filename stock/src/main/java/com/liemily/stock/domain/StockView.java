@@ -21,6 +21,10 @@ public class StockView {
     @PrimaryKeyJoinColumn
     private StockAsOfDetails stockAsOfDetails;
 
+    public String getSymbol() {
+        return symbol;
+    }
+
     public BigDecimal getGains() {
         return gains;
     }
@@ -33,11 +37,11 @@ public class StockView {
         return stock.getVolume();
     }
 
-    public BigDecimal getOpen() {
-        return stockAsOfDetails == null ? null : stockAsOfDetails.getOpen();
+    public BigDecimal getOpenValue() {
+        return stockAsOfDetails == null ? null : stockAsOfDetails.getOpenValue();
     }
 
-    public BigDecimal getClose() {
-        return stockAsOfDetails == null ? null : stockAsOfDetails.getClose();
+    public BigDecimal getCloseValue() {
+        return stockAsOfDetails == null ? null : stockAsOfDetails.getCloseValue();
     }
 }

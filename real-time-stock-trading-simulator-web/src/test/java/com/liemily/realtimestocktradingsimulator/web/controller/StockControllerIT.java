@@ -55,7 +55,7 @@ public class StockControllerIT {
     @Test
     public void testGetBuyableShares() throws Exception {
         String stockPage = stockController.addBuyableStocks(model);
-        Collection<Stock> stocks = (Collection<Stock>) model.asMap().get("stocks");
+        Collection<Stock> stocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
         assertTrue(stocks.contains(stock));
@@ -131,7 +131,7 @@ public class StockControllerIT {
      */
     @Test
     public void testStockFields() {
-
+        // TODO
     }
 
     /**

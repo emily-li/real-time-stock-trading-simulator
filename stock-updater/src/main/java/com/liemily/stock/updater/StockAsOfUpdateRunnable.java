@@ -47,9 +47,9 @@ public class StockAsOfUpdateRunnable implements Runnable {
         for (StockAsOfDetails stockAsOfs : stockAsOfDetails) {
             BigDecimal stockValue = stockAsOfs.getStockValue();
             if (asOf.equals(STOCK_AS_OF.OPEN)) {
-                stockAsOfs.setOpen(stockValue);
+                stockAsOfs.setOpenValue(stockValue);
             } else if (asOf.equals(STOCK_AS_OF.CLOSE)) {
-                stockAsOfs.setClose(stockValue);
+                stockAsOfs.setCloseValue(stockValue);
             }
         }
         stockAsOfDetailsRepository.save(stockAsOfDetails);

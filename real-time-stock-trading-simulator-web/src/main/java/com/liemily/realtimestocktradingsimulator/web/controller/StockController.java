@@ -14,6 +14,7 @@ import java.security.Principal;
  */
 @Controller
 public class StockController {
+    private final String STOCKS_ATTRIBUTE = "stocks";
     private StockService stockService;
     private UserStockService userStockService;
 
@@ -30,14 +31,18 @@ public class StockController {
 
     @RequestMapping("/stock/buy")
     public String addBuyableStocks(Model model) {
-        model.addAttribute("stocks", stockService.findStocksWithVolume());
+        model.addAttribute(STOCKS_ATTRIBUTE, stockService.findStocksWithVolume());
         return "stock";
     }
 
     @RequestMapping("/stock/sell")
     public String addSellableStocks(Model model,
                                     Principal principal) {
-        model.addAttribute("stocks", userStockService.findByUsername(principal.getName()));
+        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.findByUsername(principal.getName()));
         return "stock";
+    }
+
+    public String getStocksAttribute() {
+        return STOCKS_ATTRIBUTE;
     }
 }
