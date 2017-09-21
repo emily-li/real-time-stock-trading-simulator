@@ -7,11 +7,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -25,7 +28,6 @@ public class StockControllerIT {
     private StockController stockController;
     @Autowired
     private StockRepository stockRepository;
-
     /**
      * C.S01 Buyable and sellable shares should be presented separately
      *
@@ -35,7 +37,12 @@ public class StockControllerIT {
     public void testGetBuyableShares() throws Exception {
         Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
         stockRepository.save(stock);
-        Collection<Stock> stocks = stockController.getBuyableStocks();
+
+        Model model = new ExtendedModelMap();
+        String stockPage = stockController.addBuyableStocks(model);
+        Collection<Stock> stocks = (Collection<Stock>) model.asMap().get("stocks");
+
+        assertEquals("stock", stockPage);
         assertTrue(stocks.contains(stock));
     }
 
@@ -47,6 +54,7 @@ public class StockControllerIT {
     @Test
     public void testGetSellableShares() {
         // Collection<Stock> stocks = stockController.getSellableStocks();
+
     }
 
     /**
