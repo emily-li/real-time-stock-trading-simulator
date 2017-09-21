@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Created by Emily Li on 20/09/2017.
  */
 @Controller
-@RequestMapping("/stock")
 public class StockController {
     private StockService stockService;
     private UserStockService userStockService;
@@ -25,7 +24,7 @@ public class StockController {
     }
 
     @RequestMapping("/stock")
-    public String requestStocks(Model model) {
+    public String requestStocks() {
         return "redirect:/stock/buy";
     }
 
