@@ -17,6 +17,7 @@
         <module>stock-generation</module>
         <module>stock-modulation</module>
         <module>stock-updater</module>
+        <module>user</module>
     </modules>
 
     <properties>
