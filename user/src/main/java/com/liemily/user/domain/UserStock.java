@@ -30,7 +30,9 @@ public class UserStock {
 
         UserStock userStock = (UserStock) o;
 
-        return volume == userStock.volume && (username != null ? username.equals(userStock.username) : userStock.username == null) && (symbol != null ? symbol.equals(userStock.symbol) : userStock.symbol == null);
+        return volume == userStock.volume
+                && (username != null ? username.equals(userStock.username) : userStock.username == null)
+                && (symbol != null ? symbol.equals(userStock.symbol) : userStock.symbol == null);
     }
 
     @Override
