@@ -21,4 +21,8 @@ public class StockService {
     public List<Stock> findAll() {
         return stockRepository.findAll();
     }
+
+    public List<Stock> findStocksWithVolume() {
+        return stockRepository.findStocksWithVolume();
+    }
 }

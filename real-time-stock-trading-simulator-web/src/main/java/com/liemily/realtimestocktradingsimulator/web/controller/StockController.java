@@ -29,7 +29,7 @@ public class StockController {
     }
 
     public Collection<Stock> getBuyableStocks() {
-        return null;
+        return stockService.findStocksWithVolume();
     }
 
     public Collection<Stock> getSellableStocks() {
