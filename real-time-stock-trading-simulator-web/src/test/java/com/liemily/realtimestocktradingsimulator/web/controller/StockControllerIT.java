@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.UUID;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Covers automated tests covered by "docs/FDM05-05 Functional Test Plan.doc" for client-side stock functionality
  * Created by Emily Li on 21/09/2017.
@@ -34,6 +36,7 @@ public class StockControllerIT {
         Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
         stockRepository.save(stock);
         Collection<Stock> stocks = stockController.getBuyableStocks();
+        assertTrue(stocks.contains(stock));
     }
 
     /**
