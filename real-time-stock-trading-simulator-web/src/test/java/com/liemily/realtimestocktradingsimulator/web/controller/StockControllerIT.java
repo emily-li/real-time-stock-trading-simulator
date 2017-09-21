@@ -1,9 +1,16 @@
-package com.liemily.realtimestocktradingsimulator.web;
+package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.stock.domain.Stock;
+import com.liemily.stock.repository.StockRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Covers automated tests covered by "docs/FDM05-05 Functional Test Plan.doc" for client-side stock functionality
@@ -12,25 +19,31 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockControllerIT {
+    @Autowired
+    private StockController stockController;
+    @Autowired
+    private StockRepository stockRepository;
 
     /**
      * C.S01 Buyable and sellable shares should be presented separately
-     * <p>
+     *
      * Automatically tests buyable shares can be retrieved individually.
      */
     @Test
-    public void testGetBuyableShares() {
-
+    public void testGetBuyableShares() throws Exception {
+        Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
+        stockRepository.save(stock);
+        Collection<Stock> stocks = stockController.getBuyableStocks();
     }
 
     /**
      * C.S01 Buyable and sellable shares should be presented separately
-     * <p>
+     *
      * Automatically tests sellable shares can be retrieved individually.
      */
     @Test
     public void testGetSellableShares() {
-
+        // Collection<Stock> stocks = stockController.getSellableStocks();
     }
 
     /**
