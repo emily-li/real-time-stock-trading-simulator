@@ -2,6 +2,9 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.repository.StockRepository;
+import com.liemily.user.domain.UserStock;
+import com.liemily.user.repository.UserStockRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
+import java.nio.file.attribute.UserPrincipal;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -28,6 +33,20 @@ public class StockControllerIT {
     private StockController stockController;
     @Autowired
     private StockRepository stockRepository;
+    @Autowired
+    private UserStockRepository userStockRepository;
+
+    private Stock stock;
+    private Model model;
+
+    @Before
+    public void setup() {
+        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
+        stockRepository.save(stock);
+
+        model = new ExtendedModelMap();
+    }
+
     /**
      * C.S01 Buyable and sellable shares should be presented separately
      *
@@ -35,10 +54,6 @@ public class StockControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
-        stockRepository.save(stock);
-
-        Model model = new ExtendedModelMap();
         String stockPage = stockController.addBuyableStocks(model);
         Collection<Stock> stocks = (Collection<Stock>) model.asMap().get("stocks");
 
@@ -53,8 +68,16 @@ public class StockControllerIT {
      */
     @Test
     public void testGetSellableShares() {
-        // Collection<Stock> stocks = stockController.getSellableStocks();
+        String username = UUID.randomUUID().toString();
+        UserStock userStock = new UserStock(username, stock.getSymbol(), 1);
+        userStockRepository.save(userStock);
 
+        Principal principal = (UserPrincipal) () -> username;
+        String stockPage = stockController.addSellableStocks(model, principal);
+        Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get("stocks");
+
+        assertEquals("stock", stockPage);
+        assertTrue(stocks.contains(userStock));
     }
 
     /**
