@@ -97,14 +97,6 @@ public class StockControllerIT {
     }
 
     /**
-     * C.S06 Stock data should present the following fields as a number: Gains, Value, Volume, Open, Close
-     */
-    @Test
-    public void testStockDataNumberFields() {
-
-    }
-
-    /**
      * C.S07 Stock data should be displayed paginated
      */
     @Test
@@ -123,15 +115,6 @@ public class StockControllerIT {
      */
     @Test
     public void testEachRowIsCompanyStock() {
-
-    }
-
-    /**
-     * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
-     */
-    @Test
-    public void testStockFields() {
-        // TODO
     }
 
     /**
