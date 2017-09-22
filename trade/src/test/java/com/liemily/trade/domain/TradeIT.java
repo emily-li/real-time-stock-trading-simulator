@@ -29,6 +29,6 @@ public class TradeIT {
         tradeRepository.save(trade2);
 
         assertTrue(timeAfterFirstTrade.after(trade1.getTradeDateTime()));
-        assertTrue(trade2.getTradeDateTime().after(trade2.getTradeDateTime()));
+        assertTrue(trade2.getTradeDateTime().after(trade1.getTradeDateTime()));
     }
 }
