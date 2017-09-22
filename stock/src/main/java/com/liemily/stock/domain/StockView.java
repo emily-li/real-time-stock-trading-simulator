@@ -1,7 +1,13 @@
 package com.liemily.stock.domain;
 
-import javax.persistence.*;
+import com.liemily.company.domain.Company;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by Emily Li on 17/09/2017.
@@ -11,7 +17,8 @@ public class StockView {
     @Id
     private String symbol;
     private BigDecimal gains;
-    @ManyToOne
+    private Date lastTradeDateTime;
+    @OneToOne
     @PrimaryKeyJoinColumn
     private Company company;
     @OneToOne
@@ -25,12 +32,16 @@ public class StockView {
         return symbol;
     }
 
-    public String getName() {
-        return company.getName();
-    }
-
     public BigDecimal getGains() {
         return gains;
+    }
+
+    public Date getLastTradeDateTime() {
+        return lastTradeDateTime;
+    }
+
+    public String getName() {
+        return company.getName();
     }
 
     public BigDecimal getValue() {

@@ -1,7 +1,5 @@
 package com.liemily.stock.domain;
 
-import com.liemily.stock.repository.StockAsOfDetailsRepository;
-import com.liemily.stock.repository.StockRepository;
 import com.liemily.stock.repository.StockViewRepository;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,37 +12,29 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
+ * Tests StockView expected values and required fields
+ *
  * Created by Emily Li on 22/09/2017.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockViewIT {
+    private static final String SYMBOL = "testSymbol";
+    private static final String NAME = "testName";
+
     @Autowired
     private StockViewRepository stockViewRepository;
-    @Autowired
-    private StockRepository stockRepository;
-    @Autowired
-    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private StockView stockView;
 
     @Before
     public void setup() {
-        String symbol = UUID.randomUUID().toString();
-        Stock stock = new Stock(symbol, new BigDecimal(1), 1);
-        stockRepository.save(stock);
-
-        StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stock);
-        stockAsOfDetails.setOpenValue(new BigDecimal(1));
-        stockAsOfDetails.setCloseValue(new BigDecimal(1));
-        stockAsOfDetailsRepository.save(stockAsOfDetails);
-
-        stockView = stockViewRepository.findOne(symbol);
+        stockView = stockViewRepository.findOne(SYMBOL);
     }
 
     /**
@@ -64,9 +54,13 @@ public class StockViewIT {
 
     /**
      * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
+     *
+     * The number fields are verified in testStockDataNumberFields()
      */
     @Test
     public void testStockFields() {
-        // TODO
+        assertEquals(SYMBOL, stockView.getSymbol());
+        assertEquals(NAME, stockView.getName());
+        assertNotNull(stockView.getLastTradeDateTime());
     }
 }

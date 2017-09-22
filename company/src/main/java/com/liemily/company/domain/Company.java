@@ -1,4 +1,4 @@
-package com.liemily.stock.domain;
+package com.liemily.company.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

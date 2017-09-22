@@ -1,6 +1,6 @@
-package com.liemily.stock.repository;
+package com.liemily.company.repository;
 
-import com.liemily.stock.domain.Company;
+import com.liemily.company.domain.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
