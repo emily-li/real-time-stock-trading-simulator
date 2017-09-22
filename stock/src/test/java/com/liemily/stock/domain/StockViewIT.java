@@ -1,5 +1,6 @@
 package com.liemily.stock.domain;
 
+import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.repository.StockRepository;
 import com.liemily.stock.repository.StockViewRepository;
 import org.junit.Assert;
@@ -27,6 +28,8 @@ public class StockViewIT {
     private StockViewRepository stockViewRepository;
     @Autowired
     private StockRepository stockRepository;
+    @Autowired
+    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private StockView stockView;
 
@@ -35,6 +38,12 @@ public class StockViewIT {
         String symbol = UUID.randomUUID().toString();
         Stock stock = new Stock(symbol, new BigDecimal(1), 1);
         stockRepository.save(stock);
+
+        StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stock);
+        stockAsOfDetails.setOpenValue(new BigDecimal(1));
+        stockAsOfDetails.setCloseValue(new BigDecimal(1));
+        stockAsOfDetailsRepository.save(stockAsOfDetails);
+
         stockView = stockViewRepository.findOne(symbol);
     }
 
