@@ -1,10 +1,16 @@
 package com.liemily.trade.repository;
 
+import com.liemily.trade.domain.Trade;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by Emily Li on 22/09/2017.
@@ -17,11 +23,19 @@ public class TradeRepositoryIT {
 
     /**
      * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
-     * <p>
+     *
      * Tests last trade functionality
      */
     @Test
     public void testGetLastTrade() {
+        Trade trade1 = new Trade();
+        tradeRepository.save(trade1);
+        Trade trade2 = new Trade();
+        tradeRepository.save(trade2);
 
+        Date lastTradeDateTime = tradeRepository.getLastTradeDateTime();
+
+        assertNotEquals(trade1.getTradeDateTime(), lastTradeDateTime);
+        assertEquals(trade2.getTradeDateTime(), lastTradeDateTime);
     }
 }
