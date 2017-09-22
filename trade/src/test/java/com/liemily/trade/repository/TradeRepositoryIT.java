@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -28,12 +29,15 @@ public class TradeRepositoryIT {
      */
     @Test
     public void testGetLastTrade() {
-        Trade trade1 = new Trade();
+        String stockSymbol = UUID.randomUUID().toString();
+        Trade trade1 = new Trade(stockSymbol);
         tradeRepository.save(trade1);
-        Trade trade2 = new Trade();
+        Trade trade2 = new Trade(stockSymbol);
         tradeRepository.save(trade2);
+        Trade trade3 = new Trade(UUID.randomUUID().toString());
+        tradeRepository.save(trade3);
 
-        Date lastTradeDateTime = tradeRepository.getLastTradeDateTime();
+        Date lastTradeDateTime = tradeRepository.getLastTradeDateTime(stockSymbol);
 
         assertNotEquals(trade1.getTradeDateTime(), lastTradeDateTime);
         assertEquals(trade2.getTradeDateTime(), lastTradeDateTime);

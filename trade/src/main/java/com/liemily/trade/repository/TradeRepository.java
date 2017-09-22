@@ -10,6 +10,6 @@ import java.util.Date;
  * Created by Emily Li on 22/09/2017.
  */
 public interface TradeRepository extends JpaRepository<Trade, Integer> {
-    @Query("SELECT MAX(tradeDateTime) FROM Trade")
-    Date getLastTradeDateTime();
+    @Query("SELECT MAX(tradeDateTime) FROM Trade WHERE stockSymbol = ?1")
+    Date getLastTradeDateTime(String stockSymbol);
 }

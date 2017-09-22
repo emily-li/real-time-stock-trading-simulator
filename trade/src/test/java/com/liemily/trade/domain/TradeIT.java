@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
 
@@ -22,10 +23,10 @@ public class TradeIT {
 
     @Test
     public void testTradeDateTime() {
-        Trade trade1 = new Trade();
+        Trade trade1 = new Trade(UUID.randomUUID().toString());
         tradeRepository.save(trade1);
         Date timeAfterFirstTrade = new Date();
-        Trade trade2 = new Trade();
+        Trade trade2 = new Trade(UUID.randomUUID().toString());
         tradeRepository.save(trade2);
 
         assertTrue(timeAfterFirstTrade.after(trade1.getTradeDateTime()));

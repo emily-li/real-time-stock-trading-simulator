@@ -13,9 +13,18 @@ public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    private String stockSymbol;
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date tradeDateTime;
+
+    @SuppressWarnings("unused")
+    private Trade() {
+    }
+
+    public Trade(String stockSymbol) {
+        this.stockSymbol = stockSymbol;
+    }
 
     public Date getTradeDateTime() {
         return tradeDateTime;
