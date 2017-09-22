@@ -1,9 +1,6 @@
 package com.liemily.stock.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
@@ -14,6 +11,9 @@ public class StockView {
     @Id
     private String symbol;
     private BigDecimal gains;
+    @ManyToOne
+    @PrimaryKeyJoinColumn
+    private Company company;
     @OneToOne
     @PrimaryKeyJoinColumn
     private Stock stock;
@@ -23,6 +23,10 @@ public class StockView {
 
     public String getSymbol() {
         return symbol;
+    }
+
+    public String getName() {
+        return company.getName();
     }
 
     public BigDecimal getGains() {
