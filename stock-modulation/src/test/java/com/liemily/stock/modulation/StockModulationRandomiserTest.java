@@ -26,12 +26,4 @@ public class StockModulationRandomiserTest {
         double secondNumber = stockModulationRandomiser.numberGen();
         assertNotEquals(firstNumber, secondNumber);
     }
-
-    /**
-     * S.S11 - The price creator should run in a separate thread
-     */
-    @Test
-    public void testPriceCreatorRunsInSeparateThread() {
-
-    }
 }
