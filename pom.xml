@@ -19,6 +19,7 @@
         <module>stock-updater</module>
         <module>user</module>
         <module>trade</module>
+        <module>company</module>
     </modules>
 
     <properties>
