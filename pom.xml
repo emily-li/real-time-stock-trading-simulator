@@ -18,6 +18,7 @@
         <module>stock-modulation</module>
         <module>stock-updater</module>
         <module>user</module>
+        <module>trade</module>
     </modules>
 
     <properties>
