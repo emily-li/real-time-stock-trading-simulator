@@ -1,7 +1,8 @@
 package com.liemily.stock.modulation;
 
 public class StockModulationRandomiser {
-    public int numberGen() {
-        return 0;
+
+    public double numberGen() {
+        return Math.random();
     }
 }

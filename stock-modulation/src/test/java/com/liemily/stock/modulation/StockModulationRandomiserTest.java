@@ -22,8 +22,8 @@ public class StockModulationRandomiserTest {
      */
     @Test
     public void testNumberGenRandomness() {
-        int firstNumber = stockModulationRandomiser.numberGen();
-        int secondNumber = stockModulationRandomiser.numberGen();
+        double firstNumber = stockModulationRandomiser.numberGen();
+        double secondNumber = stockModulationRandomiser.numberGen();
         assertNotEquals(firstNumber, secondNumber);
     }
 
