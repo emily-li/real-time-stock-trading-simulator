@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS trade;
+
+CREATE TABLE IF NOT EXISTS trade (
+  id                INTEGER     NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  trade_date_time   DATETIME    NOT NULL
+);
