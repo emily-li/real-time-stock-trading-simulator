@@ -17,6 +17,7 @@ public class StockModulationRandomiserTest {
     public void setup() {
         stockModulationRandomiser = new StockModulationRandomiser();
     }
+
     /**
      * S.S10 - numberGen() should return a number with randomness
      */
