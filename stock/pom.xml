@@ -15,6 +15,11 @@
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>../resources</directory>
+            </resource>
+        </resources>
         <testSourceDirectory>src/test/java</testSourceDirectory>
     </build>
 
