@@ -1,22 +1,28 @@
 package com.liemily.stock.modulation;
 
+import com.liemily.stock.StockService;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by Emily Li on 22/09/2017.
  */
 public class StockModulationServiceTest {
-    private static final int SERVICE_RUN_TIME_MS = 10000;
+    private static final int SERVICE_RUN_TIME_MS = 1000;
     private StockModulationService stockModulationService;
+    private StockService stockService;
+    private StockModulationRandomiser stockModulationRandomiser;
 
     @Before
     public void setup() {
-        StockModulator stockModulator = new TestStockModulator();
+        stockService = mock(StockService.class);
+        stockModulationRandomiser = mock(StockModulationRandomiser.class);
+        StockModulator stockModulator = new TestStockModulator(stockService, stockModulationRandomiser);
         stockModulationService = new StockModulationService(Executors.newSingleThreadScheduledExecutor(), stockModulator);
     }
 
@@ -32,6 +38,10 @@ public class StockModulationServiceTest {
     }
 
     private class TestStockModulator extends StockModulator {
+        public TestStockModulator(StockService stockService, StockModulationRandomiser stockModulationRandomiser) {
+            super(stockService, stockModulationRandomiser);
+        }
+
         @Override
         public void run() {
             try {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -24,5 +25,13 @@ public class StockService {
 
     public List<Stock> getStocksWithVolume() {
         return stockRepository.findStocksWithVolume();
+    }
+
+    public void save(Stock stock) {
+        stockRepository.save(stock);
+    }
+
+    public void save(Collection<Stock> stocks) {
+        stockRepository.save(stocks);
     }
 }
