@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockControllerIT {
+    private static final String STOCKS_ATTRIBUTE = "stocks";
     @Autowired
     private StockController stockController;
     @Autowired
@@ -74,7 +76,7 @@ public class StockControllerIT {
 
         Principal principal = (UserPrincipal) () -> username;
         String stockPage = stockController.addSellableStocks(model, principal);
-        Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get("stocks");
+        Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(STOCKS_ATTRIBUTE);
 
         assertEquals("stock", stockPage);
         assertTrue(stocks.contains(userStock));
@@ -85,7 +87,28 @@ public class StockControllerIT {
      */
     @Test
     public void testGetOrderedStocks() {
+        Stock stock2 = new Stock("b" + UUID.randomUUID(), new BigDecimal(9), 9);
+        Stock stock1 = new Stock("a" + UUID.randomUUID(), new BigDecimal(10), 10);
+        stockRepository.save(stock1);
+        stockRepository.save(stock2);
 
+        stockController.addBuyableStocks(model);
+        List<Stock> stocks = (List<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
+        Integer stock1Idx = null;
+        Integer stock2Idx = null;
+
+
+        for (int i = 0; i < stocks.size(); i++) {
+            if (stocks.get(i).getSymbol().equals(stock1.getSymbol())) {
+                stock1Idx = i;
+            } else if (stocks.get(i).getSymbol().equals(stock2.getSymbol())) {
+                stock2Idx = i;
+            }
+            if (stock1Idx != null && stock2Idx != null) {
+                break;
+            }
+        }
+        assertTrue(stock2Idx > stock1Idx);
     }
 
     /**
