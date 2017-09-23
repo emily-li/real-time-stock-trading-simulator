@@ -31,13 +31,13 @@ public class StockController {
     }
 
     @RequestMapping("/stock/buy")
-    public String addBuyableStocks(Model model, Pageable pageable) {
+    public String getBuyableStocks(Model model, Pageable pageable) {
         model.addAttribute(STOCKS_ATTRIBUTE, stockService.getStocksWithVolume());
         return "stock";
     }
 
     @RequestMapping("/stock/sell")
-    public String addSellableStocks(Model model,
+    public String getSellableStocks(Model model,
                                     Principal principal) {
         model.addAttribute(STOCKS_ATTRIBUTE, userStockService.findByUsername(principal.getName()));
         return "stock";

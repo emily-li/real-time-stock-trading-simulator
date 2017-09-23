@@ -59,7 +59,7 @@ public class StockControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stockController.addBuyableStocks(model, null);
+        String stockPage = stockController.getBuyableStocks(model, null);
         Collection<Stock> stocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
@@ -78,7 +78,7 @@ public class StockControllerIT {
         userStockRepository.save(userStock);
 
         Principal principal = (UserPrincipal) () -> username;
-        String stockPage = stockController.addSellableStocks(model, principal);
+        String stockPage = stockController.getSellableStocks(model, principal);
         Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(STOCKS_ATTRIBUTE);
 
         assertEquals("stock", stockPage);
@@ -95,7 +95,7 @@ public class StockControllerIT {
         stockRepository.save(stock1);
         stockRepository.save(stock2);
 
-        stockController.addBuyableStocks(model, null);
+        stockController.getBuyableStocks(model, null);
         List<Stock> stocks = (List<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -128,7 +128,7 @@ public class StockControllerIT {
         stockRepository.save(stocks);
 
         Pageable pageable = new PageRequest(0, PAGE_SIZE);
-        stockController.addBuyableStocks(model, pageable);
+        stockController.getBuyableStocks(model, pageable);
         Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
         assertEquals(paginatedStocks.size(), PAGE_SIZE);
     }
