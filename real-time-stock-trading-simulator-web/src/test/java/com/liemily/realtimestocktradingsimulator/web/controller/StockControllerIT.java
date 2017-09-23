@@ -33,7 +33,6 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockControllerIT {
-    private static final String STOCKS_ATTRIBUTE = "stocks";
     @Autowired
     private StockController stockController;
     @Autowired
@@ -79,7 +78,7 @@ public class StockControllerIT {
 
         Principal principal = (UserPrincipal) () -> username;
         String stockPage = stockController.getSellableStocks(model, principal);
-        Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(STOCKS_ATTRIBUTE);
+        Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(stockController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
         assertTrue(stocks.contains(userStock));
@@ -96,7 +95,7 @@ public class StockControllerIT {
         stockRepository.save(stock2);
 
         stockController.getBuyableStocks(model, null);
-        List<Stock> stocks = (List<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
+        List<Stock> stocks = (List<Stock>) model.asMap().get(stockController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
 
@@ -129,7 +128,7 @@ public class StockControllerIT {
 
         Pageable pageable = new PageRequest(0, PAGE_SIZE);
         stockController.getBuyableStocks(model, pageable);
-        Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
+        Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
         assertEquals(paginatedStocks.size(), PAGE_SIZE);
     }
 
