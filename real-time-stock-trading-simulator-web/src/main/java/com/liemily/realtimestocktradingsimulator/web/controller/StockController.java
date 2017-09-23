@@ -3,6 +3,7 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 import com.liemily.stock.StockService;
 import com.liemily.user.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class StockController {
     }
 
     @RequestMapping("/stock/buy")
-    public String addBuyableStocks(Model model) {
+    public String addBuyableStocks(Model model, Pageable pageable) {
         model.addAttribute(STOCKS_ATTRIBUTE, stockService.getStocksWithVolume());
         return "stock";
     }

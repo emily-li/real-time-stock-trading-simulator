@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import java.math.BigDecimal;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +59,7 @@ public class StockControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stockController.addBuyableStocks(model);
+        String stockPage = stockController.addBuyableStocks(model, null);
         Collection<Stock> stocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
@@ -92,7 +95,7 @@ public class StockControllerIT {
         stockRepository.save(stock1);
         stockRepository.save(stock2);
 
-        stockController.addBuyableStocks(model);
+        stockController.addBuyableStocks(model, null);
         List<Stock> stocks = (List<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -116,6 +119,18 @@ public class StockControllerIT {
      */
     @Test
     public void testPaginatedStocks() {
+        final int PAGE_SIZE = 2;
+        Collection<Stock> stocks = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(i), i);
+            stocks.add(stock);
+        }
+        stockRepository.save(stocks);
+
+        Pageable pageable = new PageRequest(0, PAGE_SIZE);
+        stockController.addBuyableStocks(model, pageable);
+        Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(STOCKS_ATTRIBUTE);
+        assertEquals(paginatedStocks.size(), PAGE_SIZE);
     }
 
     /**
