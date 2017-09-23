@@ -112,14 +112,6 @@ public class StockControllerIT {
     }
 
     /**
-     * C.S03 Stock data should be broadcast in real time
-     */
-    @Test
-    public void testStockDataUpdates() {
-
-    }
-
-    /**
      * C.S07 Stock data should be displayed paginated
      */
     @Test
