@@ -31,7 +31,7 @@ public class StockController {
 
     @RequestMapping("/stock/buy")
     public String addBuyableStocks(Model model) {
-        model.addAttribute(STOCKS_ATTRIBUTE, stockService.findStocksWithVolume());
+        model.addAttribute(STOCKS_ATTRIBUTE, stockService.getStocksWithVolume());
         return "stock";
     }
 

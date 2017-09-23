@@ -18,11 +18,11 @@ public class StockService {
         this.stockRepository = stockRepository;
     }
 
-    public List<Stock> findAll() {
+    public List<Stock> getStocks() {
         return stockRepository.findAll();
     }
 
-    public List<Stock> findStocksWithVolume() {
+    public List<Stock> getStocksWithVolume() {
         return stockRepository.findStocksWithVolume();
     }
 }
