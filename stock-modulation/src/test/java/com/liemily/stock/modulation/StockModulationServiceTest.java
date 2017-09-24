@@ -1,6 +1,6 @@
 package com.liemily.stock.modulation;
 
-import com.liemily.stock.StockService;
+import com.liemily.stock.service.StockService;
 import org.junit.Before;
 import org.junit.Test;
 

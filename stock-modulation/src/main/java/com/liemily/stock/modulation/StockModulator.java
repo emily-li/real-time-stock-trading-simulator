@@ -1,7 +1,7 @@
 package com.liemily.stock.modulation;
 
-import com.liemily.stock.StockService;
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

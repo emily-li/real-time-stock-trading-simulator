@@ -1,4 +1,4 @@
-package com.liemily.stock;
+package com.liemily.stock.service;
 
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.repository.StockRepository;
