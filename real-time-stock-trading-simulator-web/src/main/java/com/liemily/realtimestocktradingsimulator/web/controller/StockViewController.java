@@ -16,16 +16,16 @@ import java.security.Principal;
  * Created by Emily Li on 20/09/2017.
  */
 @Controller
-public class StockController {
+public class StockViewController {
     private final String STOCKS_ATTRIBUTE = "stocks";
     private StockService stockService;
     private UserStockService userStockService;
     private int pageStockDefaultSize;
 
     @Autowired
-    public StockController(StockService stockService,
-                           UserStockService userStockService,
-                           @Value("${page.stock.defaultSize}") int pageStockDefaultSize) {
+    public StockViewController(StockService stockService,
+                               UserStockService userStockService,
+                               @Value("${page.stock.defaultSize}") int pageStockDefaultSize) {
         this.stockService = stockService;
         this.userStockService = userStockService;
         this.pageStockDefaultSize = pageStockDefaultSize;
