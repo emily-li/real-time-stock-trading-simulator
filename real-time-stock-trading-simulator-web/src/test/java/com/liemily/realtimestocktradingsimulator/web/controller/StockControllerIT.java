@@ -103,7 +103,6 @@ public class StockControllerIT {
         Integer stock1Idx = null;
         Integer stock2Idx = null;
 
-
         for (int i = 0; i < stocks.size(); i++) {
             if (stocks.get(i).getSymbol().equals(stock1.getSymbol())) {
                 stock1Idx = i;
@@ -123,33 +122,20 @@ public class StockControllerIT {
     @Test
     public void testPaginatedStocks() {
         final int PAGE_SIZE = 2;
-        Collection<Stock> stocks = new ArrayList<>();
-        Collection<UserStock> userStocks = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(i), i);
-            stocks.add(stock);
-            UserStock userStock = new UserStock(username, stock.getSymbol(), i);
-            userStocks.add(userStock);
-        }
-        stockRepository.save(stocks);
-        userStockRepository.save(userStocks);
+        generateStocks(PAGE_SIZE + 1);
 
         Pageable pageable = new PageRequest(0, PAGE_SIZE);
-        stockController.getBuyableStocks(model, pageable);
-        Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
-        assertEquals(PAGE_SIZE, paginatedStocks.size());
-
-        model = new ExtendedModelMap();
-        stockController.getSellableStocks(model, principal, pageable);
-        paginatedStocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
-        assertEquals(PAGE_SIZE, paginatedStocks.size());
+        testPaginationSize(PAGE_SIZE, pageable);
     }
 
     /**
      * C.S08 20 stocks should be visible per page by default
      */
+    @Test
     public void test20StocksVisibleByDefault() {
-
+        final int PAGE_SIZE = 20;
+        generateStocks(PAGE_SIZE + 1);
+        testPaginationSize(PAGE_SIZE, null);
     }
 
     /**
@@ -245,5 +231,29 @@ public class StockControllerIT {
     @Test
     public void testCompaniesWithStockReturnedWhenPreviouslyEmpty() {
 
+    }
+
+    private void generateStocks(int num) {
+        Collection<Stock> stocks = new ArrayList<>();
+        Collection<UserStock> userStocks = new ArrayList<>();
+        for (int i = 1; i <= num; i++) {
+            Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(i), i);
+            stocks.add(stock);
+            UserStock userStock = new UserStock(username, stock.getSymbol(), i);
+            userStocks.add(userStock);
+        }
+        stockRepository.save(stocks);
+        userStockRepository.save(userStocks);
+    }
+
+    private void testPaginationSize(int expectedSize, Pageable pageable) {
+        stockController.getBuyableStocks(model, pageable);
+        Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
+        assertEquals(expectedSize, paginatedStocks.size());
+
+        model = new ExtendedModelMap();
+        stockController.getSellableStocks(model, principal, pageable);
+        paginatedStocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
+        assertEquals(expectedSize, paginatedStocks.size());
     }
 }
