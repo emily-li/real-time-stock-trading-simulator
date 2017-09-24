@@ -1,19 +1,18 @@
 package com.liemily.user.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 /**
  * Created by Emily Li on 21/09/2017.
  */
 @Entity
+@IdClass(UserStockId.class)
 public class UserStock {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
     private String username;
+    @Id
     private String symbol;
     private int volume;
 

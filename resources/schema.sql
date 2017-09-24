@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS trade;
 DROP TABLE IF EXISTS user_stock;
 
 CREATE TABLE IF NOT EXISTS company (
-    symbol      VARCHAR(50)         NOT NULL    PRIMARY KEY,
-    name        VARCHAR(50)         NOT NULL
+    symbol          VARCHAR(50)     NOT NULL    PRIMARY KEY,
+    name            VARCHAR(50)     NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS stock (
@@ -22,13 +22,12 @@ CREATE TABLE IF NOT EXISTS stock_as_of_details (
 );
 
 CREATE TABLE IF NOT EXISTS trade (
-  id                BIGINT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  id                BIGINT          NOT NULL    PRIMARY KEY AUTO_INCREMENT,
   stock_symbol      VARCHAR(50)     NOT NULL,
   trade_date_time   DATETIME(6)     NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_stock (
-  id                BIGINT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
   username          VARCHAR(50)     NOT NULL,
   symbol            VARCHAR(50)     NOT NULL,
   volume            INT             NOT NULL
