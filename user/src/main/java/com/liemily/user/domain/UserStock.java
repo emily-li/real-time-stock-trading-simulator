@@ -46,4 +46,8 @@ public class UserStock {
         result = 31 * result + volume;
         return result;
     }
+
+    public String getSymbol() {
+        return symbol;
+    }
 }

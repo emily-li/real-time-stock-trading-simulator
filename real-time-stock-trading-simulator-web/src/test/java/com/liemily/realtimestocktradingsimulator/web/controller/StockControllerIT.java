@@ -18,10 +18,7 @@ import org.springframework.ui.Model;
 import java.math.BigDecimal;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -143,6 +140,31 @@ public class StockControllerIT {
      */
     @Test
     public void testEachRowIsCompanyStock() {
+        Collection<Stock> stocks = new ArrayList<>();
+        Collection<UserStock> userStocks = new ArrayList<>();
+        for (int i = 1; i <= 2; i++) {
+            String symbol = UUID.randomUUID().toString();
+            stocks.add(new Stock(symbol, new BigDecimal(i * 2), i * 2));
+            stocks.add(new Stock(symbol, new BigDecimal(i * 3), i * 3));
+            userStocks.add(new UserStock(username, symbol, i * 2));
+            userStocks.add(new UserStock(username, symbol, i * 3));
+        }
+        stockRepository.save(stocks);
+        userStockRepository.save(userStocks);
+
+        stockController.getBuyableStocks(model, null);
+        Collection<Stock> retrievedStocks = (Collection<Stock>) model.asMap().get(stockController.getStocksAttribute());
+        Collection<String> retrievedStockSymbols = new ArrayList<>();
+        retrievedStocks.forEach(stock -> retrievedStockSymbols.add(stock.getSymbol()));
+
+        model = new ExtendedModelMap();
+        stockController.getSellableStocks(model, principal, null);
+        Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stockController.getStocksAttribute());
+        Collection<String> retrievedUserStockSymbols = new ArrayList<>();
+        retrievedUserStocks.forEach(userStock -> retrievedUserStockSymbols.add(userStock.getSymbol()));
+
+        assertEquals(new HashSet<>(retrievedStockSymbols).size(), retrievedStockSymbols.size());
+        assertEquals(new HashSet<>(retrievedUserStockSymbols).size(), retrievedUserStockSymbols.size());
     }
 
     /**
