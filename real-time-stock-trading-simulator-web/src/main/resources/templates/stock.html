@@ -15,10 +15,16 @@
         <tr>
             <th>Stock Symbol</th>
         </tr>
+        <tr>
+            <th>Stock Name</th>
+        </tr>
         </thead>
         <tbody>
         <tr th:each="stock : ${stocks}">
             <td th:text="${stock.symbol}"></td>
+        </tr>
+        <tr th:each="stock : ${stocks}">
+            <td th:text="${stock.name}"></td>
         </tr>
         </tbody>
     </table>

@@ -1,7 +1,11 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.company.domain.Company;
+import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.domain.StockView;
 import com.liemily.stock.repository.StockRepository;
+import com.liemily.stock.service.StockViewService;
 import com.liemily.user.domain.UserStock;
 import com.liemily.user.repository.UserStockRepository;
 import org.junit.Before;
@@ -40,6 +44,10 @@ public class StockViewControllerIT {
     private StockViewController stockViewController;
 
     @Autowired
+    private StockViewService stockViewService;
+    @Autowired
+    private CompanyService companyService;
+    @Autowired
     private StockRepository stockRepository;
     @Autowired
     private UserStockRepository userStockRepository;
@@ -53,7 +61,10 @@ public class StockViewControllerIT {
 
     @Before
     public void setup() {
-        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
+        Company company = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        companyService.save(company);
+
+        stock = new Stock(company.getSymbol(), new BigDecimal(1), 1);
         stockRepository.save(stock);
 
         model = new ExtendedModelMap();
@@ -72,10 +83,11 @@ public class StockViewControllerIT {
     @Test
     public void testGetBuyableShares() throws Exception {
         String stockPage = stockViewController.getBuyableStocks(model, null);
-        Collection<Stock> stocks = (Collection<Stock>) model.asMap().get(stockViewController.getStocksAttribute());
+        StockView expectedStockView = stockViewService.getStockView(stock.getSymbol());
+        Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
-        assertTrue(stocks.contains(stock));
+        assertTrue(stockViews.contains(expectedStockView));
     }
 
     /**
@@ -106,7 +118,7 @@ public class StockViewControllerIT {
         stockRepository.save(stock2);
 
         stockViewController.getBuyableStocks(model, null);
-        List<Stock> stocks = (List<Stock>) model.asMap().get(stockViewController.getStocksAttribute());
+        List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
 
@@ -163,7 +175,7 @@ public class StockViewControllerIT {
         userStockRepository.save(userStocks);
 
         stockViewController.getBuyableStocks(model, null);
-        Collection<Stock> retrievedStocks = (Collection<Stock>) model.asMap().get(stockViewController.getStocksAttribute());
+        Collection<StockView> retrievedStocks = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
         Collection<String> retrievedStockSymbols = new ArrayList<>();
         retrievedStocks.forEach(stock -> retrievedStockSymbols.add(stock.getSymbol()));
 

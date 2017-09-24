@@ -24,4 +24,26 @@ public class Company {
     public String getName() {
         return name;
     }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Company company = (Company) o;
+
+        if (symbol != null ? !symbol.equals(company.symbol) : company.symbol != null) return false;
+        return name != null ? name.equals(company.name) : company.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = symbol != null ? symbol.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }

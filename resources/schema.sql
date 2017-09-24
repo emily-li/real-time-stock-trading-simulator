@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS user_stock (
 CREATE OR REPLACE VIEW stock_view AS
     SELECT
         stock.symbol,
+        stock.volume,
         (value - open_value) AS gains,
         last_trade_date_time
     FROM

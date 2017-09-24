@@ -1,6 +1,6 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
-import com.liemily.stock.StockService;
+import com.liemily.stock.service.StockViewService;
 import com.liemily.user.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,15 +18,15 @@ import java.security.Principal;
 @Controller
 public class StockViewController {
     private final String STOCKS_ATTRIBUTE = "stocks";
-    private StockService stockService;
+    private StockViewService stockViewService;
     private UserStockService userStockService;
     private int pageStockDefaultSize;
 
     @Autowired
-    public StockViewController(StockService stockService,
+    public StockViewController(StockViewService stockViewService,
                                UserStockService userStockService,
                                @Value("${page.stock.defaultSize}") int pageStockDefaultSize) {
-        this.stockService = stockService;
+        this.stockViewService = stockViewService;
         this.userStockService = userStockService;
         this.pageStockDefaultSize = pageStockDefaultSize;
     }
@@ -39,7 +39,7 @@ public class StockViewController {
     @RequestMapping("/stock/buy")
     public String getBuyableStocks(Model model, Pageable pageable) {
         pageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        model.addAttribute(STOCKS_ATTRIBUTE, stockService.getStocksWithVolume(pageable));
+        model.addAttribute(STOCKS_ATTRIBUTE, stockViewService.getStocksWithVolume(pageable));
         return "stock";
     }
 
