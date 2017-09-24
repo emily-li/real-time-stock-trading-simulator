@@ -8,7 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -28,20 +30,26 @@ import static org.junit.Assert.assertTrue;
  * Created by Emily Li on 21/09/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StockControllerIT {
+    @LocalServerPort
+    private int port;
+    @Autowired
+    private TestRestTemplate restTemplate;
     @Autowired
     private StockController stockController;
+
     @Autowired
     private StockRepository stockRepository;
     @Autowired
     private UserStockRepository userStockRepository;
 
-    private Stock stock;
+    private String stockURL;
     private Model model;
-
     private String username;
     private Principal principal;
+
+    private Stock stock;
 
     @Before
     public void setup() {
@@ -52,6 +60,8 @@ public class StockControllerIT {
 
         username = UUID.randomUUID().toString();
         principal = (UserPrincipal) () -> username;
+
+        stockURL = "http://localhost:" + port + "/stock";
     }
 
     /**
@@ -165,6 +175,20 @@ public class StockControllerIT {
 
         assertEquals(new HashSet<>(retrievedStockSymbols).size(), retrievedStockSymbols.size());
         assertEquals(new HashSet<>(retrievedUserStockSymbols).size(), retrievedUserStockSymbols.size());
+    }
+
+    /**
+     * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
+     * <p>
+     * The number fields are verified in testStockDataNumberFields()
+     */
+    @Test
+    public void testStockFields() {
+        String stockPageContents = restTemplate.getForObject(stockURL, String.class);
+        assertTrue(stockPageContents.contains("Stock Symbol"));
+        assertTrue(stockPageContents.contains(stock.getSymbol()));
+        assertTrue(stockPageContents.contains("Stock Name"));
+        assertTrue(stockPageContents.contains(stock.getName()));
     }
 
     /**

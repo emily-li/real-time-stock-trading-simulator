@@ -1,7 +1,11 @@
 package com.liemily.stock.domain;
 
+import com.liemily.company.domain.Company;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import java.math.BigDecimal;
 
 @Entity
@@ -10,6 +14,9 @@ public class Stock {
     private String symbol;
     private BigDecimal value;
     private int volume;
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private Company company;
 
     @SuppressWarnings("unused")
     private Stock() {
@@ -35,6 +42,10 @@ public class Stock {
 
     public void setValue(BigDecimal value) {
         this.value = value;
+    }
+
+    public String getName() {
+        return company.getName();
     }
 
     @Override
