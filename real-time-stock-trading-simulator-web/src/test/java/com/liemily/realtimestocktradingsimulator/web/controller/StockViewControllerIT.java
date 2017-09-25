@@ -66,6 +66,7 @@ public class StockViewControllerIT {
     private int pageStockDefaultSize;
 
     private String stockURL;
+    private String stockURLAll;
     private Model model;
     private String username;
     private Principal principal;
@@ -97,6 +98,7 @@ public class StockViewControllerIT {
         principal = (UserPrincipal) () -> username;
 
         stockURL = "http://localhost:" + port + "/stock";
+        stockURLAll = stockURL + "/buy/all";
         stockView = stockViewService.getStockView(company.getSymbol());
     }
 
@@ -142,7 +144,7 @@ public class StockViewControllerIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        stockViewController.getBuyableStocks(model, null);
+        stockViewController.getBuyableStocks(model);
         List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -224,7 +226,7 @@ public class StockViewControllerIT {
 
         stockView = stockViewService.getStockView(stockView.getSymbol());
 
-        String stockPageContents = restTemplate.getForObject(stockURL, String.class);
+        String stockPageContents = restTemplate.getForObject(stockURLAll, String.class);
         assertTrue(stockPageContents.contains("Stock Symbol"));
         assertTrue(stockPageContents.contains(stockView.getSymbol().toUpperCase()));
         assertTrue(stockPageContents.contains("Stock Name"));
@@ -292,9 +294,9 @@ public class StockViewControllerIT {
     @Test
     public void testViewAllStocks() {
         generateStocks(pageStockDefaultSize * 2);
-        Collection<Stock> stocks = stockService.getStocks();
-        String pageContents = restTemplate.getForObject(stockURL + "/buy/all", String.class);
-        stocks.forEach(stock -> assertTrue(pageContents.contains(stock.getSymbol().toUpperCase())));
+        Collection<StockView> stockViews = stockViewService.getStocksWithVolume(null);
+        String pageContents = restTemplate.getForObject(stockURLAll, String.class);
+        stockViews.forEach(stockView -> assertTrue(pageContents.contains(stockView.getSymbol())));
     }
 
     @Test
@@ -311,7 +313,10 @@ public class StockViewControllerIT {
      */
     @Test
     public void testNoStocksReturnedIfEmptyVolume() {
-
+        Stock stock = new Stock(stockView.getSymbol(), stockView.getValue(), 0);
+        stockService.save(stock);
+        String pageContents = restTemplate.getForObject(stockURL, String.class);
+        assertFalse(pageContents.contains(stock.getSymbol().toUpperCase()));
     }
 
     /**
@@ -319,7 +324,13 @@ public class StockViewControllerIT {
      */
     @Test
     public void testCompaniesWithStockReturnedWhenPreviouslyEmpty() {
+        Stock stock = new Stock(stockView.getSymbol(), stockView.getValue(), 0);
+        stockService.save(stock);
+        stock = new Stock(stockView.getSymbol(), stockView.getValue(), 1);
+        stockService.save(stock);
 
+        String pageContents = restTemplate.getForObject(stockURL, String.class);
+        assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
     }
 
     private void generateStocks(int num) {

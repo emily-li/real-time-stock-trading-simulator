@@ -47,4 +47,5 @@ CREATE OR REPLACE VIEW stock_view AS
         (SELECT
             stock_symbol, MAX(trade_date_time) AS last_trade_date_time
         FROM
-            trade) last_trades ON stock.symbol = last_trades.stock_symbol
+            trade
+        GROUP BY stock_symbol) last_trades ON stock.symbol = last_trades.stock_symbol
