@@ -4,10 +4,10 @@ import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockView;
-import com.liemily.stock.repository.StockRepository;
+import com.liemily.stock.service.StockService;
 import com.liemily.stock.service.StockViewService;
+import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
-import com.liemily.user.repository.UserStockRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,9 +48,9 @@ public class StockViewControllerIT {
     @Autowired
     private CompanyService companyService;
     @Autowired
-    private StockRepository stockRepository;
+    private StockService stockService;
     @Autowired
-    private UserStockRepository userStockRepository;
+    private UserStockService userStockService;
 
     private String stockURL;
     private Model model;
@@ -65,7 +65,7 @@ public class StockViewControllerIT {
         companyService.save(company);
 
         Stock stock = new Stock(company.getSymbol(), new BigDecimal(1), 1);
-        stockRepository.save(stock);
+        stockService.save(stock);
 
         model = new ExtendedModelMap();
 
@@ -99,7 +99,7 @@ public class StockViewControllerIT {
     @Test
     public void testGetSellableShares() {
         UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
-        userStockRepository.save(userStock);
+        userStockService.save(userStock);
 
         String stockPage = stockViewController.getSellableStocks(model, principal, null);
         Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
@@ -115,8 +115,8 @@ public class StockViewControllerIT {
     public void testGetOrderedStocks() {
         Stock stock2 = new Stock("b" + UUID.randomUUID(), new BigDecimal(9), 9);
         Stock stock1 = new Stock("a" + UUID.randomUUID(), new BigDecimal(10), 10);
-        stockRepository.save(stock1);
-        stockRepository.save(stock2);
+        stockService.save(stock1);
+        stockService.save(stock2);
 
         stockViewController.getBuyableStocks(model, null);
         List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
@@ -172,8 +172,8 @@ public class StockViewControllerIT {
             userStocks.add(new UserStock(username, symbol, i * 2));
             userStocks.add(new UserStock(username, symbol, i * 3));
         }
-        stockRepository.save(stocks);
-        userStockRepository.save(userStocks);
+        stockService.save(stocks);
+        userStockService.save(userStocks);
 
         stockViewController.getBuyableStocks(model, null);
         Collection<StockView> retrievedStocks = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
@@ -300,8 +300,8 @@ public class StockViewControllerIT {
             UserStock userStock = new UserStock(username, stock.getSymbol(), i);
             userStocks.add(userStock);
         }
-        stockRepository.save(stocks);
-        userStockRepository.save(userStocks);
+        stockService.save(stocks);
+        userStockService.save(userStocks);
     }
 
     private void testPaginationSize(int expectedSize, Pageable pageable) {

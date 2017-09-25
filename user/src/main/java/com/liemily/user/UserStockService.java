@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -22,4 +23,13 @@ public class UserStockService {
     public List<UserStock> findByUsername(String username, Pageable pageable) {
         return userStockRepository.findByUsername(username, pageable);
     }
+
+    public void save(UserStock userStock) {
+        userStockRepository.save(userStock);
+    }
+
+    public void save(Collection<UserStock> userStocks) {
+        userStockRepository.save(userStocks);
+    }
+
 }
