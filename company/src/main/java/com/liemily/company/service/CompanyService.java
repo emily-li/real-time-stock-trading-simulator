@@ -22,7 +22,6 @@ public class CompanyService {
     }
 
     public void save(Company company) {
-        company.setSymbol(company.getSymbol().toUpperCase());
         companyRepository.save(company);
     }
 
@@ -33,5 +32,4 @@ public class CompanyService {
     public void save(Collection<Company> companies) {
         companyRepository.save(companies);
     }
-
 }

@@ -24,12 +24,10 @@ public class StockService {
     }
 
     public void save(Stock stock) {
-        stock.setSymbol(stock.getSymbol().toUpperCase());
         stockRepository.save(stock);
     }
 
     public void save(Collection<Stock> stocks) {
-        stocks.forEach(stock -> stock.setSymbol(stock.getSymbol().toUpperCase()));
         stockRepository.save(stocks);
     }
 }

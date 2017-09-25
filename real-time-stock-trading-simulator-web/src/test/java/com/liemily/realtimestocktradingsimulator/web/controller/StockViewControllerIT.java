@@ -29,8 +29,8 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Covers automated tests covered by "docs/FDM05-05 Functional Test Plan.doc" for client-side stock functionality
@@ -68,7 +68,7 @@ public class StockViewControllerIT {
 
     @Before
     public void setup() {
-        Company company = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        Company company = new Company(UUID.randomUUID().toString().toUpperCase(), UUID.randomUUID().toString());
         companyService.save(company);
 
         Stock stock = new Stock(company.getSymbol(), new BigDecimal(1), 1);
@@ -120,8 +120,8 @@ public class StockViewControllerIT {
      */
     @Test
     public void testGetOrderedStocks() {
-        Stock stock2 = new Stock("b" + UUID.randomUUID(), new BigDecimal(9), 9);
-        Stock stock1 = new Stock("a" + UUID.randomUUID(), new BigDecimal(10), 10);
+        Stock stock2 = new Stock("B" + UUID.randomUUID().toString().toUpperCase(), new BigDecimal(9), 9);
+        Stock stock1 = new Stock("A" + UUID.randomUUID().toString().toUpperCase(), new BigDecimal(10), 10);
         stockService.save(stock1);
         stockService.save(stock2);
 
@@ -232,15 +232,6 @@ public class StockViewControllerIT {
         assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
         assertTrue(pageContents.contains(stocks.get(0).getSymbol().toUpperCase()));
         assertTrue(pageContents.contains(stocks.get(1).getSymbol().toUpperCase()));
-    }
-
-    @Test
-    public void testCompanySymbolsCapitals() {
-        String symbol = "case1" + UUID.randomUUID().toString();
-        Collection<Company> company = Collections.singletonList(new Company(symbol, UUID.randomUUID().toString()));
-        companyService.save(company);
-        assertNull(companyService.getCompany(symbol));
-        assertNotNull(companyService.getCompany(symbol.toUpperCase()));
     }
 
     /**
