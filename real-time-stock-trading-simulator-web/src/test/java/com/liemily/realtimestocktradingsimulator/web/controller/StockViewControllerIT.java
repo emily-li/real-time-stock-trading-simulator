@@ -210,7 +210,7 @@ public class StockViewControllerIT {
         tradeService.save(trade);
         String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
 
-        BigDecimal expectedGains = new BigDecimal(1);
+        BigDecimal expectedGains = new BigDecimal(2);
         StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stockService.getStock(stockView.getSymbol()));
         stockAsOfDetails.setOpenValue(stockView.getValue().subtract(expectedGains));
         stockAsOfDetailsRepository.save(stockAsOfDetails);
@@ -228,6 +228,8 @@ public class StockViewControllerIT {
         assertTrue(stockPageContents.contains(stockView.getGains().toString()));
         assertTrue(stockPageContents.contains("Value"));
         assertTrue(stockPageContents.contains(stockView.getValue().toString()));
+        assertTrue(stockPageContents.contains("Open"));
+        assertTrue(stockPageContents.contains(stockView.getOpenValue().toString()));
     }
 
     /**
