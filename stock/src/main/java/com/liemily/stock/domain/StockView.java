@@ -41,7 +41,7 @@ public class StockView {
     }
 
     public String getName() {
-        return company.getName();
+        return company == null ? null : company.getName();
     }
 
     public BigDecimal getValue() {
