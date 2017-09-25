@@ -3,7 +3,9 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockView;
+import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
 import com.liemily.stock.service.StockViewService;
 import com.liemily.trade.domain.Trade;
@@ -58,6 +60,8 @@ public class StockViewControllerIT {
     private UserStockService userStockService;
     @Autowired
     private TradeService tradeService;
+    @Autowired
+    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private String stockURL;
     private Model model;
@@ -206,6 +210,13 @@ public class StockViewControllerIT {
         tradeService.save(trade);
         String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
 
+        BigDecimal expectedGains = new BigDecimal(1);
+        StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stockService.getStock(stockView.getSymbol()));
+        stockAsOfDetails.setOpenValue(stockView.getValue().subtract(expectedGains));
+        stockAsOfDetailsRepository.save(stockAsOfDetails);
+
+        stockView = stockViewService.getStockView(stockView.getSymbol());
+
         String stockPageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(stockPageContents.contains("Stock Symbol"));
         assertTrue(stockPageContents.contains(stockView.getSymbol()));
@@ -213,6 +224,8 @@ public class StockViewControllerIT {
         assertTrue(stockPageContents.contains(stockView.getName()));
         assertTrue(stockPageContents.contains("Last Trade"));
         assertTrue(stockPageContents.contains(expectedLastTradeDateTime));
+        assertTrue(stockPageContents.contains("Gains"));
+        assertTrue(stockPageContents.contains(stockView.getGains().toString()));
     }
 
     /**
