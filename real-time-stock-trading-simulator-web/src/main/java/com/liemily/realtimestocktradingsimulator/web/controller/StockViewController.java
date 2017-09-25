@@ -43,6 +43,12 @@ public class StockViewController {
         return "stock";
     }
 
+    @RequestMapping("/stock/buy/all")
+    public String getBuyableStocks(Model model) {
+        model.addAttribute(STOCKS_ATTRIBUTE, stockViewService.getStocksWithVolume(null));
+        return "stock";
+    }
+
     @RequestMapping("/stock/sell")
     public String getSellableStocks(Model model,
                                     Principal principal,

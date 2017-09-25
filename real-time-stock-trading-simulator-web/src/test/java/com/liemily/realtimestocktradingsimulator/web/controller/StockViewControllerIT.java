@@ -293,8 +293,8 @@ public class StockViewControllerIT {
     public void testViewAllStocks() {
         generateStocks(pageStockDefaultSize * 2);
         Collection<Stock> stocks = stockService.getStocks();
-        String pageContents = restTemplate.getForObject(stockURL, String.class);
-        stocks.forEach(stock -> assertTrue(pageContents.contains(stock.getSymbol())));
+        String pageContents = restTemplate.getForObject(stockURL + "/buy/all", String.class);
+        stocks.forEach(stock -> assertTrue(pageContents.contains(stock.getSymbol().toUpperCase())));
     }
 
     /**
