@@ -22,6 +22,7 @@ public class CompanyService {
     }
 
     public void save(Company company) {
+        company.setSymbol(company.getSymbol().toUpperCase());
         companyRepository.save(company);
     }
 

@@ -220,10 +220,18 @@ public class StockViewControllerIT {
      */
     @Test
     public void testStockSymbolCapitals() {
-        Stock stock = new Stock("case" + UUID.randomUUID(), new BigDecimal(1), 1);
+        Stock stock = new Stock("case1" + UUID.randomUUID(), new BigDecimal(1), 1);
         stockService.save(stock);
+
+        List<Stock> stocks = new ArrayList<>();
+        stocks.add(new Stock("case2" + UUID.randomUUID(), new BigDecimal(1), 1));
+        stocks.add(new Stock("case3" + UUID.randomUUID(), new BigDecimal(1), 1));
+        stockService.save(stocks);
+
         String pageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
+        assertTrue(pageContents.contains(stocks.get(0).getSymbol().toUpperCase()));
+        assertTrue(pageContents.contains(stocks.get(1).getSymbol().toUpperCase()));
     }
 
     /**
