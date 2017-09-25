@@ -307,54 +307,6 @@ public class StockViewControllerIT {
     }
 
     /**
-     * C.S15 The user should be able to search stocks given a stock symbol
-     */
-    @Test
-    public void testSearchStocksBySymbol() {
-
-    }
-
-    /**
-     * C.S16 The user should be able to search stocks given a stock name
-     */
-    @Test
-    public void testSearchStocksByName() {
-
-    }
-
-    /**
-     * C.S17 The user should be able to search stocks given a gains value, greater or lesser than the variable
-     */
-    @Test
-    public void testSearchStocksByGains() {
-
-    }
-
-    /**
-     * C.S18 The user should be able to search stocks given a stock value, greater or lesser than the variable
-     */
-    @Test
-    public void testSearchStocksByValue() {
-
-    }
-
-    /**
-     * C.S19 The user should be able to search stocks given a volume, greater or lesser than the variable
-     */
-    @Test
-    public void testSearchStocksByVolume() {
-
-    }
-
-    /**
-     * C.S20 The user should be able to order stocks in ascending or descending direction given a field
-     */
-    @Test
-    public void testOrderStocksByAnyField() {
-
-    }
-
-    /**
      * C.S21 Companies with no available stock should be removed from the stock availability list
      */
     @Test
