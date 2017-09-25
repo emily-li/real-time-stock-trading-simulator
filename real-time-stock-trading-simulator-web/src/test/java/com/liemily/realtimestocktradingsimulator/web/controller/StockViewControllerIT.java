@@ -6,6 +6,8 @@ import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockService;
 import com.liemily.stock.service.StockViewService;
+import com.liemily.trade.domain.Trade;
+import com.liemily.trade.service.TradeService;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
 import org.junit.Before;
@@ -24,6 +26,7 @@ import org.springframework.ui.Model;
 import java.math.BigDecimal;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +39,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StockViewControllerIT {
+    private static final String DATETIME_FORMAT = "HH:mm:ss";
+
     @LocalServerPort
     private int port;
     @Autowired
@@ -51,6 +56,8 @@ public class StockViewControllerIT {
     private StockService stockService;
     @Autowired
     private UserStockService userStockService;
+    @Autowired
+    private TradeService tradeService;
 
     private String stockURL;
     private Model model;
@@ -192,15 +199,20 @@ public class StockViewControllerIT {
 
     /**
      * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
-     * The number fields are verified in testStockDataNumberFields()
      */
     @Test
     public void testStockFields() {
+        Trade trade = new Trade(stockView.getSymbol());
+        tradeService.save(trade);
+        String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
+
         String stockPageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(stockPageContents.contains("Stock Symbol"));
         assertTrue(stockPageContents.contains(stockView.getSymbol()));
         assertTrue(stockPageContents.contains("Stock Name"));
         assertTrue(stockPageContents.contains(stockView.getName()));
+        assertTrue(stockPageContents.contains("Last Trade"));
+        assertTrue(stockPageContents.contains(expectedLastTradeDateTime));
     }
 
     /**
