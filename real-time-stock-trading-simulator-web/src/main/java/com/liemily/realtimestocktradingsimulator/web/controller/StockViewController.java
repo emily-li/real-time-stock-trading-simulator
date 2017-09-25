@@ -58,6 +58,13 @@ public class StockViewController {
         return "stock";
     }
 
+    @RequestMapping("/stock/sell/all")
+    public String getSellableStocks(Model model,
+                                    Principal principal) {
+        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), null));
+        return "stock";
+    }
+
     public String getStocksAttribute() {
         return STOCKS_ATTRIBUTE;
     }

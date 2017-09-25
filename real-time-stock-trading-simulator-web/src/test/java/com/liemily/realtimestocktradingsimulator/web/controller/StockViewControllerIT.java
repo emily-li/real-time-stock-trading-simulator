@@ -297,6 +297,15 @@ public class StockViewControllerIT {
         stocks.forEach(stock -> assertTrue(pageContents.contains(stock.getSymbol().toUpperCase())));
     }
 
+    @Test
+    public void testViewAllUserStocks() {
+        generateStocks(pageStockDefaultSize * 2);
+        Collection<UserStock> userStocks = userStockService.getUserStocks(username, null);
+        stockViewController.getSellableStocks(model, principal);
+        Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
+        assertTrue(retrievedUserStocks.containsAll(userStocks));
+    }
+
     /**
      * C.S15 The user should be able to search stocks given a stock symbol
      */
