@@ -57,14 +57,14 @@ public class StockViewControllerIT {
     private String username;
     private Principal principal;
 
-    private Stock stock;
+    private StockView stockView;
 
     @Before
     public void setup() {
         Company company = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         companyService.save(company);
 
-        stock = new Stock(company.getSymbol(), new BigDecimal(1), 1);
+        Stock stock = new Stock(company.getSymbol(), new BigDecimal(1), 1);
         stockRepository.save(stock);
 
         model = new ExtendedModelMap();
@@ -73,6 +73,7 @@ public class StockViewControllerIT {
         principal = (UserPrincipal) () -> username;
 
         stockURL = "http://localhost:" + port + "/stock";
+        stockView = stockViewService.getStockView(company.getSymbol());
     }
 
     /**
@@ -83,7 +84,7 @@ public class StockViewControllerIT {
     @Test
     public void testGetBuyableShares() throws Exception {
         String stockPage = stockViewController.getBuyableStocks(model, null);
-        StockView expectedStockView = stockViewService.getStockView(stock.getSymbol());
+        StockView expectedStockView = stockViewService.getStockView(stockView.getSymbol());
         Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
@@ -97,7 +98,7 @@ public class StockViewControllerIT {
      */
     @Test
     public void testGetSellableShares() {
-        UserStock userStock = new UserStock(username, stock.getSymbol(), 1);
+        UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
         userStockRepository.save(userStock);
 
         String stockPage = stockViewController.getSellableStocks(model, principal, null);
@@ -191,16 +192,15 @@ public class StockViewControllerIT {
 
     /**
      * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
-     * <p>
      * The number fields are verified in testStockDataNumberFields()
      */
     @Test
     public void testStockFields() {
         String stockPageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(stockPageContents.contains("Stock Symbol"));
-        assertTrue(stockPageContents.contains(stock.getSymbol()));
+        assertTrue(stockPageContents.contains(stockView.getSymbol()));
         assertTrue(stockPageContents.contains("Stock Name"));
-        assertTrue(stockPageContents.contains(stock.getName()));
+        assertTrue(stockPageContents.contains(stockView.getName()));
     }
 
     /**
