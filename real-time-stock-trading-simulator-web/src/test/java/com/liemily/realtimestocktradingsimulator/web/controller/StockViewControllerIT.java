@@ -277,7 +277,10 @@ public class StockViewControllerIT {
      */
     @Test
     public void testLastTradeFormat() {
+        String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
+        String stockPageContents = restTemplate.getForObject(stockURL, String.class);
 
+        assertTrue(stockPageContents.contains(">" + expectedLastTradeDateTime + "<"));
     }
 
     /**
