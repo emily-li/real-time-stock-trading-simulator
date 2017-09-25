@@ -31,8 +31,7 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Covers automated tests covered by "docs/FDM05-05 Functional Test Plan.doc" for client-side stock functionality
@@ -68,7 +67,9 @@ public class StockViewControllerIT {
     private String username;
     private Principal principal;
 
+    private Trade trade;
     private StockView stockView;
+    private BigDecimal expectedGains;
 
     @Before
     public void setup() {
@@ -77,6 +78,15 @@ public class StockViewControllerIT {
 
         Stock stock = new Stock(company.getSymbol(), new BigDecimal(2), 1);
         stockService.save(stock);
+
+        trade = new Trade(company.getSymbol());
+        trade = tradeService.save(trade);
+
+        expectedGains = new BigDecimal(2);
+        StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stock);
+        stockAsOfDetails.setOpenValue(stock.getValue().subtract(expectedGains));
+        stockAsOfDetails.setCloseValue(new BigDecimal(3));
+        stockAsOfDetailsRepository.save(stockAsOfDetails);
 
         model = new ExtendedModelMap();
 
@@ -94,7 +104,7 @@ public class StockViewControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stockViewController.getBuyableStocks(model, null);
+        String stockPage = stockViewController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()));
         StockView expectedStockView = stockViewService.getStockView(stockView.getSymbol());
         Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
 
@@ -206,21 +216,14 @@ public class StockViewControllerIT {
      */
     @Test
     public void testStockFields() {
-        Trade trade = new Trade(stockView.getSymbol());
-        tradeService.save(trade);
         String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
-
-        BigDecimal expectedGains = new BigDecimal(2);
-        StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stockService.getStock(stockView.getSymbol()));
-        stockAsOfDetails.setOpenValue(stockView.getValue().subtract(expectedGains));
-        stockAsOfDetails.setCloseValue(new BigDecimal(3));
-        stockAsOfDetailsRepository.save(stockAsOfDetails);
+        expectedGains = new BigDecimal(2);
 
         stockView = stockViewService.getStockView(stockView.getSymbol());
 
         String stockPageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(stockPageContents.contains("Stock Symbol"));
-        assertTrue(stockPageContents.contains(stockView.getSymbol()));
+        assertTrue(stockPageContents.contains(stockView.getSymbol().toUpperCase()));
         assertTrue(stockPageContents.contains("Stock Name"));
         assertTrue(stockPageContents.contains(stockView.getName()));
         assertTrue(stockPageContents.contains("Last Trade"));
@@ -233,6 +236,21 @@ public class StockViewControllerIT {
         assertTrue(stockPageContents.contains(stockView.getOpenValue().toString()));
         assertTrue(stockPageContents.contains("Close"));
         assertTrue(stockPageContents.contains(stockView.getCloseValue().toString()));
+    }
+
+    @Test
+    public void testUserStock() {
+        UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
+        userStockService.save(userStock);
+        userStock = userStockService.getUserStock(username, stockView.getSymbol());
+
+        assertNotNull(userStock.getSymbol());
+        assertNotNull(userStock.getName());
+        assertNotNull(userStock.getLastTradeDateTime());
+        assertNotNull(userStock.getGains());
+        assertNotNull(userStock.getValue());
+        assertNotNull(userStock.getOpenValue());
+        assertNotNull(userStock.getCloseValue());
     }
 
     /**

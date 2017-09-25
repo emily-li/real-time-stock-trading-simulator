@@ -1,6 +1,7 @@
 package com.liemily.user;
 
 import com.liemily.user.domain.UserStock;
+import com.liemily.user.domain.UserStockId;
 import com.liemily.user.repository.UserStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,6 +25,10 @@ public class UserStockService {
         return userStockRepository.findByUsername(username, pageable);
     }
 
+    public UserStock getUserStock(String username, String symbol) {
+        return userStockRepository.findOne(new UserStockId(username, symbol));
+    }
+
     public void save(UserStock userStock) {
         userStockRepository.save(userStock);
     }
@@ -31,5 +36,4 @@ public class UserStockService {
     public void save(Collection<UserStock> userStocks) {
         userStockRepository.save(userStocks);
     }
-
 }

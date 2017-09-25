@@ -1,8 +1,10 @@
 package com.liemily.user.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import com.liemily.stock.domain.StockView;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by Emily Li on 21/09/2017.
@@ -15,6 +17,10 @@ public class UserStock {
     @Id
     private String symbol;
     private int volume;
+
+    @ManyToOne
+    @JoinColumn(name = "symbol", insertable = false, updatable = false)
+    private StockView stockView;
 
     @SuppressWarnings("unused")
     private UserStock() {
@@ -48,5 +54,29 @@ public class UserStock {
 
     public String getSymbol() {
         return symbol;
+    }
+
+    public String getName() {
+        return stockView == null ? null : stockView.getName();
+    }
+
+    public Date getLastTradeDateTime() {
+        return stockView.getLastTradeDateTime();
+    }
+
+    public BigDecimal getGains() {
+        return stockView.getGains();
+    }
+
+    public BigDecimal getValue() {
+        return stockView.getValue();
+    }
+
+    public BigDecimal getOpenValue() {
+        return stockView.getOpenValue();
+    }
+
+    public BigDecimal getCloseValue() {
+        return stockView.getCloseValue();
     }
 }
