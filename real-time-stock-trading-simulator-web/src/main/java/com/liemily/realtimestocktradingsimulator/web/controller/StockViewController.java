@@ -48,7 +48,7 @@ public class StockViewController {
                                     Principal principal,
                                     Pageable pageable) {
         pageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.findByUsername(principal.getName(), pageable));
+        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), pageable));
         return "stock";
     }
 

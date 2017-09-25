@@ -21,12 +21,12 @@ public class UserStockService {
         this.userStockRepository = userStockRepository;
     }
 
-    public List<UserStock> findByUsername(String username, Pageable pageable) {
-        return userStockRepository.findByUsername(username, pageable);
-    }
-
     public UserStock getUserStock(String username, String symbol) {
         return userStockRepository.findOne(new UserStockId(username, symbol));
+    }
+
+    public List<UserStock> getUserStocks(String username, Pageable pageable) {
+        return userStockRepository.findByUsername(username, pageable);
     }
 
     public void save(UserStock userStock) {
