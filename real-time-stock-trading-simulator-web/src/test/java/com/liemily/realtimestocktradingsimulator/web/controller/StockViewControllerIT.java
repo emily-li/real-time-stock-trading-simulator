@@ -75,7 +75,7 @@ public class StockViewControllerIT {
         Company company = new Company(UUID.randomUUID().toString().toUpperCase(), UUID.randomUUID().toString());
         companyService.save(company);
 
-        Stock stock = new Stock(company.getSymbol(), new BigDecimal(1), 1);
+        Stock stock = new Stock(company.getSymbol(), new BigDecimal(2), 1);
         stockService.save(stock);
 
         model = new ExtendedModelMap();
@@ -226,6 +226,8 @@ public class StockViewControllerIT {
         assertTrue(stockPageContents.contains(expectedLastTradeDateTime));
         assertTrue(stockPageContents.contains("Gains"));
         assertTrue(stockPageContents.contains(stockView.getGains().toString()));
+        assertTrue(stockPageContents.contains("Value"));
+        assertTrue(stockPageContents.contains(stockView.getValue().toString()));
     }
 
     /**
