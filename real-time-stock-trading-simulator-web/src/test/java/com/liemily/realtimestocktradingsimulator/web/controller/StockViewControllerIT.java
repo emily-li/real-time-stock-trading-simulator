@@ -213,6 +213,7 @@ public class StockViewControllerIT {
         BigDecimal expectedGains = new BigDecimal(2);
         StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stockService.getStock(stockView.getSymbol()));
         stockAsOfDetails.setOpenValue(stockView.getValue().subtract(expectedGains));
+        stockAsOfDetails.setCloseValue(new BigDecimal(3));
         stockAsOfDetailsRepository.save(stockAsOfDetails);
 
         stockView = stockViewService.getStockView(stockView.getSymbol());
@@ -230,6 +231,8 @@ public class StockViewControllerIT {
         assertTrue(stockPageContents.contains(stockView.getValue().toString()));
         assertTrue(stockPageContents.contains("Open"));
         assertTrue(stockPageContents.contains(stockView.getOpenValue().toString()));
+        assertTrue(stockPageContents.contains("Close"));
+        assertTrue(stockPageContents.contains(stockView.getCloseValue().toString()));
     }
 
     /**
