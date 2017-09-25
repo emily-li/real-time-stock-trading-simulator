@@ -35,8 +35,7 @@ public class UserStockId implements Serializable {
 
         UserStockId that = (UserStockId) o;
 
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        return symbol != null ? symbol.equals(that.symbol) : that.symbol == null;
+        return (username != null ? username.equals(that.username) : that.username == null) && (symbol != null ? symbol.equals(that.symbol) : that.symbol == null);
     }
 
     @Override

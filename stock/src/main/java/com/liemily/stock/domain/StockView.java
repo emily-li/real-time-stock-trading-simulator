@@ -67,13 +67,12 @@ public class StockView {
 
         StockView stockView = (StockView) o;
 
-        if (symbol != null ? !symbol.equals(stockView.symbol) : stockView.symbol != null) return false;
-        if (gains != null ? !gains.equals(stockView.gains) : stockView.gains != null) return false;
-        if (lastTradeDateTime != null ? !lastTradeDateTime.equals(stockView.lastTradeDateTime) : stockView.lastTradeDateTime != null)
-            return false;
-        if (company != null ? !company.equals(stockView.company) : stockView.company != null) return false;
-        if (stock != null ? !stock.equals(stockView.stock) : stockView.stock != null) return false;
-        return stockAsOfDetails != null ? stockAsOfDetails.equals(stockView.stockAsOfDetails) : stockView.stockAsOfDetails == null;
+        return (symbol != null ? symbol.equals(stockView.symbol) : stockView.symbol == null)
+                && (gains != null ? gains.equals(stockView.gains) : stockView.gains == null)
+                && (lastTradeDateTime != null ? lastTradeDateTime.equals(stockView.lastTradeDateTime) : stockView.lastTradeDateTime == null)
+                && (company != null ? company.equals(stockView.company) : stockView.company == null)
+                && (stock != null ? stock.equals(stockView.stock) : stockView.stock == null)
+                && (stockAsOfDetails != null ? stockAsOfDetails.equals(stockView.stockAsOfDetails) : stockView.stockAsOfDetails == null);
     }
 
     @Override

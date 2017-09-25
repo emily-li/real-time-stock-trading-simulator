@@ -44,7 +44,7 @@ public class StockAsOfUpdaterIT {
     private Stock stock;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         symbol = UUID.randomUUID().toString();
         stock = new Stock(symbol, new BigDecimal(1), 0);
         stockRepository.save(stock);
@@ -89,7 +89,7 @@ public class StockAsOfUpdaterIT {
         stockRepository.save(stock);
     }
 
-    private StockAsOfDetails getUpdatedStockAsOf(STOCK_AS_OF stockAsOf) throws Exception {
+    private StockAsOfDetails getUpdatedStockAsOf(STOCK_AS_OF stockAsOf) {
         Awaitility.await().atMost(initialDelay + 1, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
         return stockAsOfDetailsRepository.findOne(symbol);
     }

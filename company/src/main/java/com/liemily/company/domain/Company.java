@@ -40,8 +40,7 @@ public class Company {
 
         Company company = (Company) o;
 
-        if (symbol != null ? !symbol.equals(company.symbol) : company.symbol != null) return false;
-        return name != null ? name.equals(company.name) : company.name == null;
+        return (symbol != null ? symbol.equals(company.symbol) : company.symbol == null) && (name != null ? name.equals(company.name) : company.name == null);
     }
 
     @Override

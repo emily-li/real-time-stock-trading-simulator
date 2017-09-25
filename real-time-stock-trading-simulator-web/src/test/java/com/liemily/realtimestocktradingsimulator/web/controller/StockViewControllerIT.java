@@ -38,6 +38,7 @@ import static org.junit.Assert.*;
  * Covers automated tests covered by "docs/FDM05-05 Functional Test Plan.doc" for client-side stock functionality
  * Created by Emily Li on 21/09/2017.
  */
+@SuppressWarnings("ConstantConditions")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StockViewControllerIT {

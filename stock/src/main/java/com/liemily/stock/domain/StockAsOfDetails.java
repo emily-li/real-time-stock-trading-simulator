@@ -58,10 +58,10 @@ public class StockAsOfDetails {
 
         StockAsOfDetails that = (StockAsOfDetails) o;
 
-        if (symbol != null ? !symbol.equals(that.symbol) : that.symbol != null) return false;
-        if (openValue != null ? !openValue.equals(that.openValue) : that.openValue != null) return false;
-        if (closeValue != null ? !closeValue.equals(that.closeValue) : that.closeValue != null) return false;
-        return stock != null ? stock.equals(that.stock) : that.stock == null;
+        return (symbol != null ? symbol.equals(that.symbol) : that.symbol == null)
+                && (openValue != null ? openValue.equals(that.openValue) : that.openValue == null)
+                && (closeValue != null ? closeValue.equals(that.closeValue) : that.closeValue == null)
+                && (stock != null ? stock.equals(that.stock) : that.stock == null);
     }
 
     @Override
