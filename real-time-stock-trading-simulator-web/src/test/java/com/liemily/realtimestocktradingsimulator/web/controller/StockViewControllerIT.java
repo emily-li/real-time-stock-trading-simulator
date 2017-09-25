@@ -29,8 +29,8 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Covers automated tests covered by "docs/FDM05-05 Functional Test Plan.doc" for client-side stock functionality
@@ -232,6 +232,15 @@ public class StockViewControllerIT {
         assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
         assertTrue(pageContents.contains(stocks.get(0).getSymbol().toUpperCase()));
         assertTrue(pageContents.contains(stocks.get(1).getSymbol().toUpperCase()));
+    }
+
+    @Test
+    public void testCompanySymbolsCapitals() {
+        String symbol = "case1" + UUID.randomUUID().toString();
+        Collection<Company> company = Collections.singletonList(new Company(symbol, UUID.randomUUID().toString()));
+        companyService.save(company);
+        assertNull(companyService.getCompany(symbol));
+        assertNotNull(companyService.getCompany(symbol.toUpperCase()));
     }
 
     /**

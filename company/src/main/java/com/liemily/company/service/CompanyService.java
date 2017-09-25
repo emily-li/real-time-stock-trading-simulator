@@ -26,7 +26,12 @@ public class CompanyService {
         companyRepository.save(company);
     }
 
+    public Company getCompany(String symbol) {
+        return companyRepository.findOne(symbol);
+    }
+
     public void save(Collection<Company> companies) {
         companyRepository.save(companies);
     }
+
 }
