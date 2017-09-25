@@ -80,7 +80,7 @@ public class StockViewControllerIT {
         stockService.save(stock);
 
         trade = new Trade(company.getSymbol());
-        trade = tradeService.save(trade);
+        tradeService.save(trade);
 
         expectedGains = new BigDecimal(2);
         StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stock);
