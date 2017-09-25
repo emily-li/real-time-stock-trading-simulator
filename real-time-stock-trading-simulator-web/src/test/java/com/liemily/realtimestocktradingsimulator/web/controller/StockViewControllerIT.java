@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -61,6 +62,8 @@ public class StockViewControllerIT {
     private TradeService tradeService;
     @Autowired
     private StockAsOfDetailsRepository stockAsOfDetailsRepository;
+    @Value("${page.stock.defaultSize}")
+    private int pageStockDefaultSize;
 
     private String stockURL;
     private Model model;
@@ -288,7 +291,10 @@ public class StockViewControllerIT {
      */
     @Test
     public void testViewAllStocks() {
-
+        generateStocks(pageStockDefaultSize * 2);
+        Collection<Stock> stocks = stockService.getStocks();
+        String pageContents = restTemplate.getForObject(stockURL, String.class);
+        stocks.forEach(stock -> assertTrue(pageContents.contains(stock.getSymbol())));
     }
 
     /**
