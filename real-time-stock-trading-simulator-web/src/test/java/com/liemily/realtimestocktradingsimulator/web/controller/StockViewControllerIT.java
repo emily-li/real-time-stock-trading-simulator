@@ -27,6 +27,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -99,7 +100,7 @@ public class StockViewControllerIT {
         principal = (UserPrincipal) () -> username;
 
         stockURL = "http://localhost:" + port + "/stock/buy";
-        stockURLAll = stockURL + "/all";
+        stockURLAll = stockURL + "?page=0&size=" + Integer.MAX_VALUE;
         stockView = stockViewService.getStockView(company.getSymbol());
     }
 
@@ -145,7 +146,7 @@ public class StockViewControllerIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        stockViewController.getBuyableStocks(model);
+        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE));
         List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -304,7 +305,7 @@ public class StockViewControllerIT {
     public void testViewAllUserStocks() {
         generateStocks(pageStockDefaultSize * 2);
         Collection<UserStock> userStocks = userStockService.getUserStocks(username, null);
-        stockViewController.getSellableStocks(model, principal);
+        stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE));
         Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
         assertTrue(retrievedUserStocks.containsAll(userStocks));
     }
@@ -338,8 +339,32 @@ public class StockViewControllerIT {
      * C.S20 The user should be able to order stocks in ascending or descending direction given a field
      */
     @Test
-    public void testOrderStocksByAnyField() {
+    public void testOrderStocksByValue() {
+        BigDecimal smallValue = new BigDecimal("-" + Math.random());
+        smallValue = smallValue.setScale(2, RoundingMode.CEILING);
+        BigDecimal smallerValue = smallValue.multiply(new BigDecimal(2));
+        smallerValue = smallerValue.setScale(2, RoundingMode.CEILING);
 
+        Stock smallStock = new Stock(UUID.randomUUID().toString(), smallValue, 1);
+        Stock smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
+        stockService.save(smallerStock);
+        stockService.save(smallStock);
+
+        String ascValues = restTemplate.getForObject(stockURLAll + "&sort=value,asc", String.class);
+        System.out.println(ascValues);
+        int smallValueIdx = ascValues.indexOf(smallValue.toString());
+        int smallerValueIdx = ascValues.indexOf(smallerValue.toString());
+        assertNotEquals(-1, smallValueIdx);
+        assertNotEquals(-1, smallerValueIdx);
+        assertTrue(smallerValueIdx < smallValueIdx);
+
+        String descValues = restTemplate.getForObject(stockURLAll + "&sort=value,desc", String.class);
+        System.out.println(descValues);
+        smallValueIdx = descValues.indexOf(smallValue.toString());
+        smallerValueIdx = descValues.indexOf(smallerValue.toString());
+        assertNotEquals(-1, smallValueIdx);
+        assertNotEquals(-1, smallerValueIdx);
+        assertTrue(smallerValueIdx > smallValueIdx);
     }
 
     private void generateStocks(int num) {

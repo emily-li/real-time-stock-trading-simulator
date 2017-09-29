@@ -39,25 +39,12 @@ public class StockViewController {
         return STOCKS_PAGE;
     }
 
-    @RequestMapping("/stock/buy/all")
-    String getBuyableStocks(Model model) {
-        model.addAttribute(STOCKS_ATTRIBUTE, stockViewService.getStocksWithVolume(null));
-        return STOCKS_PAGE;
-    }
-
     @RequestMapping("/stock/sell")
     String getSellableStocks(Model model,
                              Principal principal,
                              Pageable pageable) {
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), stocksPageable));
-        return STOCKS_PAGE;
-    }
-
-    @RequestMapping("/stock/sell/all")
-    String getSellableStocks(Model model,
-                             Principal principal) {
-        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), null));
         return STOCKS_PAGE;
     }
 
