@@ -351,20 +351,20 @@ public class StockViewControllerIT {
         stockService.save(smallStock);
 
         String ascValues = restTemplate.getForObject(stockURLAll + "&sort=value,asc", String.class);
-        System.out.println(ascValues);
         int smallValueIdx = ascValues.indexOf(smallValue.toString());
         int smallerValueIdx = ascValues.indexOf(smallerValue.toString());
-        assertNotEquals(-1, smallValueIdx);
-        assertNotEquals(-1, smallerValueIdx);
+        assertIndicesFound(smallValueIdx, smallerValueIdx);
         assertTrue(smallerValueIdx < smallValueIdx);
 
         String descValues = restTemplate.getForObject(stockURLAll + "&sort=value,desc", String.class);
-        System.out.println(descValues);
         smallValueIdx = descValues.indexOf(smallValue.toString());
         smallerValueIdx = descValues.indexOf(smallerValue.toString());
-        assertNotEquals(-1, smallValueIdx);
-        assertNotEquals(-1, smallerValueIdx);
+        assertIndicesFound(smallValueIdx, smallerValueIdx);
         assertTrue(smallerValueIdx > smallValueIdx);
+    }
+
+    private void assertIndicesFound(int... indices) {
+        Arrays.stream(indices).forEach(idx -> assertNotEquals(-1, idx));
     }
 
     private void generateStocks(int num) {
