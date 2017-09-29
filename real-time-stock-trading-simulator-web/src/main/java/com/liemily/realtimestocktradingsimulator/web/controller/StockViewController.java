@@ -17,7 +17,8 @@ import java.security.Principal;
  */
 @Controller
 public class StockViewController {
-    private final String STOCKS_ATTRIBUTE = "stocks";
+    private static final String STOCKS_ATTRIBUTE = "stocks";
+    private static final String STOCKS_PAGE = "stock";
     private StockViewService stockViewService;
     private UserStockService userStockService;
     private int pageStockDefaultSize;
@@ -31,41 +32,36 @@ public class StockViewController {
         this.pageStockDefaultSize = pageStockDefaultSize;
     }
 
-    @RequestMapping("/stock")
-    public String requestStocks() {
-        return "redirect:/stock/buy";
-    }
-
     @RequestMapping("/stock/buy")
-    public String getBuyableStocks(Model model, Pageable pageable) {
-        pageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        model.addAttribute(STOCKS_ATTRIBUTE, stockViewService.getStocksWithVolume(pageable));
-        return "stock";
+    String getBuyableStocks(Model model, Pageable pageable) {
+        Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
+        model.addAttribute(STOCKS_ATTRIBUTE, stockViewService.getStocksWithVolume(stocksPageable));
+        return STOCKS_PAGE;
     }
 
     @RequestMapping("/stock/buy/all")
-    public String getBuyableStocks(Model model) {
+    String getBuyableStocks(Model model) {
         model.addAttribute(STOCKS_ATTRIBUTE, stockViewService.getStocksWithVolume(null));
-        return "stock";
+        return STOCKS_PAGE;
     }
 
     @RequestMapping("/stock/sell")
-    public String getSellableStocks(Model model,
-                                    Principal principal,
-                                    Pageable pageable) {
-        pageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), pageable));
-        return "stock";
+    String getSellableStocks(Model model,
+                             Principal principal,
+                             Pageable pageable) {
+        Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
+        model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), stocksPageable));
+        return STOCKS_PAGE;
     }
 
     @RequestMapping("/stock/sell/all")
-    public String getSellableStocks(Model model,
-                                    Principal principal) {
+    String getSellableStocks(Model model,
+                             Principal principal) {
         model.addAttribute(STOCKS_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), null));
-        return "stock";
+        return STOCKS_PAGE;
     }
 
-    public String getStocksAttribute() {
+    String getStocksAttribute() {
         return STOCKS_ATTRIBUTE;
     }
 }

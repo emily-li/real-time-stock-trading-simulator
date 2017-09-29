@@ -98,8 +98,8 @@ public class StockViewControllerIT {
         username = UUID.randomUUID().toString();
         principal = (UserPrincipal) () -> username;
 
-        stockURL = "http://localhost:" + port + "/stock";
-        stockURLAll = stockURL + "/buy/all";
+        stockURL = "http://localhost:" + port + "/stock/buy";
+        stockURLAll = stockURL + "/all";
         stockView = stockViewService.getStockView(company.getSymbol());
     }
 
