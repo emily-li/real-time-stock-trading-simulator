@@ -27,7 +27,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -333,38 +332,6 @@ public class StockViewControllerIT {
 
         String pageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
-    }
-
-    /**
-     * C.S20 The user should be able to order stocks in ascending or descending direction given a field
-     */
-    @Test
-    public void testOrderStocksByValue() {
-        BigDecimal smallValue = new BigDecimal("-" + Math.random());
-        smallValue = smallValue.setScale(2, RoundingMode.CEILING);
-        BigDecimal smallerValue = smallValue.multiply(new BigDecimal(2));
-        smallerValue = smallerValue.setScale(2, RoundingMode.CEILING);
-
-        Stock smallStock = new Stock(UUID.randomUUID().toString(), smallValue, 1);
-        Stock smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
-        stockService.save(smallerStock);
-        stockService.save(smallStock);
-
-        String ascValues = restTemplate.getForObject(stockURLAll + "&sort=value,asc", String.class);
-        int smallValueIdx = ascValues.indexOf(smallValue.toString());
-        int smallerValueIdx = ascValues.indexOf(smallerValue.toString());
-        assertIndicesFound(smallValueIdx, smallerValueIdx);
-        assertTrue(smallerValueIdx < smallValueIdx);
-
-        String descValues = restTemplate.getForObject(stockURLAll + "&sort=value,desc", String.class);
-        smallValueIdx = descValues.indexOf(smallValue.toString());
-        smallerValueIdx = descValues.indexOf(smallerValue.toString());
-        assertIndicesFound(smallValueIdx, smallerValueIdx);
-        assertTrue(smallerValueIdx > smallValueIdx);
-    }
-
-    private void assertIndicesFound(int... indices) {
-        Arrays.stream(indices).forEach(idx -> assertNotEquals(-1, idx));
     }
 
     private void generateStocks(int num) {
