@@ -46,12 +46,4 @@ public class StockViewSearchIT {
     public void testSearchStocksByVolume() {
 
     }
-
-    /**
-     * C.S20 The user should be able to order stocks in ascending or descending direction given a field
-     */
-    @Test
-    public void testOrderStocksByAnyField() {
-
-    }
 }

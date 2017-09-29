@@ -334,6 +334,14 @@ public class StockViewControllerIT {
         assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
     }
 
+    /**
+     * C.S20 The user should be able to order stocks in ascending or descending direction given a field
+     */
+    @Test
+    public void testOrderStocksByAnyField() {
+
+    }
+
     private void generateStocks(int num) {
         Collection<Stock> stocks = new ArrayList<>();
         Collection<UserStock> userStocks = new ArrayList<>();
