@@ -25,7 +25,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -37,6 +36,9 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StocksControllerSearchIT {
+    private static final String LT_OP = "lt";
+    private static final String GT_OP = "gt";
+    
     @Autowired
     private StocksController stocksController;
     @Autowired
@@ -57,6 +59,7 @@ public class StocksControllerSearchIT {
 
     private int comparison;
     private List<StockView> stockViews;
+    private List<UserStock> userStocks;
 
     @Before
     public void setup() {
@@ -93,10 +96,8 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksBySymbol() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null, null, null, null);
-        List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
-        assertEquals(1, stockViews.size());
-        assertEquals(symbol, stockViews.get(0).getSymbol());
+        setupBuyableTest(symbol.substring(10), null, null, null, null);
+        stockViews.forEach(stockView -> assertTrue(stockView.getSymbol().contains(symbol)));
     }
 
     /**
@@ -104,10 +105,8 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksBySymbol() {
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null, null, null);
-        List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
-        assertEquals(1, stockViews.size());
-        assertEquals(symbol, stockViews.get(0).getSymbol());
+        setupSellableTest(symbol.substring(10), null, null, null, null);
+        userStocks.forEach(userStock -> assertTrue(userStock.getSymbol().equalsIgnoreCase(symbol)));
     }
 
     /**
@@ -115,10 +114,8 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByName() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10), null, null, null);
-        List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
-        assertEquals(1, stockViews.size());
-        assertEquals(companyName, stockViews.get(0).getName());
+        setupBuyableTest(null, companyName.substring(10), null, null, null);
+        stockViews.forEach(stockView -> assertTrue(stockView.getName().toUpperCase().contains(companyName.toUpperCase())));
     }
 
     /**
@@ -126,10 +123,8 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByName() {
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10), null, null);
-        List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
-        assertEquals(1, stockViews.size());
-        assertEquals(companyName, stockViews.get(0).getName());
+        setupSellableTest(null, companyName.substring(10), null, null, null);
+        userStocks.forEach(userStock -> assertTrue(userStock.getName().equalsIgnoreCase(companyName.toUpperCase())));
     }
 
     /**
@@ -137,8 +132,10 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByGains() {
-        testBuyableGains("lt", new BigDecimal(2));
-        testBuyableGains("gt", new BigDecimal(1));
+        setupBuyableTest(null, null, LT_OP, new BigDecimal(2), null);
+        stockViews.forEach(stockView -> assertTrue(stockView.getGains().compareTo(new BigDecimal(2)) == comparison));
+        setupBuyableTest(null, null, GT_OP, new BigDecimal(1), null);
+        stockViews.forEach(stockView -> assertTrue(stockView.getGains().compareTo(new BigDecimal(1)) == comparison));
     }
 
     /**
@@ -146,22 +143,10 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByGains() {
-        testSellableGains("lt", new BigDecimal(2));
-        testSellableGains("gt", new BigDecimal(1));
-    }
-
-    private void testBuyableGains(String op, BigDecimal threshold) {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold, null);
-        List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
-        final int comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
-        stockViews.forEach(stockView -> assertTrue(stockView.getGains().compareTo(threshold) == comparison));
-    }
-
-    private void testSellableGains(String op, BigDecimal threshold) {
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
-        List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
-        final int comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
-        stockViews.forEach(stockView -> assertTrue(stockView.getGains().compareTo(threshold) == comparison));
+        setupSellableTest(null, null, LT_OP, new BigDecimal(2), null);
+        userStocks.forEach(userStock -> assertTrue(userStock.getGains().compareTo(new BigDecimal(2)) == comparison));
+        setupSellableTest(null, null, GT_OP, new BigDecimal(1), null);
+        userStocks.forEach(userStock -> assertTrue(userStock.getGains().compareTo(new BigDecimal(1)) == comparison));
     }
 
     /**
@@ -169,17 +154,10 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByValue() {
-        setupBuyableValuesTest("lt", new BigDecimal(2));
+        setupBuyableTest(null, null, LT_OP, null, new BigDecimal(2));
         stockViews.forEach(stockView -> assertTrue(stockView.getValue().compareTo(new BigDecimal(2)) == comparison));
-        setupBuyableValuesTest("gt", new BigDecimal(1));
+        setupBuyableTest(null, null, GT_OP, null, new BigDecimal(1));
         stockViews.forEach(stockView -> assertTrue(stockView.getValue().compareTo(new BigDecimal(1)) == comparison));
-    }
-
-    private void setupBuyableValuesTest(String op, BigDecimal value) {
-        model = new ExtendedModelMap();
-        comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, null, value);
-        stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
     }
 
     /**
@@ -188,5 +166,19 @@ public class StocksControllerSearchIT {
     @Test
     public void testSearchStocksByVolume() {
 
+    }
+
+    private void setupBuyableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value) {
+        model = new ExtendedModelMap();
+        comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value);
+        stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
+    }
+
+    private void setupSellableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value) {
+        model = new ExtendedModelMap();
+        comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains);
+        userStocks = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
     }
 }
