@@ -1,5 +1,7 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.company.domain.Company;
+import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockView;
@@ -42,6 +44,8 @@ public class StockViewSortIT {
     @Autowired
     private UserStockService userStockService;
     @Autowired
+    private CompanyService companyService;
+    @Autowired
     private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private Model model;
@@ -66,6 +70,11 @@ public class StockViewSortIT {
         smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
         stockService.save(smallerStock);
         stockService.save(smallStock);
+
+        Company smallCompany = new Company(smallStock.getSymbol(), "b" + UUID.randomUUID());
+        Company smallerCompany = new Company(smallerStock.getSymbol(), "a" + UUID.randomUUID());
+        companyService.save(smallCompany);
+        companyService.save(smallerCompany);
 
         StockAsOfDetails smallStockAsOfDetails = new StockAsOfDetails(smallStock);
         smallStockAsOfDetails.setOpenValue(new BigDecimal(5));
@@ -159,6 +168,26 @@ public class StockViewSortIT {
     }
 
     /**
+     * Tests stocks can be ordered by company name
+     */
+    @Test
+    public void testOrderStocksByName() {
+        final String property = "company.name";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<StockView> stocks = getOrderedStocks();
+
+            String prevSymbol = stocks.get(0).getName();
+            for (int i = 1; i < stocks.size(); i++) {
+                String nextSymbol = stocks.get(i).getName();
+                int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
+                prevSymbol = nextSymbol;
+                assertTrue(symbolCompare == comparison);
+            }
+        }
+    }
+
+    /**
      * Tests user stocks can be ordered by value
      */
     @Test
@@ -223,6 +252,26 @@ public class StockViewSortIT {
             String prevSymbol = stocks.get(0).getSymbol();
             for (int i = 1; i < stocks.size(); i++) {
                 String nextSymbol = stocks.get(i).getSymbol();
+                int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
+                prevSymbol = nextSymbol;
+                assertTrue(symbolCompare == comparison);
+            }
+        }
+    }
+
+    /**
+     * Tests user stocks can be ordered by company name
+     */
+    @Test
+    public void testOrderUserStocksByName() {
+        final String property = "stockView.company.name";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<UserStock> stocks = getOrderedUserStocks();
+
+            String prevSymbol = stocks.get(0).getName();
+            for (int i = 1; i < stocks.size(); i++) {
+                String nextSymbol = stocks.get(i).getName();
                 int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
                 prevSymbol = nextSymbol;
                 assertTrue(symbolCompare == comparison);
