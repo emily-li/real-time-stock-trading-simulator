@@ -71,9 +71,15 @@ public class StockViewSortIT {
      * Tests stocks can be ordered by value descending
      */
     @Test
-    public void testOrderStocksByValueDesc() {
-        testOrderedBuyableStocks(Sort.Direction.ASC, "value");
-        testOrderedBuyableStocks(Sort.Direction.DESC, "value");
+    public void testOrderStocksByValue() {
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupAssert(direction, "value");
+
+            stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
+            List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+
+            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+        }
     }
 
     /**
@@ -86,26 +92,14 @@ public class StockViewSortIT {
         userStockService.save(smallUserStock);
         userStockService.save(smallerUserStock);
 
-        testOrderedUserStocks(Sort.Direction.ASC, "stockView.value");
-        testOrderedUserStocks(Sort.Direction.DESC, "stockView.value");
-    }
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupAssert(direction, "stockView.value");
 
-    private void testOrderedBuyableStocks(Sort.Direction direction, String property) {
-        setupAssert(direction, property);
+            stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
+            List<UserStock> stocks = (List<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
 
-        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
-        List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
-
-        stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
-    }
-
-    private void testOrderedUserStocks(Sort.Direction direction, String property) {
-        setupAssert(direction, property);
-
-        stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
-        List<UserStock> stocks = (List<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
-
-        stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+        }
     }
 
     private void setupAssert(Sort.Direction direction, String property) {
