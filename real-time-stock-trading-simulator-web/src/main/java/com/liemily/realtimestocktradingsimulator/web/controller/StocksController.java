@@ -3,6 +3,7 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockViewService;
 import com.liemily.user.UserStockService;
+import com.liemily.user.domain.UserStock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -54,9 +55,17 @@ public class StocksController {
     @RequestMapping("sell")
     String getSellableStocks(Model model,
                              Principal principal,
-                             Pageable pageable) {
+                             Pageable pageable,
+                             @RequestParam(required = false) String symbol) {
+        String username = principal.getName();
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        model.addAttribute(STOCKS_MODEL_ATTRIBUTE, userStockService.getUserStocks(principal.getName(), stocksPageable));
+        List<UserStock> userStocks;
+        if (symbol == null) {
+            userStocks = userStockService.getUserStocks(username, stocksPageable);
+        } else {
+            userStocks = userStockService.getUserStocksBySymbol(username, symbol, stocksPageable);
+        }
+        model.addAttribute(STOCKS_MODEL_ATTRIBUTE, userStocks);
         return STOCKS_PAGE;
     }
 

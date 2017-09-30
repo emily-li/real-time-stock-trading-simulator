@@ -11,4 +11,7 @@ import java.util.List;
 public interface UserStockRepository extends JpaRepository<UserStock, UserStockId> {
     @Query
     List<UserStock> findByUsername(String username, Pageable pageable);
+
+    @Query
+    List<UserStock> findByUsernameAndSymbolContainingIgnoreCase(String username, String symbol, Pageable stocksPageable);
 }
