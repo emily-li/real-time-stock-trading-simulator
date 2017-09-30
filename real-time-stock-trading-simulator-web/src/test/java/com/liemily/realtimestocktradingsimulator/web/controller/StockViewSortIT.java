@@ -3,6 +3,9 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockService;
+import com.liemily.user.UserStockService;
+import com.liemily.user.domain.UserStock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.attribute.UserPrincipal;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,30 +33,85 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest
 public class StockViewSortIT {
     @Autowired
-    private StockService stockService;
-    @Autowired
     private StockViewController stockViewController;
 
-    /**
-     * Tests stocks can be ordered by value
-     */
-    @Test
-    public void testOrderStocksByValue() {
+    @Autowired
+    private StockService stockService;
+    @Autowired
+    private UserStockService userStockService;
+
+    private Model model;
+    private String username;
+    private Principal principal;
+
+    private Stock smallStock;
+    private Stock smallerStock;
+
+    private Sort sort;
+    private int comparison;
+    private BigDecimal firstExpectedValue;
+
+    @Before
+    public void setup() {
         BigDecimal smallValue = new BigDecimal("-" + Math.random());
         smallValue = smallValue.setScale(2, RoundingMode.CEILING);
         BigDecimal smallerValue = smallValue.multiply(new BigDecimal(2));
         smallerValue = smallerValue.setScale(2, RoundingMode.CEILING);
 
-        Stock smallStock = new Stock(UUID.randomUUID().toString(), smallValue, 1);
-        Stock smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
+        smallStock = new Stock(UUID.randomUUID().toString(), smallValue, 1);
+        smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
         stockService.save(smallerStock);
         stockService.save(smallStock);
 
-        Model model = new ExtendedModelMap();
-        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "value")));
-        List<StockView> ascStocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+        username = UUID.randomUUID().toString();
+        principal = (UserPrincipal) () -> username;
+    }
 
-        BigDecimal prevValue = new BigDecimal(Integer.MIN_VALUE);
-        ascStocks.forEach(stockView -> assertTrue(prevValue.compareTo(stockView.getValue()) < 0));
+    /**
+     * Tests stocks can be ordered by value descending
+     */
+    @Test
+    public void testOrderStocksByValueDesc() {
+        testOrderedBuyableStocks(Sort.Direction.ASC, "value");
+        testOrderedBuyableStocks(Sort.Direction.DESC, "value");
+    }
+
+    /**
+     * Tests user stocks can be ordered by value
+     */
+    @Test
+    public void testOrderUserStocksByValue() {
+        UserStock smallUserStock = new UserStock(username, smallStock.getSymbol(), 1);
+        UserStock smallerUserStock = new UserStock(username, smallerStock.getSymbol(), 1);
+        userStockService.save(smallUserStock);
+        userStockService.save(smallerUserStock);
+
+        testOrderedUserStocks(Sort.Direction.ASC, "stockView.value");
+        testOrderedUserStocks(Sort.Direction.DESC, "stockView.value");
+    }
+
+    private void testOrderedBuyableStocks(Sort.Direction direction, String property) {
+        setupAssert(direction, property);
+
+        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
+        List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+
+        stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+    }
+
+    private void testOrderedUserStocks(Sort.Direction direction, String property) {
+        setupAssert(direction, property);
+
+        stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
+        List<UserStock> stocks = (List<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
+
+        stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+    }
+
+    private void setupAssert(Sort.Direction direction, String property) {
+        sort = new Sort(direction, property);
+        comparison = direction.isAscending() ? -1 : 1;
+        firstExpectedValue = direction.isAscending() ? new BigDecimal(Integer.MIN_VALUE) : new BigDecimal(Integer.MAX_VALUE);
+        model = new ExtendedModelMap();
     }
 }
