@@ -139,7 +139,7 @@ public class StockViewSortIT {
     }
 
     /**
-     * Tests stocks can be ordered by volume
+     * Tests stocks can be ordered by symbol
      */
     @Test
     public void testOrderStocksBySymbol() {
@@ -212,7 +212,7 @@ public class StockViewSortIT {
     }
 
     /**
-     * Tests user stocks can be ordered by volume
+     * Tests user stocks can be ordered by symbol
      */
     @Test
     public void testOrderUserStocksBySymbol() {
