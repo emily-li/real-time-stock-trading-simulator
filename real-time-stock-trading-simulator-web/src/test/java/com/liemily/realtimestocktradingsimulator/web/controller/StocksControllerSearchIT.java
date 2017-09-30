@@ -149,8 +149,8 @@ public class StocksControllerSearchIT {
     private void testBuyableGains(String op, BigDecimal threshold, BigDecimal expected) {
         stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
-        assertEquals(1, stockViews.size());
-        assertTrue(expected.compareTo(stockViews.get(0).getGains()) == 0);
+        final int comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
+        stockViews.forEach(stockView -> assertTrue(stockView.getGains().compareTo(threshold) == comparison));
     }
 
     private void testSellableGains(String op, BigDecimal threshold, BigDecimal expected) {

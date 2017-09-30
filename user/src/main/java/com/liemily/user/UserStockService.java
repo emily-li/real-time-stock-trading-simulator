@@ -35,7 +35,7 @@ public class UserStockService {
     }
 
     public List<UserStock> getUserStocksByName(String username, String name, Pageable stocksPageable) {
-        return userStockRepository.findByUsernameAndNameContainingIgnoreCase(username, name, stocksPageable);
+        return userStockRepository.findByUsernameAndStockViewCompanyNameContainingIgnoreCase(username, name, stocksPageable);
     }
 
     public List<UserStock> getUserStocksByGainsLessThan(String username, BigDecimal gains, Pageable stocksPageable) {
