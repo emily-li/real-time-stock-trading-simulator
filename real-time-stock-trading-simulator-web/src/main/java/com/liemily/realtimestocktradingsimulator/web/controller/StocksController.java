@@ -53,9 +53,9 @@ public class StocksController {
             stockViews = stockViewService.getStocksWithVolumeByName(name, stocksPageable);
         } else if (op != null && gains != null) {
             if (op.equalsIgnoreCase("lt")) {
-                //stockViews = stockViewService.getStocksWithVolumeByGainsLessThan
+                stockViews = stockViewService.getStocksWithVolumeByGainsLessThan(gains, stocksPageable);
             } else if (op.equalsIgnoreCase("gt")) {
-
+                stockViews = stockViewService.getStocksWithVolumeByGainsGreaterThan(gains, stocksPageable);
             }
         }
         if (stockViews == null) {

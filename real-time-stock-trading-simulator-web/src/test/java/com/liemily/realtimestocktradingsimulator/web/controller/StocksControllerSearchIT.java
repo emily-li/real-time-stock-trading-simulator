@@ -5,6 +5,7 @@ import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockView;
+import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
@@ -28,6 +29,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
+ * Test class to ensure stock results can be sorted by each field
+ *
  * Created by Emily Li on 25/09/2017.
  */
 @RunWith(SpringRunner.class)
@@ -41,6 +44,8 @@ public class StocksControllerSearchIT {
     private StockService stockService;
     @Autowired
     private UserStockService userStockService;
+    @Autowired
+    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private Model model;
     private String symbol;
@@ -73,6 +78,10 @@ public class StocksControllerSearchIT {
 
         stockAsOfDetails = new StockAsOfDetails(stock1);
         stockAsOfDetails.setOpenValue(new BigDecimal(0));
+        StockAsOfDetails stockAsOfDetails2 = new StockAsOfDetails(stock2);
+        stockAsOfDetails2.setOpenValue(new BigDecimal(0));
+        stockAsOfDetailsRepository.save(stockAsOfDetails);
+        stockAsOfDetailsRepository.save(stockAsOfDetails2);
     }
 
     /**
@@ -124,10 +133,15 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByGains() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, "lt", new BigDecimal(2));
+        testBuyableGains("lt", new BigDecimal(2), new BigDecimal(1));
+        testBuyableGains("gt", new BigDecimal(1), new BigDecimal(2));
+    }
+
+    private void testBuyableGains(String op, BigDecimal threshold, BigDecimal expected) {
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
-        assertTrue(new BigDecimal(2).compareTo(stockViews.get(0).getGains()) == 0);
+        assertTrue(expected.compareTo(stockViews.get(0).getGains()) == 0);
     }
 
     /**

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,5 +37,13 @@ public class StockViewService {
 
     public List<StockView> getStocksWithVolumeByName(String name, Pageable stocksPageable) {
         return stockViewRepository.findByCompanyNameContainingIgnoreCaseAndStockVolumeGreaterThan(name, 0, stocksPageable);
+    }
+
+    public List<StockView> getStocksWithVolumeByGainsLessThan(BigDecimal gains, Pageable stocksPageable) {
+        return stockViewRepository.findByGainsLessThanAndStockVolumeGreaterThan(gains, 0, stocksPageable);
+    }
+
+    public List<StockView> getStocksWithVolumeByGainsGreaterThan(BigDecimal gains, Pageable stocksPageable) {
+        return stockViewRepository.findByGainsGreaterThanAndStockVolumeGreaterThan(gains, 0, stocksPageable);
     }
 }
