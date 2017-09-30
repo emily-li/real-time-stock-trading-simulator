@@ -374,7 +374,7 @@ public class StocksControllerSortIT {
 
     private List<UserStock> getOrderedUserStocks() {
         model = new ExtendedModelMap();
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort), null);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort), null, null);
         return (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
     }
 

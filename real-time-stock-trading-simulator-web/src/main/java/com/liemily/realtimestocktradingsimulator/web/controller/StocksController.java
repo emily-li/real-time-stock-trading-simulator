@@ -59,7 +59,8 @@ public class StocksController {
     String getSellableStocks(Model model,
                              Principal principal,
                              Pageable pageable,
-                             @RequestParam(required = false) String symbol) {
+                             @RequestParam(required = false) String symbol,
+                             @RequestParam(required = false) String name) {
         String username = principal.getName();
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         List<UserStock> userStocks;

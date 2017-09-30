@@ -85,7 +85,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksBySymbol() {
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10));
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null);
         List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(symbol, stockViews.get(0).getSymbol());
@@ -96,8 +96,19 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByName() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10));
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
+        assertEquals(1, stockViews.size());
+        assertEquals(companyName, stockViews.get(0).getName());
+    }
+
+    /**
+     * C.S16 The user should be able to search stocks given a stock name
+     */
+    @Test
+    public void testSearchUserStocksByName() {
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10));
+        List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(companyName, stockViews.get(0).getName());
     }
