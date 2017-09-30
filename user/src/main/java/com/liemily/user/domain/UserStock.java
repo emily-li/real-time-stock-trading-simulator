@@ -79,4 +79,8 @@ public class UserStock {
     public BigDecimal getCloseValue() {
         return stockView.getCloseValue();
     }
+
+    public int getVolume() {
+        return volume;
+    }
 }

@@ -103,7 +103,7 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderStocksByOpenValue() {
-        final String property = "stockAsOfDetails.closeValue";
+        final String property = "stockAsOfDetails.openValue";
         for (Sort.Direction direction : Sort.Direction.values()) {
             setupTest(direction, property);
             List<StockView> stocks = getOrderedStocks();
@@ -121,6 +121,20 @@ public class StockViewSortIT {
             setupTest(direction, property);
             List<StockView> stocks = getOrderedStocks();
             stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getCloseValue()) == comparison));
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by volume
+     */
+    @Test
+    public void testOrderStocksByVolume() {
+        final String property = "stock.volume";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            int firstExpectedVol = direction.isAscending() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            setupTest(direction, property);
+            List<StockView> stocks = getOrderedStocks();
+            stocks.forEach(stockView -> assertTrue(Integer.compare(firstExpectedVol, stockView.getVolume()) == comparison));
         }
     }
 
@@ -147,6 +161,20 @@ public class StockViewSortIT {
             setupTest(direction, property);
             List<UserStock> userStocks = getOrderedUserStocks();
             userStocks.forEach(userStock -> assertTrue(firstExpectedValue.compareTo(userStock.getOpenValue()) == comparison));
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by volume
+     */
+    @Test
+    public void testOrderUserStocksByVolume() {
+        final String property = "volume";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            int firstExpectedVol = direction.isAscending() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            setupTest(direction, property);
+            List<UserStock> userStocks = getOrderedUserStocks();
+            userStocks.forEach(userStock -> assertTrue(Integer.compare(firstExpectedVol, userStock.getVolume()) == comparison));
         }
     }
 
