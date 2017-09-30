@@ -1,5 +1,7 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.company.domain.Company;
+import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockService;
@@ -32,12 +34,15 @@ public class StocksControllerSearchIT {
     @Autowired
     private StocksController stocksController;
     @Autowired
+    private CompanyService companyService;
+    @Autowired
     private StockService stockService;
     @Autowired
     private UserStockService userStockService;
 
     private Model model;
     private String symbol;
+    private String companyName;
     private String username;
     private Principal principal;
 
@@ -48,6 +53,10 @@ public class StocksControllerSearchIT {
         principal = new UserPrincipal(username);
 
         symbol = UUID.randomUUID().toString().toUpperCase();
+        companyName = UUID.randomUUID().toString();
+
+        Company company = new Company(symbol, companyName);
+        companyService.save(company);
 
         Stock stock1 = new Stock(symbol, new BigDecimal(1), 1);
         Stock stock2 = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
@@ -65,7 +74,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksBySymbol() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10));
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(symbol, stockViews.get(0).getSymbol());
@@ -87,7 +96,10 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByName() {
-
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName);
+        List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
+        assertEquals(1, stockViews.size());
+        assertEquals(symbol, stockViews.get(0).getName());
     }
 
     /**

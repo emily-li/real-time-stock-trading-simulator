@@ -40,7 +40,8 @@ public class StocksController {
     @RequestMapping("buy")
     String getBuyableStocks(Model model,
                             Pageable pageable,
-                            @RequestParam(required = false) String symbol) {
+                            @RequestParam(required = false) String symbol,
+                            @RequestParam(required = false) String name) {
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         List<StockView> stockViews;
         if (symbol != null) {
