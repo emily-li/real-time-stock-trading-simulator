@@ -23,7 +23,7 @@ public class StockViewService {
     }
 
     public List<StockView> getStocksWithVolume(Pageable pageable) {
-        return stockViewRepository.findAllWithVolumeGreaterThan0(pageable);
+        return stockViewRepository.findByStockVolumeGreaterThan(0, pageable);
     }
 
     public StockView getStockView(String symbol) {
@@ -31,10 +31,10 @@ public class StockViewService {
     }
 
     public List<StockView> getStocksWithVolumeBySymbol(String symbol, Pageable pageable) {
-        return stockViewRepository.findAllWithVolumeGreaterThan0BySymbol(symbol.toUpperCase(), pageable);
+        return stockViewRepository.findBySymbolContainingIgnoreCaseAndStockVolumeGreaterThan(symbol, 0, pageable);
     }
 
     public List<StockView> getStocksWithVolumeByName(String name, Pageable stocksPageable) {
-        return stockViewRepository.findAllWithVolumeGreaterThan0ByName(name, stocksPageable);
+        return stockViewRepository.findByCompanyNameContainingIgnoreCaseAndStockVolumeGreaterThan(name, 0, stocksPageable);
     }
 }

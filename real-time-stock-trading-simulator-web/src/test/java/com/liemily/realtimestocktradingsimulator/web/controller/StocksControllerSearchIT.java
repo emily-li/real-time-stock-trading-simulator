@@ -3,6 +3,7 @@ package com.liemily.realtimestocktradingsimulator.web.controller;
 import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockService;
 import com.liemily.user.UserStockService;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Emily Li on 25/09/2017.
@@ -43,6 +45,7 @@ public class StocksControllerSearchIT {
     private Model model;
     private String symbol;
     private String companyName;
+    private StockAsOfDetails stockAsOfDetails;
     private String username;
     private Principal principal;
 
@@ -59,7 +62,7 @@ public class StocksControllerSearchIT {
         companyService.save(company);
 
         Stock stock1 = new Stock(symbol, new BigDecimal(1), 1);
-        Stock stock2 = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
+        Stock stock2 = new Stock(UUID.randomUUID().toString(), new BigDecimal(2), 1);
         stockService.save(stock1);
         stockService.save(stock2);
 
@@ -67,6 +70,9 @@ public class StocksControllerSearchIT {
         UserStock userStock2 = new UserStock(username, stock2.getSymbol(), 1);
         userStockService.save(userStock1);
         userStockService.save(userStock2);
+
+        stockAsOfDetails = new StockAsOfDetails(stock1);
+        stockAsOfDetails.setOpenValue(new BigDecimal(0));
     }
 
     /**
@@ -74,7 +80,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksBySymbol() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null, null, null);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(symbol, stockViews.get(0).getSymbol());
@@ -96,7 +102,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByName() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10));
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10), null, null);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(companyName, stockViews.get(0).getName());
@@ -114,11 +120,14 @@ public class StocksControllerSearchIT {
     }
 
     /**
-     * C.S17 The user should be able to search stocks given a gains value, greater or lesser than the variable
+     * C.S17 The user should be able to search stocks given a gains value, greater or less than the variable
      */
     @Test
     public void testSearchStocksByGains() {
-
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, "lt", new BigDecimal(2));
+        List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
+        assertEquals(1, stockViews.size());
+        assertTrue(new BigDecimal(2).compareTo(stockViews.get(0).getGains()) == 0);
     }
 
     /**

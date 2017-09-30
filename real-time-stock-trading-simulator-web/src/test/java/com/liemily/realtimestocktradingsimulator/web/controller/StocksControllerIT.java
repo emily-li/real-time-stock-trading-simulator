@@ -110,7 +110,7 @@ public class StocksControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stocksController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()), null, null);
+        String stockPage = stocksController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()), null, null, null, null);
         StockView expectedStockView = stockViewService.getStockView(stockView.getSymbol());
         Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stocksController.getStocksAttribute());
 
@@ -145,7 +145,7 @@ public class StocksControllerIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null);
         List<StockView> stocks = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -202,7 +202,7 @@ public class StocksControllerIT {
         stockService.save(stocks);
         userStockService.save(userStocks);
 
-        stocksController.getBuyableStocks(model, null, null, null);
+        stocksController.getBuyableStocks(model, null, null, null, null, null);
         Collection<StockView> retrievedStocks = (Collection<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         Collection<String> retrievedStockSymbols = new ArrayList<>();
         retrievedStocks.forEach(stock -> retrievedStockSymbols.add(stock.getSymbol()));
@@ -348,7 +348,7 @@ public class StocksControllerIT {
     }
 
     private void testPaginationSize(int expectedSize, Pageable pageable) {
-        stocksController.getBuyableStocks(model, pageable, null, null);
+        stocksController.getBuyableStocks(model, pageable, null, null, null, null);
         Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(expectedSize, paginatedStocks.size());
 

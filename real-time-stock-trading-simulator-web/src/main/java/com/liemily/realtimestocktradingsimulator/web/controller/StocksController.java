@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -41,14 +42,23 @@ public class StocksController {
     String getBuyableStocks(Model model,
                             Pageable pageable,
                             @RequestParam(required = false) String symbol,
-                            @RequestParam(required = false) String name) {
+                            @RequestParam(required = false) String name,
+                            @RequestParam(required = false) String op,
+                            @RequestParam(required = false) BigDecimal gains) {
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        List<StockView> stockViews;
+        List<StockView> stockViews = null;
         if (symbol != null) {
             stockViews = stockViewService.getStocksWithVolumeBySymbol(symbol, stocksPageable);
         } else if (name != null) {
             stockViews = stockViewService.getStocksWithVolumeByName(name, stocksPageable);
-        } else {
+        } else if (op != null && gains != null) {
+            if (op.equalsIgnoreCase("lt")) {
+                //stockViews = stockViewService.getStocksWithVolumeByGainsLessThan
+            } else if (op.equalsIgnoreCase("gt")) {
+
+            }
+        }
+        if (stockViews == null) {
             stockViews = stockViewService.getStocksWithVolume(stocksPageable);
         }
         model.addAttribute(STOCKS_MODEL_ATTRIBUTE, stockViews);

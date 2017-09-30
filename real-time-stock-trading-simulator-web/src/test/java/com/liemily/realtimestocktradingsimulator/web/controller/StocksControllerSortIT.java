@@ -121,9 +121,16 @@ public class StocksControllerSortIT {
     public void testOrderStocksByOpenValue() {
         final String property = "stockAsOfDetails.openValue";
         for (Sort.Direction direction : Sort.Direction.values()) {
+            int openValues = 0;
             setupTest(direction, property);
-            List<StockView> stocks = getOrderedStocks();
-            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getOpenValue()) == comparison));
+            List<StockView> stockViews = getOrderedStocks();
+            for (StockView stockView : stockViews) {
+                if (stockView.getOpenValue() != null) {
+                    openValues++;
+                    assertTrue(firstExpectedValue.compareTo(stockView.getOpenValue()) == comparison);
+                }
+            }
+            assertTrue(openValues >= 2);
         }
     }
 
@@ -134,9 +141,16 @@ public class StocksControllerSortIT {
     public void testOrderStocksByCloseValue() {
         final String property = "stockAsOfDetails.closeValue";
         for (Sort.Direction direction : Sort.Direction.values()) {
+            int closeValues = 0;
             setupTest(direction, property);
-            List<StockView> stocks = getOrderedStocks();
-            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getCloseValue()) == comparison));
+            List<StockView> stockViews = getOrderedStocks();
+            for (StockView stockView : stockViews) {
+                if (stockView.getCloseValue() != null) {
+                    closeValues++;
+                    assertTrue(firstExpectedValue.compareTo(stockView.getCloseValue()) == comparison);
+                }
+            }
+            assertTrue(closeValues >= 2);
         }
     }
 
@@ -201,16 +215,26 @@ public class StocksControllerSortIT {
     public void testOrderStocksByName() {
         final String property = "company.name";
         for (Sort.Direction direction : Sort.Direction.values()) {
+            int names = 0;
             setupTest(direction, property);
             List<StockView> stocks = getOrderedStocks();
 
-            String prevName = stocks.get(0).getName();
-            for (int i = 1; i < stocks.size(); i++) {
-                String nextName = stocks.get(i).getName();
-                int symbolCompare = prevName.compareTo(nextName) < 0 ? -1 : 1;
-                assertTrue(symbolCompare == comparison);
-                prevName = nextName;
+            String prevName = null;
+            for (int i = 0; i < stocks.size(); i++) {
+                String name = stocks.get(i).getName();
+                if (name != null) {
+                    names++;
+                    if (prevName == null) {
+                        prevName = name;
+                    } else {
+                        String nextName = name;
+                        int symbolCompare = prevName.compareTo(nextName) < 0 ? -1 : 1;
+                        assertTrue(symbolCompare == comparison);
+                        prevName = nextName;
+                    }
+                }
             }
+            assertTrue(names >= 2);
         }
     }
 
@@ -219,7 +243,7 @@ public class StocksControllerSortIT {
      */
     @Test
     public void testOrderStocksByLastTradeDateTime() {
-        final String property = "last_trade_date_time";
+        final String property = "lastTradeDateTime";
         for (Sort.Direction direction : Sort.Direction.values()) {
             setupTest(direction, property);
             List<StockView> stocks = getOrderedStocks();
@@ -368,7 +392,7 @@ public class StocksControllerSortIT {
 
     private List<StockView> getOrderedStocks() {
         model = new ExtendedModelMap();
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort), null, null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort), null, null, null, null);
         return (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
     }
 
