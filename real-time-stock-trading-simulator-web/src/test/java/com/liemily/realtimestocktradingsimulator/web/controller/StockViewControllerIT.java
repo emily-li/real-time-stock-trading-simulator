@@ -110,7 +110,7 @@ public class StockViewControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stockViewController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()));
+        String stockPage = stockViewController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()), null);
         StockView expectedStockView = stockViewService.getStockView(stockView.getSymbol());
         Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
 
@@ -145,7 +145,7 @@ public class StockViewControllerIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE));
+        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null);
         List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -202,7 +202,7 @@ public class StockViewControllerIT {
         stockService.save(stocks);
         userStockService.save(userStocks);
 
-        stockViewController.getBuyableStocks(model, null);
+        stockViewController.getBuyableStocks(model, null, null);
         Collection<StockView> retrievedStocks = (Collection<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
         Collection<String> retrievedStockSymbols = new ArrayList<>();
         retrievedStocks.forEach(stock -> retrievedStockSymbols.add(stock.getSymbol()));
@@ -348,7 +348,7 @@ public class StockViewControllerIT {
     }
 
     private void testPaginationSize(int expectedSize, Pageable pageable) {
-        stockViewController.getBuyableStocks(model, pageable);
+        stockViewController.getBuyableStocks(model, pageable, null);
         Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(stockViewController.getStocksAttribute());
         assertEquals(expectedSize, paginatedStocks.size());
 

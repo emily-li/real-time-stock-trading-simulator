@@ -13,4 +13,7 @@ import java.util.List;
 public interface StockViewRepository extends JpaRepository<StockView, String> {
     @Query("FROM StockView WHERE stock.volume > 0")
     List<StockView> findAllWithVolumeGreaterThan0(Pageable pageable);
+
+    @Query("FROM StockView WHERE stock.volume > 0 AND symbol LIKE %?1%")
+    List<StockView> findAllWithVolumeGreaterThan0BySymbol(String symbol, Pageable pageable);
 }
