@@ -46,6 +46,8 @@ public class StocksController {
         List<StockView> stockViews;
         if (symbol != null) {
             stockViews = stockViewService.getStocksWithVolumeBySymbol(symbol, stocksPageable);
+        } else if (name != null) {
+            stockViews = stockViewService.getStocksWithVolumeByName(name, stocksPageable);
         } else {
             stockViews = stockViewService.getStocksWithVolume(stocksPageable);
         }

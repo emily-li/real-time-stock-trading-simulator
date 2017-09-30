@@ -33,4 +33,8 @@ public class StockViewService {
     public List<StockView> getStocksWithVolumeBySymbol(String symbol, Pageable pageable) {
         return stockViewRepository.findAllWithVolumeGreaterThan0BySymbol(symbol.toUpperCase(), pageable);
     }
+
+    public List<StockView> getStocksWithVolumeByName(String name, Pageable stocksPageable) {
+        return stockViewRepository.findAllWithVolumeGreaterThan0ByName(name, stocksPageable);
+    }
 }

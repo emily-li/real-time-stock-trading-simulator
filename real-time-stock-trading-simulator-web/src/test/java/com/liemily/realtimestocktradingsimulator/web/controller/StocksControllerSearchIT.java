@@ -99,7 +99,7 @@ public class StocksControllerSearchIT {
         stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
-        assertEquals(symbol, stockViews.get(0).getName());
+        assertEquals(companyName, stockViews.get(0).getName());
     }
 
     /**
