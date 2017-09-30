@@ -392,7 +392,7 @@ public class StocksControllerSortIT {
 
     private List<StockView> getOrderedStocks() {
         model = new ExtendedModelMap();
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort), null, null, null, null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort), null, null, null, null, null);
         return (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
     }
 

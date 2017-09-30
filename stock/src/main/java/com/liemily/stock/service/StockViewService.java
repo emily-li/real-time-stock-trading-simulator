@@ -46,4 +46,12 @@ public class StockViewService {
     public List<StockView> getStocksWithVolumeByGainsGreaterThan(BigDecimal gains, Pageable stocksPageable) {
         return stockViewRepository.findByGainsGreaterThanAndStockVolumeGreaterThan(gains, 0, stocksPageable);
     }
+
+    public List<StockView> getStocksWithVolumeByValueLessThan(BigDecimal value, Pageable stocksPageable) {
+        return stockViewRepository.findByStockValueLessThanAndStockVolumeGreaterThan(value, 0, stocksPageable);
+    }
+
+    public List<StockView> getStocksWithVolumeByValueGreaterThan(BigDecimal value, Pageable stocksPageable) {
+        return stockViewRepository.findByStockValueGreaterThanAndStockVolumeGreaterThan(value, 0, stocksPageable);
+    }
 }

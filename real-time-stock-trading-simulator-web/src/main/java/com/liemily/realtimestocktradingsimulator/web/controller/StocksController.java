@@ -44,7 +44,8 @@ public class StocksController {
                             @RequestParam(required = false) String symbol,
                             @RequestParam(required = false) String name,
                             @RequestParam(required = false) String op,
-                            @RequestParam(required = false) BigDecimal gains) {
+                            @RequestParam(required = false) BigDecimal gains,
+                            @RequestParam(required = false) BigDecimal value) {
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         List<StockView> stockViews = null;
 
@@ -52,12 +53,8 @@ public class StocksController {
             stockViews = stockViewService.getStocksWithVolumeBySymbol(symbol, stocksPageable);
         } else if (name != null) {
             stockViews = stockViewService.getStocksWithVolumeByName(name, stocksPageable);
-        } else if (op != null && gains != null) {
-            if (op.equalsIgnoreCase("lt")) {
-                stockViews = stockViewService.getStocksWithVolumeByGainsLessThan(gains, stocksPageable);
-            } else if (op.equalsIgnoreCase("gt")) {
-                stockViews = stockViewService.getStocksWithVolumeByGainsGreaterThan(gains, stocksPageable);
-            }
+        } else if (op != null) {
+            stockViews = searchBuyableStocksWithOperator(op, gains, value, stocksPageable);
         }
 
         stockViews = stockViews == null ? stockViewService.getStocksWithVolume(stocksPageable) : stockViews;
@@ -97,4 +94,23 @@ public class StocksController {
     String getStocksAttribute() {
         return STOCKS_MODEL_ATTRIBUTE;
     }
+
+    private List<StockView> searchBuyableStocksWithOperator(String op, BigDecimal gains, BigDecimal value, Pageable stocksPageable) {
+        List<StockView> stockViews = null;
+        if (op.equalsIgnoreCase("lt")) {
+            if (gains != null) {
+                stockViews = stockViewService.getStocksWithVolumeByGainsLessThan(gains, stocksPageable);
+            } else if (value != null) {
+                stockViews = stockViewService.getStocksWithVolumeByValueLessThan(value, stocksPageable);
+            }
+        } else if (op.equalsIgnoreCase("gt")) {
+            if (gains != null) {
+                stockViews = stockViewService.getStocksWithVolumeByGainsGreaterThan(gains, stocksPageable);
+            } else if (value != null) {
+                stockViews = stockViewService.getStocksWithVolumeByValueGreaterThan(value, stocksPageable);
+            }
+        }
+        return stockViews;
+    }
+
 }

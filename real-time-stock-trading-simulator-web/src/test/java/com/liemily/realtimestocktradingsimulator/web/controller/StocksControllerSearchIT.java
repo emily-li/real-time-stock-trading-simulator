@@ -33,6 +33,7 @@ import static org.junit.Assert.assertTrue;
  *
  * Created by Emily Li on 25/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StocksControllerSearchIT {
@@ -53,6 +54,9 @@ public class StocksControllerSearchIT {
     private StockAsOfDetails stockAsOfDetails;
     private String username;
     private Principal principal;
+
+    private int comparison;
+    private List<StockView> stockViews;
 
     @Before
     public void setup() {
@@ -89,7 +93,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksBySymbol() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null, null, null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null, null, null, null);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(symbol, stockViews.get(0).getSymbol());
@@ -111,7 +115,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByName() {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10), null, null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10), null, null, null);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(companyName, stockViews.get(0).getName());
@@ -133,8 +137,8 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByGains() {
-        testBuyableGains("lt", new BigDecimal(2), new BigDecimal(1));
-        testBuyableGains("gt", new BigDecimal(1), new BigDecimal(2));
+        testBuyableGains("lt", new BigDecimal(2));
+        testBuyableGains("gt", new BigDecimal(1));
     }
 
     /**
@@ -142,18 +146,18 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByGains() {
-        testSellableGains("lt", new BigDecimal(2), new BigDecimal(1));
-        testSellableGains("gt", new BigDecimal(1), new BigDecimal(2));
+        testSellableGains("lt", new BigDecimal(2));
+        testSellableGains("gt", new BigDecimal(1));
     }
 
-    private void testBuyableGains(String op, BigDecimal threshold, BigDecimal expected) {
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
+    private void testBuyableGains(String op, BigDecimal threshold) {
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold, null);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         final int comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
         stockViews.forEach(stockView -> assertTrue(stockView.getGains().compareTo(threshold) == comparison));
     }
 
-    private void testSellableGains(String op, BigDecimal threshold, BigDecimal expected) {
+    private void testSellableGains(String op, BigDecimal threshold) {
         stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
         List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         final int comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
@@ -165,7 +169,17 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchStocksByValue() {
+        setupBuyableValuesTest("lt", new BigDecimal(2));
+        stockViews.forEach(stockView -> assertTrue(stockView.getValue().compareTo(new BigDecimal(2)) == comparison));
+        setupBuyableValuesTest("gt", new BigDecimal(1));
+        stockViews.forEach(stockView -> assertTrue(stockView.getValue().compareTo(new BigDecimal(1)) == comparison));
+    }
 
+    private void setupBuyableValuesTest(String op, BigDecimal value) {
+        model = new ExtendedModelMap();
+        comparison = op.equalsIgnoreCase("lt") ? -1 : 1;
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, null, value);
+        stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
     }
 
     /**
