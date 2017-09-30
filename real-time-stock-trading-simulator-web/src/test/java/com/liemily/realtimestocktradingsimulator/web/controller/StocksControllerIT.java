@@ -128,7 +128,7 @@ public class StocksControllerIT {
         UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
         userStockService.save(userStock);
 
-        String stockPage = stocksController.getSellableStocks(model, principal, null, null, null);
+        String stockPage = stocksController.getSellableStocks(model, principal, null, null, null, null, null);
         Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
 
         assertEquals("stock", stockPage);
@@ -208,7 +208,7 @@ public class StocksControllerIT {
         retrievedStocks.forEach(stock -> retrievedStockSymbols.add(stock.getSymbol()));
 
         model = new ExtendedModelMap();
-        stocksController.getSellableStocks(model, principal, null, null, null);
+        stocksController.getSellableStocks(model, principal, null, null, null, null, null);
         Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         Collection<String> retrievedUserStockSymbols = new ArrayList<>();
         retrievedUserStocks.forEach(userStock -> retrievedUserStockSymbols.add(userStock.getSymbol()));
@@ -304,7 +304,7 @@ public class StocksControllerIT {
     public void testViewAllUserStocks() {
         generateStocks(pageStockDefaultSize * 2);
         Collection<UserStock> userStocks = userStockService.getUserStocks(username, null);
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null);
         Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertTrue(retrievedUserStocks.containsAll(userStocks));
     }
@@ -353,7 +353,7 @@ public class StocksControllerIT {
         assertEquals(expectedSize, paginatedStocks.size());
 
         model = new ExtendedModelMap();
-        stocksController.getSellableStocks(model, principal, pageable, null, null);
+        stocksController.getSellableStocks(model, principal, pageable, null, null, null, null);
         paginatedStocks = (Collection<Stock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(expectedSize, paginatedStocks.size());
     }

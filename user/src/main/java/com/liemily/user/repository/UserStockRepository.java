@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserStockRepository extends JpaRepository<UserStock, UserStockId> {
@@ -17,4 +18,10 @@ public interface UserStockRepository extends JpaRepository<UserStock, UserStockI
 
     @Query("FROM UserStock WHERE username = ?1 AND stockView.company.name LIKE %?2%")
     List<UserStock> findByUsernameAndNameContainingIgnoreCase(String username, String name, Pageable stocksPageable);
+
+    @Query
+    List<UserStock> findByUsernameAndStockViewGainsLessThan(String username, BigDecimal gains, Pageable stocksPageable);
+
+    @Query
+    List<UserStock> findByUsernameAndStockViewGainsGreaterThan(String username, BigDecimal gains, Pageable stocksPageable);
 }

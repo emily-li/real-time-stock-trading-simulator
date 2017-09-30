@@ -100,7 +100,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksBySymbol() {
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10), null, null, null);
         List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(symbol, stockViews.get(0).getSymbol());
@@ -122,7 +122,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByName() {
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10));
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, companyName.substring(10), null, null);
         List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(companyName, stockViews.get(0).getName());
@@ -137,9 +137,25 @@ public class StocksControllerSearchIT {
         testBuyableGains("gt", new BigDecimal(1), new BigDecimal(2));
     }
 
+    /**
+     * C.S17 The user should be able to search user stocks given a gains value, greater or less than the variable
+     */
+    @Test
+    public void testSearchUserStocksByGains() {
+        testSellableGains("lt", new BigDecimal(2), new BigDecimal(1));
+        testSellableGains("gt", new BigDecimal(1), new BigDecimal(2));
+    }
+
     private void testBuyableGains(String op, BigDecimal threshold, BigDecimal expected) {
         stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
         List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
+        assertEquals(1, stockViews.size());
+        assertTrue(expected.compareTo(stockViews.get(0).getGains()) == 0);
+    }
+
+    private void testSellableGains(String op, BigDecimal threshold, BigDecimal expected) {
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null, op, threshold);
+        List<UserStock> stockViews = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertTrue(expected.compareTo(stockViews.get(0).getGains()) == 0);
     }

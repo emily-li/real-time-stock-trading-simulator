@@ -70,17 +70,26 @@ public class StocksController {
                              Principal principal,
                              Pageable pageable,
                              @RequestParam(required = false) String symbol,
-                             @RequestParam(required = false) String name) {
+                             @RequestParam(required = false) String name,
+                             @RequestParam(required = false) String op,
+                             @RequestParam(required = false) BigDecimal gains) {
         String username = principal.getName();
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
-        List<UserStock> userStocks;
+        List<UserStock> userStocks = null;
+
         if (symbol != null) {
             userStocks = userStockService.getUserStocksBySymbol(username, symbol, stocksPageable);
         } else if (name != null) {
             userStocks = userStockService.getUserStocksByName(username, name, stocksPageable);
-        } else {
-            userStocks = userStockService.getUserStocks(username, stocksPageable);
+        } else if (op != null && gains != null) {
+            if (op.equalsIgnoreCase("lt")) {
+                userStocks = userStockService.getUserStocksByGainsLessThan(username, gains, stocksPageable);
+            } else if (op.equalsIgnoreCase("gt")) {
+                userStocks = userStockService.getUserStocksByGainsGreaterThan(username, gains, stocksPageable);
+            }
         }
+
+        userStocks = userStocks == null ? userStockService.getUserStocks(username, stocksPageable) : userStocks;
         model.addAttribute(STOCKS_MODEL_ATTRIBUTE, userStocks);
         return STOCKS_PAGE;
     }

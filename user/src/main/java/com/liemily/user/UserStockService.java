@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +36,14 @@ public class UserStockService {
 
     public List<UserStock> getUserStocksByName(String username, String name, Pageable stocksPageable) {
         return userStockRepository.findByUsernameAndNameContainingIgnoreCase(username, name, stocksPageable);
+    }
+
+    public List<UserStock> getUserStocksByGainsLessThan(String username, BigDecimal gains, Pageable stocksPageable) {
+        return userStockRepository.findByUsernameAndStockViewGainsLessThan(username, gains, stocksPageable);
+    }
+
+    public List<UserStock> getUserStocksByGainsGreaterThan(String username, BigDecimal gains, Pageable stocksPageable) {
+        return userStockRepository.findByUsernameAndStockViewGainsGreaterThan(username, gains, stocksPageable);
     }
 
     public void save(UserStock userStock) {

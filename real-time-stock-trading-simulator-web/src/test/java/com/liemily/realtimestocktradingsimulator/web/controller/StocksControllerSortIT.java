@@ -220,8 +220,8 @@ public class StocksControllerSortIT {
             List<StockView> stocks = getOrderedStocks();
 
             String prevName = null;
-            for (int i = 0; i < stocks.size(); i++) {
-                String name = stocks.get(i).getName();
+            for (StockView stock : stocks) {
+                String name = stock.getName();
                 if (name != null) {
                     names++;
                     if (prevName == null) {
@@ -398,7 +398,7 @@ public class StocksControllerSortIT {
 
     private List<UserStock> getOrderedUserStocks() {
         model = new ExtendedModelMap();
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort), null, null);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort), null, null, null, null);
         return (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
     }
 
