@@ -15,13 +15,11 @@ import static org.mockito.Mockito.mock;
 public class StockModulationServiceTest {
     private static final int SERVICE_RUN_TIME_MS = 1000;
     private StockModulationService stockModulationService;
-    private StockService stockService;
-    private StockModulationRandomiser stockModulationRandomiser;
 
     @Before
     public void setup() {
-        stockService = mock(StockService.class);
-        stockModulationRandomiser = mock(StockModulationRandomiser.class);
+        StockService stockService = mock(StockService.class);
+        StockModulationRandomiser stockModulationRandomiser = mock(StockModulationRandomiser.class);
         StockModulator stockModulator = new TestStockModulator(stockService, stockModulationRandomiser);
         stockModulationService = new StockModulationService(Executors.newSingleThreadScheduledExecutor(), stockModulator);
     }
@@ -38,7 +36,7 @@ public class StockModulationServiceTest {
     }
 
     private class TestStockModulator extends StockModulator {
-        public TestStockModulator(StockService stockService, StockModulationRandomiser stockModulationRandomiser) {
+        TestStockModulator(StockService stockService, StockModulationRandomiser stockModulationRandomiser) {
             super(stockService, stockModulationRandomiser);
         }
 

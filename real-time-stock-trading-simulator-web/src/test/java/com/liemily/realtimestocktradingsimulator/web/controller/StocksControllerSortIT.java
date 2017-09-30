@@ -38,9 +38,9 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class StockViewSortIT {
+public class StocksControllerSortIT {
     @Autowired
-    private StockViewController stockViewController;
+    private StocksController stocksController;
 
     @Autowired
     private StockService stockService;
@@ -57,9 +57,6 @@ public class StockViewSortIT {
     private String username;
     private Principal principal;
 
-    private Stock smallStock;
-    private Stock smallerStock;
-
     private Sort sort;
     private int comparison;
     private BigDecimal firstExpectedValue;
@@ -74,8 +71,8 @@ public class StockViewSortIT {
         BigDecimal smallerValue = smallValue.multiply(new BigDecimal(2));
         smallerValue = smallerValue.setScale(2, RoundingMode.CEILING);
 
-        smallStock = new Stock(UUID.randomUUID().toString(), smallValue, 1);
-        smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
+        Stock smallStock = new Stock(UUID.randomUUID().toString(), smallValue, 1);
+        Stock smallerStock = new Stock(UUID.randomUUID().toString(), smallerValue, 1);
         stockService.save(smallerStock);
         stockService.save(smallStock);
 
@@ -149,11 +146,18 @@ public class StockViewSortIT {
     @Test
     public void testOrderStocksByGains() {
         final String property = "gains";
+        int stocksWithGains = 0;
         for (Sort.Direction direction : Sort.Direction.values()) {
             setupTest(direction, property);
-            List<StockView> stocks = getOrderedStocks();
-            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getGains()) == comparison));
+            List<StockView> stockViews = getOrderedStocks();
+            for (StockView stockView : stockViews) {
+                if (stockView.getGains() != null) {
+                    stocksWithGains++;
+                    assertTrue(firstExpectedValue.compareTo(stockView.getGains()) == comparison);
+                }
+            }
         }
+        assertTrue(stocksWithGains >= 2);
     }
 
     /**
@@ -219,13 +223,22 @@ public class StockViewSortIT {
         for (Sort.Direction direction : Sort.Direction.values()) {
             setupTest(direction, property);
             List<StockView> stocks = getOrderedStocks();
+            int datesFound = 0;
 
-            Date prevDate = stocks.get(0).getLastTradeDateTime();
+            Date prevDate = null;
             for (int i = 1; i < stocks.size(); i++) {
-                Date nextDate = stocks.get(i).getLastTradeDateTime();
-                assertTrue(prevDate.compareTo(nextDate) == comparison);
-                prevDate = nextDate;
+                Date date = stocks.get(i).getLastTradeDateTime();
+                if (date != null) {
+                    datesFound++;
+                    if (prevDate == null) {
+                        prevDate = date;
+                    } else {
+                        assertTrue(prevDate.compareTo(date) == comparison);
+                        prevDate = date;
+                    }
+                }
             }
+            assertTrue(datesFound >= 2);
         }
     }
 
@@ -355,14 +368,14 @@ public class StockViewSortIT {
 
     private List<StockView> getOrderedStocks() {
         model = new ExtendedModelMap();
-        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort), null);
-        return (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort), null);
+        return (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
     }
 
     private List<UserStock> getOrderedUserStocks() {
         model = new ExtendedModelMap();
-        stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
-        return (List<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
+        return (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
     }
 
     private void setupTest(Sort.Direction direction, String property) {

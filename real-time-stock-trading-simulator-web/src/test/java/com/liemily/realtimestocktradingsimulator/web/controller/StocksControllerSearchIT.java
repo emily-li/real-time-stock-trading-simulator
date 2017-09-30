@@ -24,9 +24,9 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class StockViewSearchIT {
+public class StocksControllerSearchIT {
     @Autowired
-    private StockViewController stockViewController;
+    private StocksController stocksController;
     @Autowired
     private StockService stockService;
 
@@ -47,8 +47,8 @@ public class StockViewSearchIT {
      */
     @Test
     public void testSearchStocksBySymbol() {
-        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10));
-        List<StockView> stockViews = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol.substring(10));
+        List<StockView> stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertEquals(1, stockViews.size());
         assertEquals(symbol, stockViews.get(0).getSymbol());
     }

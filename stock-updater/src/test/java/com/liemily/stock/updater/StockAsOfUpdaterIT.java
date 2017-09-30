@@ -38,8 +38,6 @@ public class StockAsOfUpdaterIT {
     @Autowired
     private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
-    private StockAsOfUpdaterTester stockAsOfUpdater;
-    private String updateTimeString;
     private String symbol;
     private Stock stock;
 
@@ -51,10 +49,10 @@ public class StockAsOfUpdaterIT {
 
         LocalDateTime updateTime = LocalDateTime.now();
         updateTime = updateTime.plusSeconds(initialDelay);
-        updateTimeString = updateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        String updateTimeString = updateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         logger.info("Setting update time for stock " + symbol + " at " + updateTimeString);
 
-        stockAsOfUpdater = new StockAsOfUpdaterTester(stockRepository, stockAsOfDetailsRepository, updateTimeString, updateTimeString);
+        StockAsOfUpdaterTester stockAsOfUpdater = new StockAsOfUpdaterTester(stockRepository, stockAsOfDetailsRepository, updateTimeString, updateTimeString);
         new Thread(stockAsOfUpdater).run();
     }
 
