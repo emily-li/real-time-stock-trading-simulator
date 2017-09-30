@@ -144,6 +144,19 @@ public class StockViewSortIT {
     }
 
     /**
+     * Tests stocks can be ordered by gains
+     */
+    @Test
+    public void testOrderStocksByGains() {
+        final String property = "gains";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<StockView> stocks = getOrderedStocks();
+            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getGains()) == comparison));
+        }
+    }
+
+    /**
      * Tests stocks can be ordered by volume
      */
     @Test
@@ -324,6 +337,19 @@ public class StockViewSortIT {
                 assertTrue(prevDate.compareTo(nextDate) == comparison);
                 prevDate = nextDate;
             }
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by gains
+     */
+    @Test
+    public void testOrderUserStocksByGains() {
+        final String property = "stockView.gains";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<UserStock> stocks = getOrderedUserStocks();
+            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getGains()) == comparison));
         }
     }
 
