@@ -1,7 +1,9 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockView;
+import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
@@ -39,6 +41,8 @@ public class StockViewSortIT {
     private StockService stockService;
     @Autowired
     private UserStockService userStockService;
+    @Autowired
+    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private Model model;
     private String username;
@@ -63,8 +67,22 @@ public class StockViewSortIT {
         stockService.save(smallerStock);
         stockService.save(smallStock);
 
+        StockAsOfDetails smallStockAsOfDetails = new StockAsOfDetails(smallStock);
+        smallStockAsOfDetails.setOpenValue(new BigDecimal(5));
+        smallStockAsOfDetails.setCloseValue(new BigDecimal(10));
+        StockAsOfDetails smallerStockAsOfDetails = new StockAsOfDetails(smallerStock);
+        smallerStockAsOfDetails.setOpenValue(new BigDecimal(4));
+        smallerStockAsOfDetails.setCloseValue(new BigDecimal(6));
+        stockAsOfDetailsRepository.save(smallStockAsOfDetails);
+        stockAsOfDetailsRepository.save(smallerStockAsOfDetails);
+
         username = UUID.randomUUID().toString();
         principal = (UserPrincipal) () -> username;
+
+        UserStock smallUserStock = new UserStock(username, smallStock.getSymbol(), 1);
+        UserStock smallerUserStock = new UserStock(username, smallerStock.getSymbol(), 1);
+        userStockService.save(smallUserStock);
+        userStockService.save(smallerUserStock);
     }
 
     /**
@@ -72,12 +90,10 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderStocksByValue() {
+        final String property = "value";
         for (Sort.Direction direction : Sort.Direction.values()) {
-            setupAssert(direction, "value");
-
-            stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
-            List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
-
+            List<StockView> stocks = getOrderedStocks(direction, property);
+            setupAssert(direction, property);
             stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
         }
     }
@@ -87,12 +103,10 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderStocksByOpenValue() {
+        final String property = "stockAsOfDetails.closeValue";
         for (Sort.Direction direction : Sort.Direction.values()) {
-            setupAssert(direction, "stockAsOfDetails.openValue");
-
-            stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
-            List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
-
+            List<StockView> stocks = getOrderedStocks(direction, property);
+            setupAssert(direction, property);
             stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getOpenValue()) == comparison));
         }
     }
@@ -102,12 +116,10 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderStocksByCloseValue() {
+        final String property = "stockAsOfDetails.closeValue";
         for (Sort.Direction direction : Sort.Direction.values()) {
-            setupAssert(direction, "stockAsOfDetails.closeValue");
-
-            stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
-            List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
-
+            List<StockView> stocks = getOrderedStocks(direction, property);
+            setupAssert(direction, property);
             stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getCloseValue()) == comparison));
         }
     }
@@ -117,25 +129,55 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderUserStocksByValue() {
-        UserStock smallUserStock = new UserStock(username, smallStock.getSymbol(), 1);
-        UserStock smallerUserStock = new UserStock(username, smallerStock.getSymbol(), 1);
-        userStockService.save(smallUserStock);
-        userStockService.save(smallerUserStock);
-
+        final String property = "stockView.value";
         for (Sort.Direction direction : Sort.Direction.values()) {
-            setupAssert(direction, "stockView.value");
-
-            stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
-            List<UserStock> stocks = (List<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
-
-            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+            List<UserStock> userStocks = getOrderedUserStocks(direction, property);
+            setupAssert(direction, property);
+            userStocks.forEach(userStock -> assertTrue(firstExpectedValue.compareTo(userStock.getValue()) == comparison));
         }
+    }
+
+    /**
+     * Tests user stocks can be ordered by open value
+     */
+    @Test
+    public void testOrderUserStocksByOpenValue() {
+        final String property = "stockView.stockAsOfDetails.openValue";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            List<UserStock> userStocks = getOrderedUserStocks(direction, property);
+            setupAssert(direction, property);
+            userStocks.forEach(userStock -> assertTrue(firstExpectedValue.compareTo(userStock.getOpenValue()) == comparison));
+        }
+    }
+
+    /**
+     * Tests user stocks can be ordered by close value
+     */
+    @Test
+    public void testOrderUserStocksByCloseValue() {
+        final String property = "stockView.stockAsOfDetails.closeValue";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            List<UserStock> userStocks = getOrderedUserStocks(direction, property);
+            setupAssert(direction, property);
+            userStocks.forEach(userStock -> assertTrue(firstExpectedValue.compareTo(userStock.getCloseValue()) == comparison));
+        }
+    }
+
+    private List<StockView> getOrderedStocks(Sort.Direction direction, String property) {
+        model = new ExtendedModelMap();
+        stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
+        return (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+    }
+
+    private List<UserStock> getOrderedUserStocks(Sort.Direction direction, String property) {
+        model = new ExtendedModelMap();
+        stockViewController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE, sort));
+        return (List<UserStock>) model.asMap().get(stockViewController.getStocksAttribute());
     }
 
     private void setupAssert(Sort.Direction direction, String property) {
         sort = new Sort(direction, property);
         comparison = direction.isAscending() ? -1 : 1;
         firstExpectedValue = direction.isAscending() ? new BigDecimal(Integer.MIN_VALUE) : new BigDecimal(Integer.MAX_VALUE);
-        model = new ExtendedModelMap();
     }
 }
