@@ -90,7 +90,7 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderStocksByValue() {
-        final String property = "value";
+        final String property = "stock.value";
         for (Sort.Direction direction : Sort.Direction.values()) {
             List<StockView> stocks = getOrderedStocks(direction, property);
             setupAssert(direction, property);
@@ -129,7 +129,7 @@ public class StockViewSortIT {
      */
     @Test
     public void testOrderUserStocksByValue() {
-        final String property = "stockView.value";
+        final String property = "stockView.stock.value";
         for (Sort.Direction direction : Sort.Direction.values()) {
             List<UserStock> userStocks = getOrderedUserStocks(direction, property);
             setupAssert(direction, property);

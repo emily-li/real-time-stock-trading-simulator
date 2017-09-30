@@ -18,7 +18,6 @@ public class StockView {
     private String symbol;
     private BigDecimal gains;
     private Date lastTradeDateTime;
-    private BigDecimal value;
     @OneToOne
     @PrimaryKeyJoinColumn
     private Company company;
@@ -46,7 +45,7 @@ public class StockView {
     }
 
     public BigDecimal getValue() {
-        return value;
+        return stock.getValue();
     }
 
     public int getVolume() {
