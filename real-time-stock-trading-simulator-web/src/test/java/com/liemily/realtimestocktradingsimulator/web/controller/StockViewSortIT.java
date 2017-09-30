@@ -7,6 +7,8 @@ import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
+import com.liemily.trade.domain.Trade;
+import com.liemily.trade.service.TradeService;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
 import org.junit.Before;
@@ -24,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +49,8 @@ public class StockViewSortIT {
     @Autowired
     private CompanyService companyService;
     @Autowired
+    private TradeService tradeService;
+    @Autowired
     private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private Model model;
@@ -61,6 +66,9 @@ public class StockViewSortIT {
 
     @Before
     public void setup() {
+        username = UUID.randomUUID().toString();
+        principal = (UserPrincipal) () -> username;
+
         BigDecimal smallValue = new BigDecimal("-" + Math.random());
         smallValue = smallValue.setScale(2, RoundingMode.CEILING);
         BigDecimal smallerValue = smallValue.multiply(new BigDecimal(2));
@@ -85,13 +93,15 @@ public class StockViewSortIT {
         stockAsOfDetailsRepository.save(smallStockAsOfDetails);
         stockAsOfDetailsRepository.save(smallerStockAsOfDetails);
 
-        username = UUID.randomUUID().toString();
-        principal = (UserPrincipal) () -> username;
-
         UserStock smallUserStock = new UserStock(username, smallStock.getSymbol(), 1);
         UserStock smallerUserStock = new UserStock(username, smallerStock.getSymbol(), 1);
         userStockService.save(smallUserStock);
         userStockService.save(smallerUserStock);
+
+        Trade smallTrade = new Trade(smallStock.getSymbol());
+        Trade smallerTrade = new Trade(smallerStock.getSymbol());
+        tradeService.save(smallTrade);
+        tradeService.save(smallerTrade);
     }
 
     /**
@@ -161,8 +171,8 @@ public class StockViewSortIT {
             for (int i = 1; i < stocks.size(); i++) {
                 String nextSymbol = stocks.get(i).getSymbol();
                 int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
-                prevSymbol = nextSymbol;
                 assertTrue(symbolCompare == comparison);
+                prevSymbol = nextSymbol;
             }
         }
     }
@@ -177,12 +187,31 @@ public class StockViewSortIT {
             setupTest(direction, property);
             List<StockView> stocks = getOrderedStocks();
 
-            String prevSymbol = stocks.get(0).getName();
+            String prevName = stocks.get(0).getName();
             for (int i = 1; i < stocks.size(); i++) {
-                String nextSymbol = stocks.get(i).getName();
-                int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
-                prevSymbol = nextSymbol;
+                String nextName = stocks.get(i).getName();
+                int symbolCompare = prevName.compareTo(nextName) < 0 ? -1 : 1;
                 assertTrue(symbolCompare == comparison);
+                prevName = nextName;
+            }
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by last trade date time
+     */
+    @Test
+    public void testOrderStocksByLastTradeDateTime() {
+        final String property = "last_trade_date_time";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<StockView> stocks = getOrderedStocks();
+
+            Date prevDate = stocks.get(0).getLastTradeDateTime();
+            for (int i = 1; i < stocks.size(); i++) {
+                Date nextDate = stocks.get(i).getLastTradeDateTime();
+                assertTrue(prevDate.compareTo(nextDate) == comparison);
+                prevDate = nextDate;
             }
         }
     }
@@ -253,8 +282,8 @@ public class StockViewSortIT {
             for (int i = 1; i < stocks.size(); i++) {
                 String nextSymbol = stocks.get(i).getSymbol();
                 int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
-                prevSymbol = nextSymbol;
                 assertTrue(symbolCompare == comparison);
+                prevSymbol = nextSymbol;
             }
         }
     }
@@ -273,8 +302,27 @@ public class StockViewSortIT {
             for (int i = 1; i < stocks.size(); i++) {
                 String nextSymbol = stocks.get(i).getName();
                 int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
-                prevSymbol = nextSymbol;
                 assertTrue(symbolCompare == comparison);
+                prevSymbol = nextSymbol;
+            }
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by last trade date time
+     */
+    @Test
+    public void testOrderUserStocksByLastTradeDateTime() {
+        final String property = "stockView.lastTradeDateTime";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<UserStock> stocks = getOrderedUserStocks();
+
+            Date prevDate = stocks.get(0).getLastTradeDateTime();
+            for (int i = 1; i < stocks.size(); i++) {
+                Date nextDate = stocks.get(i).getLastTradeDateTime();
+                assertTrue(prevDate.compareTo(nextDate) == comparison);
+                prevDate = nextDate;
             }
         }
     }
