@@ -47,6 +47,7 @@ public class StocksController {
                             @RequestParam(required = false) BigDecimal gains) {
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         List<StockView> stockViews = null;
+
         if (symbol != null) {
             stockViews = stockViewService.getStocksWithVolumeBySymbol(symbol, stocksPageable);
         } else if (name != null) {
@@ -58,9 +59,8 @@ public class StocksController {
                 stockViews = stockViewService.getStocksWithVolumeByGainsGreaterThan(gains, stocksPageable);
             }
         }
-        if (stockViews == null) {
-            stockViews = stockViewService.getStocksWithVolume(stocksPageable);
-        }
+
+        stockViews = stockViews == null ? stockViewService.getStocksWithVolume(stocksPageable) : stockViews;
         model.addAttribute(STOCKS_MODEL_ATTRIBUTE, stockViews);
         return STOCKS_PAGE;
     }
