@@ -139,6 +139,26 @@ public class StockViewSortIT {
     }
 
     /**
+     * Tests stocks can be ordered by volume
+     */
+    @Test
+    public void testOrderStocksBySymbol() {
+        final String property = "symbol";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<StockView> stocks = getOrderedStocks();
+
+            String prevSymbol = stocks.get(0).getSymbol();
+            for (int i = 1; i < stocks.size(); i++) {
+                String nextSymbol = stocks.get(i).getSymbol();
+                int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
+                prevSymbol = nextSymbol;
+                assertTrue(symbolCompare == comparison);
+            }
+        }
+    }
+
+    /**
      * Tests user stocks can be ordered by value
      */
     @Test
@@ -188,6 +208,25 @@ public class StockViewSortIT {
             setupTest(direction, property);
             List<UserStock> userStocks = getOrderedUserStocks();
             userStocks.forEach(userStock -> assertTrue(firstExpectedValue.compareTo(userStock.getCloseValue()) == comparison));
+        }
+    }
+
+    /**
+     * Tests user stocks can be ordered by volume
+     */
+    @Test
+    public void testOrderUserStocksBySymbol() {
+        final String property = "symbol";
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupTest(direction, property);
+            List<UserStock> stocks = getOrderedUserStocks();
+            String prevSymbol = stocks.get(0).getSymbol();
+            for (int i = 1; i < stocks.size(); i++) {
+                String nextSymbol = stocks.get(i).getSymbol();
+                int symbolCompare = prevSymbol.compareTo(nextSymbol) < 0 ? -1 : 1;
+                prevSymbol = nextSymbol;
+                assertTrue(symbolCompare == comparison);
+            }
         }
     }
 
