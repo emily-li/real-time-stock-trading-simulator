@@ -68,7 +68,7 @@ public class StockViewSortIT {
     }
 
     /**
-     * Tests stocks can be ordered by value descending
+     * Tests stocks can be ordered by value
      */
     @Test
     public void testOrderStocksByValue() {
@@ -79,6 +79,36 @@ public class StockViewSortIT {
             List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
 
             stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getValue()) == comparison));
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by open value
+     */
+    @Test
+    public void testOrderStocksByOpenValue() {
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupAssert(direction, "stockAsOfDetails.openValue");
+
+            stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
+            List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+
+            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getOpenValue()) == comparison));
+        }
+    }
+
+    /**
+     * Tests stocks can be ordered by close value
+     */
+    @Test
+    public void testOrderStocksByCloseValue() {
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            setupAssert(direction, "stockAsOfDetails.closeValue");
+
+            stockViewController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE, sort));
+            List<StockView> stocks = (List<StockView>) model.asMap().get(stockViewController.getStocksAttribute());
+
+            stocks.forEach(stockView -> assertTrue(firstExpectedValue.compareTo(stockView.getCloseValue()) == comparison));
         }
     }
 
