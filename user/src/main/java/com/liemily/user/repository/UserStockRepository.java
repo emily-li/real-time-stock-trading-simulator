@@ -14,4 +14,7 @@ public interface UserStockRepository extends JpaRepository<UserStock, UserStockI
 
     @Query
     List<UserStock> findByUsernameAndSymbolContainingIgnoreCase(String username, String symbol, Pageable stocksPageable);
+
+    @Query("FROM UserStock WHERE username = ?1 AND stockView.company.name LIKE %?2%")
+    List<UserStock> findByUsernameAndNameContainingIgnoreCase(String username, String name, Pageable stocksPageable);
 }

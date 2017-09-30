@@ -33,6 +33,10 @@ public class UserStockService {
         return userStockRepository.findByUsernameAndSymbolContainingIgnoreCase(username, symbol, stocksPageable);
     }
 
+    public List<UserStock> getUserStocksByName(String username, String name, Pageable stocksPageable) {
+        return userStockRepository.findByUsernameAndNameContainingIgnoreCase(username, name, stocksPageable);
+    }
+
     public void save(UserStock userStock) {
         userStockRepository.save(userStock);
     }

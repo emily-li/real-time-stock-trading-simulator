@@ -64,10 +64,12 @@ public class StocksController {
         String username = principal.getName();
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         List<UserStock> userStocks;
-        if (symbol == null) {
-            userStocks = userStockService.getUserStocks(username, stocksPageable);
-        } else {
+        if (symbol != null) {
             userStocks = userStockService.getUserStocksBySymbol(username, symbol, stocksPageable);
+        } else if (name != null) {
+            userStocks = userStockService.getUserStocksByName(username, name, stocksPageable);
+        } else {
+            userStocks = userStockService.getUserStocks(username, stocksPageable);
         }
         model.addAttribute(STOCKS_MODEL_ATTRIBUTE, userStocks);
         return STOCKS_PAGE;
