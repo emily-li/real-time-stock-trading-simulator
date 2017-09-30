@@ -161,6 +161,17 @@ public class StocksControllerSearchIT {
     }
 
     /**
+     * C.S18 The user should be able to search user stocks given a stock value, greater or lesser than the variable
+     */
+    @Test
+    public void testSearchUserStocksByValue() {
+        setupSellableTest(null, null, LT_OP, null, new BigDecimal(2));
+        userStocks.forEach(userStock -> assertTrue(userStock.getValue().compareTo(new BigDecimal(2)) == comparison));
+        setupSellableTest(null, null, GT_OP, null, new BigDecimal(1));
+        userStocks.forEach(userStock -> assertTrue(userStock.getValue().compareTo(new BigDecimal(1)) == comparison));
+    }
+
+    /**
      * C.S19 The user should be able to search stocks given a volume, greater or lesser than the variable
      */
     @Test
@@ -178,7 +189,7 @@ public class StocksControllerSearchIT {
     private void setupSellableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value) {
         model = new ExtendedModelMap();
         comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value);
         userStocks = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
     }
 }
