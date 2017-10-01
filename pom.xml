@@ -13,13 +13,15 @@
 
     <modules>
         <module>real-time-stock-trading-simulator-web</module>
+
+        <module>broker</module>
+        <module>company</module>
         <module>stock</module>
         <module>stock-generation</module>
         <module>stock-modulation</module>
         <module>stock-updater</module>
-        <module>user</module>
         <module>trade</module>
-        <module>company</module>
+        <module>user</module>
     </modules>
 
     <properties>
