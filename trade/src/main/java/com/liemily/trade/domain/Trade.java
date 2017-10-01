@@ -1,6 +1,5 @@
 package com.liemily.trade.domain;
 
-import com.liemily.user.domain.User;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -19,9 +18,6 @@ public class Trade {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date tradeDateTime;
-    @ManyToOne
-    @JoinColumn(name = "username", insertable = false, updatable = false)
-    private User user;
 
     @SuppressWarnings("unused")
     private Trade() {
@@ -36,8 +32,8 @@ public class Trade {
         return tradeDateTime;
     }
 
-    public User getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
     public String getStockSymbol() {

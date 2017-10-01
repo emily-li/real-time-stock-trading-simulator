@@ -1,7 +1,6 @@
 package com.liemily.trade.config;
 
 import com.liemily.stock.config.StockConfig;
-import com.liemily.user.config.UserConfig;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan("com.liemily.trade")
 @EnableJpaRepositories("com.liemily.trade")
 @EntityScan("com.liemily.trade")
-@Import({StockConfig.class, UserConfig.class})
+@Import({StockConfig.class})
 @Lazy
 public class TradeConfig {
 }

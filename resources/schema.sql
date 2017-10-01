@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS company;
 DROP TABLE IF EXISTS stock;
 DROP TABLE IF EXISTS stock_as_of_details;
+DROP TABLE IF EXISTS USER;
 DROP TABLE IF EXISTS trade;
 DROP TABLE IF EXISTS user_stock;
 
@@ -22,7 +23,14 @@ CREATE TABLE IF NOT EXISTS stock_as_of_details (
 );
 
 CREATE TABLE IF NOT EXISTS USER (
-    username        VARCHAR(50)     NOT NULL    PRIMARY KEY
+    username        VARCHAR(50)     NOT NULL    PRIMARY KEY,
+    credits         DECIMAL(65, 2)
+);
+
+CREATE TABLE IF NOT EXISTS user_stock (
+  username          VARCHAR(50)     NOT NULL,
+  symbol            VARCHAR(50)     NOT NULL,
+  volume            INT             NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS trade (
@@ -30,12 +38,6 @@ CREATE TABLE IF NOT EXISTS trade (
   stock_symbol      VARCHAR(50)     NOT NULL,
   username          VARCHAR(50)     NOT NULL,
   trade_date_time   DATETIME(6)     NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_stock (
-  username          VARCHAR(50)     NOT NULL,
-  symbol            VARCHAR(50)     NOT NULL,
-  volume            INT             NOT NULL
 );
 
 CREATE OR REPLACE VIEW stock_view AS
