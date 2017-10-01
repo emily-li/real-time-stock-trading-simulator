@@ -31,6 +31,9 @@ public class ReportGenerationService {
             case STOCK:
                 stockDetails = stockViewService.getStocksBySymbolOrderByName(reportRequest.getSearchTerms());
                 break;
+            case USER_STOCK:
+                stockDetails = userStockService.getUserStocksOrderByCompanyName(reportRequest.getSearchTerms()[0]);
+                break;
         }
         return new Report(stockDetails);
     }

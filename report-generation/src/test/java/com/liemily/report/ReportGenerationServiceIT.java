@@ -5,6 +5,10 @@ import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockDetails;
 import com.liemily.stock.service.StockService;
+import com.liemily.user.UserStockService;
+import com.liemily.user.domain.User;
+import com.liemily.user.domain.UserStock;
+import com.liemily.user.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,9 +38,14 @@ public class ReportGenerationServiceIT {
     private CompanyService companyService;
     @Autowired
     private StockService stockService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserStockService userStockService;
 
     private Company company1;
     private Company company2;
+    private User user;
 
     @Before
     public void setup() {
@@ -49,6 +58,13 @@ public class ReportGenerationServiceIT {
         Stock stock2 = new Stock(company2.getSymbol(), new BigDecimal(1), 0);
         stockService.save(stock1);
         stockService.save(stock2);
+
+        user = new User(UUID.randomUUID().toString());
+        userService.save(user);
+        UserStock userStock1 = new UserStock(user.getUsername(), company1.getSymbol(), 1);
+        UserStock userStock2 = new UserStock(user.getUsername(), company2.getSymbol(), 1);
+        userStockService.save(userStock1);
+        userStockService.save(userStock2);
     }
 
     /**
@@ -57,6 +73,19 @@ public class ReportGenerationServiceIT {
     @Test
     public void testCompanyStockReportOrderedByCompanyName() {
         ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol(), company2.getSymbol());
+        assertOrderedByCompanyName(reportRequest);
+    }
+
+    /**
+     * S.R02 The current shares report should be ordered by company name
+     */
+    @Test
+    public void testUserStocksReportOrderedByCompanyName() {
+        ReportRequest reportRequest = new ReportRequest(ReportName.USER_STOCK, user.getUsername());
+        assertOrderedByCompanyName(reportRequest);
+    }
+
+    private void assertOrderedByCompanyName(ReportRequest reportRequest) {
         Report report = reportGenerationService.generate(reportRequest);
 
         List<? extends StockDetails> stockDetails = report.getStockDetails();
@@ -67,13 +96,6 @@ public class ReportGenerationServiceIT {
         List<String> orderedCompanyNames = new ArrayList<>(companyNames);
         Collections.sort(orderedCompanyNames);
         assertEquals(orderedCompanyNames, companyNames);
-    }
-
-    /**
-     * S.R02 The current shares report should be ordered by company name
-     */
-    @Test
-    public void testSharesReportOrderedByCompanyName() {
     }
 
     /**

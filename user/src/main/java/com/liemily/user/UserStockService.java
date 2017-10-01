@@ -30,6 +30,10 @@ public class UserStockService {
         return userStockRepository.findByUsername(username, pageable);
     }
 
+    public List<UserStock> getUserStocksOrderByCompanyName(String username) {
+        return userStockRepository.findByUsernameOrderByStockViewCompanyName(username);
+    }
+
     public List<UserStock> getUserStocksBySymbol(String username, String symbol, Pageable stocksPageable) {
         return userStockRepository.findByUsernameAndSymbolContainingIgnoreCase(username, symbol, stocksPageable);
     }
