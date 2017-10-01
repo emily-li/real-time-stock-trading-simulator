@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
  *
  * Created by Emily Li on 22/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockViewIT {

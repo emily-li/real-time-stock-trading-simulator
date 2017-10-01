@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNotEquals;
  *
  * See "docs/FDM05-05 Functional Test Plan.doc" for more documentation
  */
+@SuppressWarnings("WeakerAccess")
 public class StockModulationRandomiserTest {
     private StockModulationRandomiser stockModulationRandomiser;
 

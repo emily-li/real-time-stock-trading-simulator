@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({TradeConfig.class, UserConfig.class})
-public class RealTimeStockTradingSimulatorConfig {
+class RealTimeStockTradingSimulatorConfig {
 }

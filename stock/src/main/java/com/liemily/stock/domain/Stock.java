@@ -32,10 +32,6 @@ public class Stock {
         return symbol;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
     public BigDecimal getValue() {
         return value;
     }
@@ -46,10 +42,6 @@ public class Stock {
 
     public void setValue(BigDecimal value) {
         this.value = value;
-    }
-
-    public String getName() {
-        return company.getName();
     }
 
     @Override

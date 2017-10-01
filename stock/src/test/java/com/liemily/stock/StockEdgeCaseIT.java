@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
  * Ensuring that saved values are persisted correctly
  * Created by Emily Li on 16/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockEdgeCaseIT {

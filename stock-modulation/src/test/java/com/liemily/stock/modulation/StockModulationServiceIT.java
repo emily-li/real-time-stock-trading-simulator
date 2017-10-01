@@ -12,7 +12,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -21,6 +23,7 @@ import static org.junit.Assert.assertTrue;
  *
  * See "docs/FDM05-05 Functional Test Plan.doc" for more documentation
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockModulationServiceIT {
@@ -47,9 +50,26 @@ public class StockModulationServiceIT {
     public void testStocksModulation() throws Exception {
         BigDecimal prevValue = stockRepository.findOne(symbol).getValue();
         for (int i = 0; i < 3; i++) {
-            Thread.sleep(updateRateMs);
+            await().atMost(updateRateMs + 1000, TimeUnit.MILLISECONDS).until(new StockChangeWaiter(prevValue));
             BigDecimal currValue = stockRepository.findOne(symbol).getValue();
             assertTrue(prevValue.compareTo(currValue) != 0);
+            prevValue = stockRepository.findOne(symbol).getValue();
+        }
+    }
+
+    private class StockChangeWaiter implements Runnable {
+        private BigDecimal prevValue;
+
+        public StockChangeWaiter(BigDecimal prevValue) {
+            this.prevValue = prevValue;
+        }
+
+        @Override
+        public void run() {
+            BigDecimal currValue = stockRepository.findOne(symbol).getValue();
+            while (prevValue.compareTo(currValue) == 0) {
+                currValue = stockRepository.findOne(symbol).getValue();
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ import java.util.Random;
 
 @Component
 @Lazy
-public class StockGenerationRandomiser {
+class StockGenerationRandomiser {
     private Random random;
     private int minValue;
     private int maxValue;

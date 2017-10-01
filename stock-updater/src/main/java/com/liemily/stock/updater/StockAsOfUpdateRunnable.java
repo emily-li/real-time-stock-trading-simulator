@@ -18,13 +18,13 @@ import java.util.Map;
 /**
  * Created by Emily Li on 18/09/2017.
  */
-public class StockAsOfUpdateRunnable implements Runnable {
+class StockAsOfUpdateRunnable implements Runnable {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
     private final StockRepository stockRepository;
     private final StockAsOfDetailsRepository stockAsOfDetailsRepository;
     private final STOCK_AS_OF asOf;
 
-    public StockAsOfUpdateRunnable(StockRepository stockRepository, StockAsOfDetailsRepository stockAsOfDetailsRepository, STOCK_AS_OF asOf) {
+    StockAsOfUpdateRunnable(StockRepository stockRepository, StockAsOfDetailsRepository stockAsOfDetailsRepository, STOCK_AS_OF asOf) {
         this.stockRepository = stockRepository;
         this.stockAsOfDetailsRepository = stockAsOfDetailsRepository;
         this.asOf = asOf;

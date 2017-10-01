@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 @Component
 @Lazy
-public class StockModulator implements Runnable {
+class StockModulator implements Runnable {
     private StockService stockService;
     private StockModulationRandomiser stockModulationRandomiser;
 
@@ -35,6 +35,6 @@ public class StockModulator implements Runnable {
     }
 
     private double modulateValue(double initialValue) {
-        return initialValue * stockModulationRandomiser.numberGen();
+        return initialValue > 0 ? initialValue * stockModulationRandomiser.numberGen() : stockModulationRandomiser.numberGen();
     }
 }

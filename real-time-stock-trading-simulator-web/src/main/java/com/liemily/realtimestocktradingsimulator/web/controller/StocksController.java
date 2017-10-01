@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("stock")
-public class StocksController {
+class StocksController {
     private static final String STOCKS_MODEL_ATTRIBUTE = "stocks";
     private static final String STOCKS_PAGE = "stock";
     private StockViewService stockViewService;

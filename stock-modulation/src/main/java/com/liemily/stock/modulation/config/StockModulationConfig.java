@@ -13,7 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 @ComponentScan("com.liemily.stock.modulation")
 @Import(StockConfig.class)
 @Lazy
-public class StockModulationConfig {
+class StockModulationConfig {
     @Bean
     protected ScheduledExecutorService scheduledExecutorService() {
         return Executors.newSingleThreadScheduledExecutor();

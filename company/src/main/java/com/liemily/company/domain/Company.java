@@ -25,10 +25,6 @@ public class Company {
         return name;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
     public String getSymbol() {
         return symbol;
     }

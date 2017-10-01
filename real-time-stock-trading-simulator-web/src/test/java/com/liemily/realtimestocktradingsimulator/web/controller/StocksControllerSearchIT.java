@@ -53,8 +53,6 @@ public class StocksControllerSearchIT {
     private Model model;
     private String symbol;
     private String companyName;
-    private StockAsOfDetails stockAsOfDetails;
-    private String username;
     private Principal principal;
 
     private int comparison;
@@ -64,7 +62,7 @@ public class StocksControllerSearchIT {
     @Before
     public void setup() {
         model = new ExtendedModelMap();
-        username = UUID.randomUUID().toString();
+        String username = UUID.randomUUID().toString();
         principal = new UserPrincipal(username);
 
         symbol = UUID.randomUUID().toString().toUpperCase();
@@ -83,7 +81,7 @@ public class StocksControllerSearchIT {
         userStockService.save(userStock1);
         userStockService.save(userStock2);
 
-        stockAsOfDetails = new StockAsOfDetails(stock1);
+        StockAsOfDetails stockAsOfDetails = new StockAsOfDetails(stock1);
         stockAsOfDetails.setOpenValue(new BigDecimal(0));
         StockAsOfDetails stockAsOfDetails2 = new StockAsOfDetails(stock2);
         stockAsOfDetails2.setOpenValue(new BigDecimal(0));

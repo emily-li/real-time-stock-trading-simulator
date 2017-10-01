@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
  * Interacts with MySQL database for testing
  * Please see "docs/FDM05-05 Functional Test Plan.doc" for documentation
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockGenerationServiceIT {

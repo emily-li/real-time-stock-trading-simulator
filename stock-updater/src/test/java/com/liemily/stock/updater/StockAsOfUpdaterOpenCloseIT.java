@@ -16,6 +16,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by Emily Li on 20/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockAsOfUpdaterOpenCloseIT {

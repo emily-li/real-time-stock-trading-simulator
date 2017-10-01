@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Lazy
-public class StockModulationRandomiser {
-    public double numberGen() {
+class StockModulationRandomiser {
+    double numberGen() {
         return Math.random();
     }
 }

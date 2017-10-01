@@ -15,6 +15,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 /**
  * Created by Emily Li on 23/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 public class StockModulatorTest {
     private StockModulator stockModulator;
     private StockService stockService;

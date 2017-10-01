@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -44,7 +46,7 @@ public class StockModulationServiceTest {
         public void run() {
             try {
                 super.run();
-                Thread.sleep(SERVICE_RUN_TIME_MS);
+                await().atMost(SERVICE_RUN_TIME_MS, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

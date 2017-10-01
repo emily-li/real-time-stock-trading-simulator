@@ -11,5 +11,5 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @Lazy
 @Import(StockConfig.class)
-public class StockUpdaterConfig {
+class StockUpdaterConfig {
 }

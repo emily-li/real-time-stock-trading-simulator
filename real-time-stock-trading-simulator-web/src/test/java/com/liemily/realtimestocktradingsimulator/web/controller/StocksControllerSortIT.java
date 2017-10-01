@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
  * C.S20 The user should be able to order stocks in ascending or descending direction given a field
  * Created by Emily Li on 30/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StocksControllerSortIT {
@@ -227,10 +228,9 @@ public class StocksControllerSortIT {
                     if (prevName == null) {
                         prevName = name;
                     } else {
-                        String nextName = name;
-                        int symbolCompare = prevName.compareTo(nextName) < 0 ? -1 : 1;
+                        int symbolCompare = prevName.compareTo(name) < 0 ? -1 : 1;
                         assertTrue(symbolCompare == comparison);
-                        prevName = nextName;
+                        prevName = name;
                     }
                 }
             }

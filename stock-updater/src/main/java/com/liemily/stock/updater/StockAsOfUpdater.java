@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * Created by Emily Li on 18/09/2017.
  */
 @Component
-public class StockAsOfUpdater {
+class StockAsOfUpdater {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
     private static final long SCHEDULE_FREQUENCY = 24 * 60 * 60 * 1_000L;
 

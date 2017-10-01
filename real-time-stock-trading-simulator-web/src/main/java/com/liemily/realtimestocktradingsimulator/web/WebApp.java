@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableAutoConfiguration
-public class WebApp {
+class WebApp {
     public static void main(String[] args) {
         SpringApplication.run(WebApp.class, args);
     }

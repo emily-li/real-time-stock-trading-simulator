@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Emily Li on 19/09/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StockAsOfUpdaterIT {

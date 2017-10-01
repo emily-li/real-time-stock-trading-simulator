@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Created by Emily Li on 18/09/2017.
  */
 @SpringBootApplication
-public class StockUpdaterApp {
+class StockUpdaterApp {
     public static void main(String[] args) {
         SpringApplication.run(StockUpdaterApp.class, args);
     }
