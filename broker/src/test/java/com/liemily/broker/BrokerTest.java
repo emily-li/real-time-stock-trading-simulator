@@ -41,6 +41,7 @@ public class BrokerTest {
     /**
      * S.B01 The broker should receive user requests
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void testBrokerReceivesUserRequests() throws Exception {
         broker.process(trade);
