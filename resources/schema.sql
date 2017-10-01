@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS stock_as_of_details (
     close_value     DECIMAL(65, 2)
 );
 
+CREATE TABLE IF NOT EXISTS USER (
+    username        VARCHAR(50)     NOT NULL    PRIMARY KEY
+);
+
 CREATE TABLE IF NOT EXISTS trade (
   id                BIGINT          NOT NULL    PRIMARY KEY AUTO_INCREMENT,
   stock_symbol      VARCHAR(50)     NOT NULL,

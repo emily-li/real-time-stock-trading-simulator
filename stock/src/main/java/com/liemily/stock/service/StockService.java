@@ -19,6 +19,10 @@ public class StockService {
         this.stockRepository = stockRepository;
     }
 
+    public Stock getStock(String stockSymbol) {
+        return stockRepository.findOne(stockSymbol);
+    }
+
     public List<Stock> getStocks() {
         return stockRepository.findAll();
     }

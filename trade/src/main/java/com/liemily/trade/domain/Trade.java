@@ -39,4 +39,17 @@ public class Trade {
     public User getUser() {
         return user;
     }
+
+    public String getStockSymbol() {
+        return stockSymbol;
+    }
+
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "id=" + id +
+                ", stockSymbol='" + stockSymbol + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

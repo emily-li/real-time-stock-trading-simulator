@@ -12,4 +12,7 @@ import java.util.Date;
 public interface TradeRepository extends JpaRepository<Trade, Integer> {
     @Query("SELECT MAX(tradeDateTime) FROM Trade WHERE stockSymbol = ?1")
     Date getLastTradeDateTime(String stockSymbol);
+
+    @Query
+    Trade findByStockSymbolAndUsername(String stock, String username);
 }

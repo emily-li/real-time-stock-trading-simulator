@@ -25,7 +25,7 @@ public class BrokerTest {
      * S.B01 The broker should receive user requests
      */
     @Test
-    public void testBrokerReceivesUserRequests() {
+    public void testBrokerReceivesUserRequests() throws Exception {
         broker.process(trade);
         verify(trade, atLeastOnce()).getUser();
     }

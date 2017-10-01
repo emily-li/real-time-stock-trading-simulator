@@ -22,4 +22,8 @@ public class TradeService {
     public void save(Trade trade) {
         tradeRepository.save(trade);
     }
+
+    public Trade getTrade(String stock, String username) {
+        return tradeRepository.findByStockSymbolAndUsername(stock, username);
+    }
 }
