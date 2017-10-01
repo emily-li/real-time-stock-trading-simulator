@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
  * See above in ../docs/FDM05-05 Functional Test Plan.doc
  * Created by Emily Li on 01/10/2017.
  */
+@SuppressWarnings("WeakerAccess")
 public class BrokerTest {
     private Broker broker;
     private Trade trade;

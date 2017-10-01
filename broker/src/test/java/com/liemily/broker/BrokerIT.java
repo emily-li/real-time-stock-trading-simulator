@@ -59,21 +59,10 @@ public class BrokerIT {
      */
     @Test(expected = InsufficientStockException.class)
     public void testBrokerVerifiesStockVolume() throws Exception {
-        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 0);
+        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
         stockService.save(stock);
-        trade = new Trade(stock.getSymbol(), user.getUsername(), 1);
+        trade = new Trade(stock.getSymbol(), user.getUsername(), 2);
         broker.process(trade);
-    }
-
-    /**
-     * Tests successful trade
-     */
-    @Test
-    public void testSuccessfulTrade() throws Exception {
-        broker.process(trade);
-
-        Trade successfulTrade = tradeService.getTrade(stock.getSymbol(), user.getUsername());
-        assertNotNull(successfulTrade);
     }
 
     /**
@@ -81,17 +70,21 @@ public class BrokerIT {
      */
     @Test(expected = InsufficientCreditException.class)
     public void testBrokerVerifiesCredits() throws Exception {
+        stock = new Stock(stock.getSymbol(), stock.getValue(), 2);
+        stockService.save(stock);
         trade = new Trade(stock.getSymbol(), user.getUsername(), 2);
         userService.save(user);
         broker.process(trade);
     }
 
     /**
-     * Transactions should be possible given the company symbol and desired stock quantity
+     * S.B05 Transactions should be possible given the company symbol and desired stock quantity
      */
     @Test
-    public void testTransaction() {
-
+    public void testTransaction() throws Exception {
+        broker.process(trade);
+        Trade successfulTrade = tradeService.getTrade(stock.getSymbol(), user.getUsername());
+        assertNotNull(successfulTrade);
     }
 
 }

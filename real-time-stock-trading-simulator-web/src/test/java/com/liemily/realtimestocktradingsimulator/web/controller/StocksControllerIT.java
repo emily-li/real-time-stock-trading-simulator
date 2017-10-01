@@ -88,7 +88,7 @@ public class StocksControllerIT {
         Stock stock = new Stock(company.getSymbol(), new BigDecimal(2), 1);
         stockService.save(stock);
 
-        trade = new Trade(company.getSymbol(), username);
+        trade = new Trade(company.getSymbol(), username, 1);
         tradeService.save(trade);
 
         expectedGains = new BigDecimal(2);

@@ -50,7 +50,7 @@ public class StockModulationServiceIT {
     public void testStocksModulation() throws Exception {
         BigDecimal prevValue = stockRepository.findOne(symbol).getValue();
         for (int i = 0; i < 3; i++) {
-            await().atMost(updateRateMs + 1000, TimeUnit.MILLISECONDS).until(new StockChangeWaiter(prevValue));
+            await().atMost(updateRateMs + 2000, TimeUnit.MILLISECONDS).until(new StockChangeWaiter(prevValue));
             BigDecimal currValue = stockRepository.findOne(symbol).getValue();
             assertTrue(prevValue.compareTo(currValue) != 0);
             prevValue = stockRepository.findOne(symbol).getValue();

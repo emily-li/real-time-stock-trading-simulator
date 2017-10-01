@@ -41,7 +41,7 @@ public class Broker {
         Stock stock = stockService.getStock(stockSymbol);
         User user = userService.getUser(trade.getUsername());
 
-        if (stock.getVolume() < 1) {
+        if (!sufficientStock(trade, stock)) {
             throw new InsufficientStockException("Insufficient stock for trade " + trade);
         }
         if (!sufficientUserCredits(trade, user, stock)) {
@@ -50,9 +50,13 @@ public class Broker {
         tradeService.save(trade);
     }
 
+    private boolean sufficientStock(Trade trade, Stock stock) {
+        return stock.getVolume() >= trade.getVolume();
+    }
+
     private boolean sufficientUserCredits(Trade trade, User user, Stock stock) {
         BigDecimal userCredits = user.getCredits();
         BigDecimal requiredCredits = stock.getValue().multiply(new BigDecimal(trade.getVolume()));
-        return userCredits.compareTo(requiredCredits) != -1;
+        return userCredits.compareTo(requiredCredits) >= 0;
     }
 }
