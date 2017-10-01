@@ -27,12 +27,14 @@ public class ReportGenerationService {
 
     public Report generate(ReportRequest reportRequest) {
         List<? extends StockDetails> stockDetails = new ArrayList<>();
+        String[] searchTerms = reportRequest.getSearchTerms();
+
         switch (reportRequest.getReportName()) {
             case STOCK:
-                stockDetails = stockViewService.getStocksBySymbolOrderByName(reportRequest.getSearchTerms());
+                stockDetails = searchTerms == null ? stockViewService.getStocksBySymbolOrderByName(searchTerms) : null;
                 break;
             case USER_STOCK:
-                stockDetails = userStockService.getUserStocksOrderByCompanyName(reportRequest.getSearchTerms()[0]);
+                stockDetails = userStockService.getUserStocksOrderByCompanyName(searchTerms[0]);
                 break;
         }
         return new Report(stockDetails);

@@ -19,10 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -30,6 +27,7 @@ import static org.junit.Assert.*;
  * Integration tests testing creation of reports from StockView and UserStock entities
  * Created by Emily Li on 01/10/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReportGenerationServiceIT {
@@ -49,6 +47,7 @@ public class ReportGenerationServiceIT {
     private Company company1;
     private Company company2;
     private User user;
+    private Collection<UserStock> userStocks;
 
     @Before
     public void setup() {
@@ -71,10 +70,10 @@ public class ReportGenerationServiceIT {
 
         user = new User(UUID.randomUUID().toString());
         userService.save(user);
-        UserStock userStock1 = new UserStock(user.getUsername(), company1.getSymbol(), 1);
-        UserStock userStock2 = new UserStock(user.getUsername(), company2.getSymbol(), 1);
-        userStockService.save(userStock1);
-        userStockService.save(userStock2);
+        userStocks = new ArrayList<>();
+        userStocks.add(new UserStock(user.getUsername(), company1.getSymbol(), 1));
+        userStocks.add(new UserStock(user.getUsername(), company2.getSymbol(), 1));
+        userStockService.save(userStocks);
     }
 
     /**
@@ -131,7 +130,9 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testUserStockReport() {
-
+        ReportRequest reportRequest = new ReportRequest(ReportName.USER_STOCK, user.getUsername());
+        Report report = reportGenerationService.generate(reportRequest);
+        assertTrue(report.getStockDetails().containsAll(userStocks));
     }
 
     /**
@@ -139,7 +140,14 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCompanyStockReport() {
+        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK);
+        Report report = reportGenerationService.generate(reportRequest);
 
+        Collection<String> stocks = new ArrayList<>();
+        report.getStockDetails().forEach(stockDetails -> stocks.add(stockDetails.getSymbol()));
+
+        assertTrue(stocks.contains(company1.getSymbol()));
+        assertTrue(stocks.contains(company2.getSymbol()));
     }
 
     /**
