@@ -1,6 +1,6 @@
 package com.liemily.report;
 
-import com.liemily.stock.domain.StockView;
+import com.liemily.stock.domain.StockDetails;
 import com.liemily.stock.service.StockViewService;
 import com.liemily.user.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,12 @@ public class ReportGenerationService {
     }
 
     public Report generate(ReportRequest reportRequest) {
-        List<StockView> stockViews = new ArrayList<>();
+        List<? extends StockDetails> stockDetails = new ArrayList<>();
         switch (reportRequest.getReportName()) {
             case STOCK:
-                stockViews = stockViewService.getStocksBySymbolOrderByName(reportRequest.getSearchTerms());
+                stockDetails = stockViewService.getStocksBySymbolOrderByName(reportRequest.getSearchTerms());
                 break;
         }
-        return new Report(stockViews);
+        return new Report(stockDetails);
     }
 }

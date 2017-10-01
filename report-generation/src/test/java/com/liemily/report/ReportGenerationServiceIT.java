@@ -3,7 +3,7 @@ package com.liemily.report;
 import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
-import com.liemily.stock.domain.StockView;
+import com.liemily.stock.domain.StockDetails;
 import com.liemily.stock.service.StockService;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,11 +59,11 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol(), company2.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<StockView> stockViews = report.getStockViews();
-        assertTrue(stockViews.size() > 0);
+        List<? extends StockDetails> stockDetails = report.getStockDetails();
+        assertTrue(stockDetails.size() > 0);
 
         List<String> companyNames = new ArrayList<>();
-        stockViews.forEach(stockView -> companyNames.add(stockView.getName()));
+        stockDetails.forEach(stockDetail -> companyNames.add(stockDetail.getName()));
         List<String> orderedCompanyNames = new ArrayList<>(companyNames);
         Collections.sort(orderedCompanyNames);
         assertEquals(orderedCompanyNames, companyNames);
