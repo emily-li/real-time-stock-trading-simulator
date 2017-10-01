@@ -23,6 +23,14 @@ public class StockViewService {
         this.stockViewRepository = stockViewRepository;
     }
 
+    public List<StockView> getStocksWithVolumeLessThan(int volume, Pageable pageable) {
+        return stockViewRepository.findByStockVolumeLessThan(volume, pageable);
+    }
+
+    public List<StockView> getStocksWithVolumeGreaterThan(int volume, Pageable pageable) {
+        return stockViewRepository.findByStockVolumeGreaterThan(volume, pageable);
+    }
+
     public List<StockView> getStocksWithVolume(Pageable pageable) {
         return stockViewRepository.findByStockVolumeGreaterThan(0, pageable);
     }
@@ -35,23 +43,23 @@ public class StockViewService {
         return stockViewRepository.findBySymbolContainingIgnoreCaseAndStockVolumeGreaterThan(symbol, 0, pageable);
     }
 
-    public List<StockView> getStocksWithVolumeByName(String name, Pageable stocksPageable) {
-        return stockViewRepository.findByCompanyNameContainingIgnoreCaseAndStockVolumeGreaterThan(name, 0, stocksPageable);
+    public List<StockView> getStocksWithVolumeByName(String name, Pageable pageable) {
+        return stockViewRepository.findByCompanyNameContainingIgnoreCaseAndStockVolumeGreaterThan(name, 0, pageable);
     }
 
-    public List<StockView> getStocksWithVolumeByGainsLessThan(BigDecimal gains, Pageable stocksPageable) {
-        return stockViewRepository.findByGainsLessThanAndStockVolumeGreaterThan(gains, 0, stocksPageable);
+    public List<StockView> getStocksWithVolumeByGainsLessThan(BigDecimal gains, Pageable pageable) {
+        return stockViewRepository.findByGainsLessThanAndStockVolumeGreaterThan(gains, 0, pageable);
     }
 
-    public List<StockView> getStocksWithVolumeByGainsGreaterThan(BigDecimal gains, Pageable stocksPageable) {
-        return stockViewRepository.findByGainsGreaterThanAndStockVolumeGreaterThan(gains, 0, stocksPageable);
+    public List<StockView> getStocksWithVolumeByGainsGreaterThan(BigDecimal gains, Pageable pageable) {
+        return stockViewRepository.findByGainsGreaterThanAndStockVolumeGreaterThan(gains, 0, pageable);
     }
 
-    public List<StockView> getStocksWithVolumeByValueLessThan(BigDecimal value, Pageable stocksPageable) {
-        return stockViewRepository.findByStockValueLessThanAndStockVolumeGreaterThan(value, 0, stocksPageable);
+    public List<StockView> getStocksWithVolumeByValueLessThan(BigDecimal value, Pageable pageable) {
+        return stockViewRepository.findByStockValueLessThanAndStockVolumeGreaterThan(value, 0, pageable);
     }
 
-    public List<StockView> getStocksWithVolumeByValueGreaterThan(BigDecimal value, Pageable stocksPageable) {
-        return stockViewRepository.findByStockValueGreaterThanAndStockVolumeGreaterThan(value, 0, stocksPageable);
+    public List<StockView> getStocksWithVolumeByValueGreaterThan(BigDecimal value, Pageable pageable) {
+        return stockViewRepository.findByStockValueGreaterThanAndStockVolumeGreaterThan(value, 0, pageable);
     }
 }

@@ -16,20 +16,23 @@ public interface StockViewRepository extends JpaRepository<StockView, String> {
     List<StockView> findByStockVolumeGreaterThan(int volume, Pageable pageable);
 
     @Query
-    List<StockView> findBySymbolContainingIgnoreCaseAndStockVolumeGreaterThan(String symbol, int i, Pageable pageable);
+    List<StockView> findByStockVolumeLessThan(int volume, Pageable pageable);
 
     @Query
-    List<StockView> findByCompanyNameContainingIgnoreCaseAndStockVolumeGreaterThan(String name, int i, Pageable stocksPageable);
+    List<StockView> findBySymbolContainingIgnoreCaseAndStockVolumeGreaterThan(String symbol, int volume, Pageable pageable);
 
     @Query
-    List<StockView> findByGainsLessThanAndStockVolumeGreaterThan(BigDecimal gains, int i, Pageable stocksPageable);
+    List<StockView> findByCompanyNameContainingIgnoreCaseAndStockVolumeGreaterThan(String name, int volume, Pageable stocksPageable);
 
     @Query
-    List<StockView> findByGainsGreaterThanAndStockVolumeGreaterThan(BigDecimal gains, int i, Pageable stocksPageable);
+    List<StockView> findByGainsLessThanAndStockVolumeGreaterThan(BigDecimal gains, int volume, Pageable stocksPageable);
 
     @Query
-    List<StockView> findByStockValueLessThanAndStockVolumeGreaterThan(BigDecimal volume, int i, Pageable stocksPageable);
+    List<StockView> findByGainsGreaterThanAndStockVolumeGreaterThan(BigDecimal gains, int volume, Pageable stocksPageable);
 
     @Query
-    List<StockView> findByStockValueGreaterThanAndStockVolumeGreaterThan(BigDecimal volume, int i, Pageable stocksPageable);
+    List<StockView> findByStockValueLessThanAndStockVolumeGreaterThan(BigDecimal value, int volume, Pageable stocksPageable);
+
+    @Query
+    List<StockView> findByStockValueGreaterThanAndStockVolumeGreaterThan(BigDecimal value, int volume, Pageable stocksPageable);
 }
