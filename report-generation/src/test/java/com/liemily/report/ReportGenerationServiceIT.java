@@ -3,7 +3,9 @@ package com.liemily.report;
 import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
+import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockDetails;
+import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.User;
@@ -22,8 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Integration tests testing creation of reports from StockView and UserStock entities
@@ -42,6 +43,8 @@ public class ReportGenerationServiceIT {
     private UserService userService;
     @Autowired
     private UserStockService userStockService;
+    @Autowired
+    private StockAsOfDetailsRepository stockAsOfDetailsRepository;
 
     private Company company1;
     private Company company2;
@@ -58,6 +61,13 @@ public class ReportGenerationServiceIT {
         Stock stock2 = new Stock(company2.getSymbol(), new BigDecimal(1), 0);
         stockService.save(stock1);
         stockService.save(stock2);
+
+        StockAsOfDetails stockAsOfDetails1 = new StockAsOfDetails(stock1);
+        stockAsOfDetails1.setOpenValue(new BigDecimal(1));
+        StockAsOfDetails stockAsOfDetails2 = new StockAsOfDetails(stock2);
+        stockAsOfDetails1.setOpenValue(new BigDecimal(1));
+        stockAsOfDetailsRepository.save(stockAsOfDetails1);
+        stockAsOfDetailsRepository.save(stockAsOfDetails2);
 
         user = new User(UUID.randomUUID().toString());
         userService.save(user);
@@ -103,7 +113,17 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testReportFields() {
+        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol());
+        Report report = reportGenerationService.generate(reportRequest);
 
+        List<? extends StockDetails> stockDetailLists = report.getStockDetails();
+        for (StockDetails stockDetails : stockDetailLists) {
+            assertNotNull(stockDetails.getSymbol());
+            assertNotNull(stockDetails.getName());
+            assertNotNull(stockDetails.getValue());
+            assertTrue(stockDetails.getVolume() > -1);
+            assertNotNull(stockDetails.getGains());
+        }
     }
 
     /**
