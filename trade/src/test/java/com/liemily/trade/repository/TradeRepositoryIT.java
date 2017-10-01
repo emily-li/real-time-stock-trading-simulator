@@ -32,11 +32,11 @@ public class TradeRepositoryIT {
     public void testGetLastTrade() {
         String stockSymbol = UUID.randomUUID().toString();
         String username = UUID.randomUUID().toString();
-        Trade trade1 = new Trade(stockSymbol, username);
+        Trade trade1 = new Trade(stockSymbol, username, 1);
         tradeRepository.save(trade1);
-        Trade trade2 = new Trade(stockSymbol, username);
+        Trade trade2 = new Trade(stockSymbol, username, 1);
         tradeRepository.save(trade2);
-        Trade trade3 = new Trade(UUID.randomUUID().toString(), username);
+        Trade trade3 = new Trade(UUID.randomUUID().toString(), username, 1);
         tradeRepository.save(trade3);
 
         Date lastTradeDateTime = tradeRepository.getLastTradeDateTime(stockSymbol);

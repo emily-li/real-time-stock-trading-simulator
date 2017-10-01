@@ -33,7 +33,7 @@ public class BrokerTest {
         UserService userService = mock(UserService.class);
         when(userService.getUser(user.getUsername())).thenReturn(user);
 
-        trade = spy(new Trade(stock.getSymbol(), user.getUsername()));
+        trade = spy(new Trade(stock.getSymbol(), user.getUsername(), 1));
         broker = new Broker(stockService, mock(TradeService.class), userService);
     }
 

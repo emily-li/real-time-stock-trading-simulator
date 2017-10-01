@@ -46,12 +46,12 @@ public class BrokerIT {
     public void setup() {
         String username = UUID.randomUUID().toString();
         user = new User(username);
-        user.setCredits(new BigDecimal(1));
+        user.setCredits(new BigDecimal(9));
         userService.save(user);
 
-        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
+        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(5), 1);
         stockService.save(stock);
-        trade = new Trade(stock.getSymbol(), user.getUsername());
+        trade = new Trade(stock.getSymbol(), user.getUsername(), 1);
     }
 
     /**
@@ -59,9 +59,9 @@ public class BrokerIT {
      */
     @Test(expected = InsufficientStockException.class)
     public void testBrokerVerifiesStockVolume() throws Exception {
-        Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 0);
+        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 0);
         stockService.save(stock);
-        Trade trade = new Trade(stock.getSymbol(), user.getUsername());
+        trade = new Trade(stock.getSymbol(), user.getUsername(), 1);
         broker.process(trade);
     }
 
@@ -81,7 +81,7 @@ public class BrokerIT {
      */
     @Test(expected = InsufficientCreditException.class)
     public void testBrokerVerifiesCredits() throws Exception {
-        user.setCredits(new BigDecimal(0));
+        trade = new Trade(stock.getSymbol(), user.getUsername(), 2);
         userService.save(user);
         broker.process(trade);
     }

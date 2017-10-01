@@ -15,6 +15,7 @@ public class Trade {
     private int id;
     private String stockSymbol;
     private String username;
+    private int volume;
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date tradeDateTime;
@@ -23,9 +24,10 @@ public class Trade {
     private Trade() {
     }
 
-    public Trade(String stockSymbol, String username) {
+    public Trade(String stockSymbol, String username, int volume) {
         this.stockSymbol = stockSymbol;
         this.username = username;
+        this.volume = volume;
     }
 
     public Date getTradeDateTime() {
@@ -38,6 +40,10 @@ public class Trade {
 
     public String getStockSymbol() {
         return stockSymbol;
+    }
+
+    public int getVolume() {
+        return volume;
     }
 
     @Override

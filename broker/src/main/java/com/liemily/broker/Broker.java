@@ -39,16 +39,20 @@ public class Broker {
     public void process(Trade trade) throws BrokerException {
         String stockSymbol = trade.getStockSymbol();
         Stock stock = stockService.getStock(stockSymbol);
+        User user = userService.getUser(trade.getUsername());
 
         if (stock.getVolume() < 1) {
             throw new InsufficientStockException("Insufficient stock for trade " + trade);
         }
-
-        String username = trade.getUsername();
-        User user = userService.getUser(username);
-        if (user.getCredits().compareTo(new BigDecimal(1)) == -1) {
+        if (!sufficientUserCredits(trade, user, stock)) {
             throw new InsufficientCreditException("Insufficient credits for trade " + trade);
         }
         tradeService.save(trade);
+    }
+
+    private boolean sufficientUserCredits(Trade trade, User user, Stock stock) {
+        BigDecimal userCredits = user.getCredits();
+        BigDecimal requiredCredits = stock.getValue().multiply(new BigDecimal(trade.getVolume()));
+        return userCredits.compareTo(requiredCredits) != -1;
     }
 }

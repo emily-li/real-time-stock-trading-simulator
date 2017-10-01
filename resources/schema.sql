@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS trade (
   id                BIGINT          NOT NULL    PRIMARY KEY AUTO_INCREMENT,
   stock_symbol      VARCHAR(50)     NOT NULL,
   username          VARCHAR(50)     NOT NULL,
+  volume            INT             NOT NULL,
   trade_date_time   DATETIME(6)     NOT NULL
 );
 
