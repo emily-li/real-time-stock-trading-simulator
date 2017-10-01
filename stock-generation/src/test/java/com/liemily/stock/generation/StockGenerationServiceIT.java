@@ -71,12 +71,24 @@ public class StockGenerationServiceIT {
      * S.S02 - Stocks should be generated with values between £5 and £550
      */
     @Test
-    public void testStocksValuesGeneratedWithRequirementsRange() {
-        BigDecimal value = persistedStockView.getValue();
-        boolean ge5 = value.compareTo(new BigDecimal(5)) >= 0;
-        boolean le550 = value.compareTo(new BigDecimal(550)) <= 0;
-        assertTrue(ge5);
-        assertTrue(le550);
+    public void testStocksValuesGeneratedWithRequirementsRange() throws Exception {
+        BigDecimal prevValue = null;
+        for (int i = 0; i < 5; i++) {
+            BigDecimal value = persistedStockView.getValue();
+            boolean ge5 = value.compareTo(new BigDecimal(5)) >= 0;
+            boolean le550 = value.compareTo(new BigDecimal(550)) <= 0;
+
+            assertTrue(ge5);
+            assertTrue(le550);
+            if (prevValue != null) {
+                assertTrue(prevValue.compareTo(value) != 0);
+            }
+
+            prevValue = value;
+            stockId = UUID.randomUUID().toString();
+            stockGenerationService.generateStock(stockId);
+            persistedStockView = stockViewRepository.findOne(stockId);
+        }
     }
 
     /**

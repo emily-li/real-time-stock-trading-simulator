@@ -7,23 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 @Lazy
 public class StockGenerationService {
     private StockRepository stockRepository;
+    private StockGenerationRandomiser stockGenerationRandomiser;
 
     @Autowired
-    public StockGenerationService(StockRepository stockRepository) {
+    public StockGenerationService(StockRepository stockRepository, StockGenerationRandomiser stockGenerationRandomiser) {
         this.stockRepository = stockRepository;
+        this.stockGenerationRandomiser = stockGenerationRandomiser;
     }
 
     void generateStock(String stockId) throws StockGenerationException {
         if (stockRepository.exists(stockId)) {
             throw new StockGenerationException("Stock already exists: " + stockId);
+        } else {
+            Stock stock = stockGenerationRandomiser.randomise(stockId);
+            stockRepository.save(stock);
         }
-        Stock stock = new Stock(stockId, new BigDecimal(550), 2500000);
-        stockRepository.save(stock);
     }
 }
