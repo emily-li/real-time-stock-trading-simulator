@@ -1,5 +1,6 @@
 package com.liemily.broker;
 
+import com.liemily.broker.exception.InsufficientCreditException;
 import com.liemily.broker.exception.InsufficientStockException;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.service.StockService;
@@ -37,13 +38,20 @@ public class BrokerIT {
     @Autowired
     private UserService userService;
 
-    private String username;
+    private User user;
+    private Stock stock;
+    private Trade trade;
 
     @Before
     public void setup() {
-        username = UUID.randomUUID().toString();
-        User user = new User(username);
+        String username = UUID.randomUUID().toString();
+        user = new User(username);
+        user.setCredits(new BigDecimal(1));
         userService.save(user);
+
+        stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
+        stockService.save(stock);
+        trade = new Trade(stock.getSymbol(), user.getUsername());
     }
 
     /**
@@ -53,7 +61,7 @@ public class BrokerIT {
     public void testBrokerVerifiesStockVolume() throws Exception {
         Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 0);
         stockService.save(stock);
-        Trade trade = new Trade(stock.getSymbol(), username);
+        Trade trade = new Trade(stock.getSymbol(), user.getUsername());
         broker.process(trade);
     }
 
@@ -62,21 +70,20 @@ public class BrokerIT {
      */
     @Test
     public void testSuccessfulTrade() throws Exception {
-        Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
-        stockService.save(stock);
-        Trade trade = new Trade(stock.getSymbol(), username);
         broker.process(trade);
 
-        Trade successfulTrade = tradeService.getTrade(stock.getSymbol(), username);
+        Trade successfulTrade = tradeService.getTrade(stock.getSymbol(), user.getUsername());
         assertNotNull(successfulTrade);
     }
 
     /**
      * S.B04 The broker should check if there is sufficient credits for the request
      */
-    @Test
-    public void testBrokerVerifiesCredits() {
-
+    @Test(expected = InsufficientCreditException.class)
+    public void testBrokerVerifiesCredits() throws Exception {
+        user.setCredits(new BigDecimal(0));
+        userService.save(user);
+        broker.process(trade);
     }
 
     /**

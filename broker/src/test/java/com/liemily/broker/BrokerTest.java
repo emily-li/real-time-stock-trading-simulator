@@ -1,8 +1,15 @@
 package com.liemily.broker;
 
+import com.liemily.stock.domain.Stock;
+import com.liemily.stock.service.StockService;
 import com.liemily.trade.domain.Trade;
+import com.liemily.trade.service.TradeService;
+import com.liemily.user.domain.User;
+import com.liemily.user.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.math.BigDecimal;
 
 import static org.mockito.Mockito.*;
 
@@ -17,8 +24,17 @@ public class BrokerTest {
 
     @Before
     public void setup() {
-        broker = new Broker();
-        trade = spy(new Trade("symbol", "username"));
+        Stock stock = new Stock("symbol", new BigDecimal(1), 1);
+        StockService stockService = mock(StockService.class);
+        when(stockService.getStock(stock.getSymbol())).thenReturn(stock);
+
+        User user = new User("username");
+        user.setCredits(new BigDecimal(1));
+        UserService userService = mock(UserService.class);
+        when(userService.getUser(user.getUsername())).thenReturn(user);
+
+        trade = spy(new Trade(stock.getSymbol(), user.getUsername()));
+        broker = new Broker(stockService, mock(TradeService.class), userService);
     }
 
     /**
@@ -27,6 +43,6 @@ public class BrokerTest {
     @Test
     public void testBrokerReceivesUserRequests() throws Exception {
         broker.process(trade);
-        verify(trade, atLeastOnce()).getUser();
+        verify(trade, atLeastOnce()).getUsername();
     }
 }

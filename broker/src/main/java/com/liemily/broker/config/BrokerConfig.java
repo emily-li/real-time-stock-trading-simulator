@@ -1,6 +1,7 @@
 package com.liemily.broker.config;
 
 import com.liemily.trade.config.TradeConfig;
+import com.liemily.user.config.UserConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Lazy;
  */
 @Configuration
 @ComponentScan("com.liemily.broker")
-@Import(TradeConfig.class)
+@Import({TradeConfig.class, UserConfig.class})
 @Lazy
 public class BrokerConfig {
 }
