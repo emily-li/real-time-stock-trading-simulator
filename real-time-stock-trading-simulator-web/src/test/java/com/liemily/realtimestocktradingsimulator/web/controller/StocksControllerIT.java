@@ -78,13 +78,17 @@ public class StocksControllerIT {
 
     @Before
     public void setup() {
+        model = new ExtendedModelMap();
+        username = UUID.randomUUID().toString();
+        principal = (UserPrincipal) () -> username;
+
         Company company = new Company(UUID.randomUUID().toString().toUpperCase(), UUID.randomUUID().toString());
         companyService.save(company);
 
         Stock stock = new Stock(company.getSymbol(), new BigDecimal(2), 1);
         stockService.save(stock);
 
-        trade = new Trade(company.getSymbol());
+        trade = new Trade(company.getSymbol(), username);
         tradeService.save(trade);
 
         expectedGains = new BigDecimal(2);
@@ -92,11 +96,6 @@ public class StocksControllerIT {
         stockAsOfDetails.setOpenValue(stock.getValue().subtract(expectedGains));
         stockAsOfDetails.setCloseValue(new BigDecimal(3));
         stockAsOfDetailsRepository.save(stockAsOfDetails);
-
-        model = new ExtendedModelMap();
-
-        username = UUID.randomUUID().toString();
-        principal = (UserPrincipal) () -> username;
 
         stockURL = "http://localhost:" + port + "/stock/buy";
         stockURLAll = stockURL + "?page=0&size=" + Integer.MAX_VALUE;

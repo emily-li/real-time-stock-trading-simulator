@@ -24,10 +24,11 @@ public class TradeIT {
 
     @Test
     public void testTradeDateTime() {
-        Trade trade1 = new Trade(UUID.randomUUID().toString());
+        String username = UUID.randomUUID().toString();
+        Trade trade1 = new Trade(UUID.randomUUID().toString(), username);
         tradeRepository.save(trade1);
         Date timeAfterFirstTrade = new Date();
-        Trade trade2 = new Trade(UUID.randomUUID().toString());
+        Trade trade2 = new Trade(UUID.randomUUID().toString(), username);
         tradeRepository.save(trade2);
 
         assertTrue(timeAfterFirstTrade.after(trade1.getTradeDateTime()));

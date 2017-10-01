@@ -1,17 +1,13 @@
 package com.liemily.broker;
 
-import com.liemily.broker.config.BrokerConfig;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * S.B02 The broker should validate the user request
  * Broker integration tests that verify correct Broker transactions
+ * See "../docs/FDM05-05 Functional Test Plan.doc"
  * Created by Emily Li on 01/10/2017.
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {BrokerConfig.class})
 public class BrokerIT {
 
     /**

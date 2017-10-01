@@ -96,8 +96,8 @@ public class StocksControllerSortIT {
         userStockService.save(smallUserStock);
         userStockService.save(smallerUserStock);
 
-        Trade smallTrade = new Trade(smallStock.getSymbol());
-        Trade smallerTrade = new Trade(smallerStock.getSymbol());
+        Trade smallTrade = new Trade(smallStock.getSymbol(), username);
+        Trade smallerTrade = new Trade(smallerStock.getSymbol(), username);
         tradeService.save(smallTrade);
         tradeService.save(smallerTrade);
     }

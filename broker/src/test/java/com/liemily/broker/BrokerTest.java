@@ -18,7 +18,7 @@ public class BrokerTest {
     @Before
     public void setup() {
         broker = new Broker();
-        trade = spy(new Trade("symbol"));
+        trade = spy(new Trade("symbol", "username"));
     }
 
     /**
@@ -28,13 +28,5 @@ public class BrokerTest {
     public void testBrokerReceivesUserRequests() {
         broker.process(trade);
         verify(trade, atLeastOnce()).getUser();
-    }
-
-    /**
-     * S.B02 The broker should validate the user request()
-     */
-    @Test
-    public void testBrokerValidatesUserRequest() {
-
     }
 }

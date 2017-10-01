@@ -15,18 +15,21 @@ public class Trade {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String stockSymbol;
+    private String username;
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date tradeDateTime;
     @ManyToOne
+    @JoinColumn(name = "username", insertable = false, updatable = false)
     private User user;
 
     @SuppressWarnings("unused")
     private Trade() {
     }
 
-    public Trade(String stockSymbol) {
+    public Trade(String stockSymbol, String username) {
         this.stockSymbol = stockSymbol;
+        this.username = username;
     }
 
     public Date getTradeDateTime() {
