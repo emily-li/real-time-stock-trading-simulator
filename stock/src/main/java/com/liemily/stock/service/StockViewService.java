@@ -62,4 +62,8 @@ public class StockViewService {
     public List<StockView> getStocksWithVolumeByValueGreaterThan(BigDecimal value, Pageable pageable) {
         return stockViewRepository.findByStockValueGreaterThanAndStockVolumeGreaterThan(value, 0, pageable);
     }
+
+    public List<StockView> getStocksBySymbolOrderByName(String[] symbols) {
+        return stockViewRepository.findBySymbolInOrderByCompanyName(symbols);
+    }
 }
