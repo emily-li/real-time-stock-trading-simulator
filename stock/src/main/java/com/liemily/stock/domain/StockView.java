@@ -13,49 +13,60 @@ import java.util.Date;
  * Created by Emily Li on 17/09/2017.
  */
 @Entity
-public class StockView {
+public class StockView implements StockDetails {
     @Id
     private String symbol;
     private BigDecimal gains;
     private Date lastTradeDateTime;
+
     @OneToOne
     @PrimaryKeyJoinColumn
     private Company company;
+
     @OneToOne
     @PrimaryKeyJoinColumn
     private Stock stock;
+
     @OneToOne
     @PrimaryKeyJoinColumn
     private StockAsOfDetails stockAsOfDetails;
 
+    @Override
     public String getSymbol() {
         return symbol;
     }
 
+    @Override
     public BigDecimal getGains() {
         return gains;
     }
 
+    @Override
     public Date getLastTradeDateTime() {
         return lastTradeDateTime;
     }
 
+    @Override
     public String getName() {
         return company == null ? null : company.getName();
     }
 
+    @Override
     public BigDecimal getValue() {
         return stock.getValue();
     }
 
+    @Override
     public int getVolume() {
         return stock.getVolume();
     }
 
+    @Override
     public BigDecimal getOpenValue() {
         return stockAsOfDetails == null ? null : stockAsOfDetails.getOpenValue();
     }
 
+    @Override
     public BigDecimal getCloseValue() {
         return stockAsOfDetails == null ? null : stockAsOfDetails.getCloseValue();
     }
@@ -69,10 +80,7 @@ public class StockView {
 
         return (symbol != null ? symbol.equals(stockView.symbol) : stockView.symbol == null)
                 && (gains != null ? gains.equals(stockView.gains) : stockView.gains == null)
-                && (lastTradeDateTime != null ? lastTradeDateTime.equals(stockView.lastTradeDateTime) : stockView.lastTradeDateTime == null)
-                && (company != null ? company.equals(stockView.company) : stockView.company == null)
-                && (stock != null ? stock.equals(stockView.stock) : stockView.stock == null)
-                && (stockAsOfDetails != null ? stockAsOfDetails.equals(stockView.stockAsOfDetails) : stockView.stockAsOfDetails == null);
+                && (lastTradeDateTime != null ? lastTradeDateTime.equals(stockView.lastTradeDateTime) : stockView.lastTradeDateTime == null);
     }
 
     @Override
@@ -80,9 +88,6 @@ public class StockView {
         int result = symbol != null ? symbol.hashCode() : 0;
         result = 31 * result + (gains != null ? gains.hashCode() : 0);
         result = 31 * result + (lastTradeDateTime != null ? lastTradeDateTime.hashCode() : 0);
-        result = 31 * result + (company != null ? company.hashCode() : 0);
-        result = 31 * result + (stock != null ? stock.hashCode() : 0);
-        result = 31 * result + (stockAsOfDetails != null ? stockAsOfDetails.hashCode() : 0);
         return result;
     }
 }

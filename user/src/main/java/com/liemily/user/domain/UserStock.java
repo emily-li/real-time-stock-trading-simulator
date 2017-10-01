@@ -1,5 +1,6 @@
 package com.liemily.user.domain;
 
+import com.liemily.stock.domain.StockDetails;
 import com.liemily.stock.domain.StockView;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 @Entity
 @IdClass(UserStockId.class)
-public class UserStock {
+public class UserStock implements StockDetails {
     @Id
     private String username;
     @Id
@@ -33,6 +34,46 @@ public class UserStock {
     }
 
     @Override
+    public String getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public String getName() {
+        return stockView == null ? null : stockView.getName();
+    }
+
+    @Override
+    public Date getLastTradeDateTime() {
+        return stockView.getLastTradeDateTime();
+    }
+
+    @Override
+    public BigDecimal getGains() {
+        return stockView.getGains();
+    }
+
+    @Override
+    public BigDecimal getValue() {
+        return stockView.getValue();
+    }
+
+    @Override
+    public BigDecimal getOpenValue() {
+        return stockView.getOpenValue();
+    }
+
+    @Override
+    public BigDecimal getCloseValue() {
+        return stockView.getCloseValue();
+    }
+
+    @Override
+    public int getVolume() {
+        return volume;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -50,37 +91,5 @@ public class UserStock {
         result = 31 * result + (symbol != null ? symbol.hashCode() : 0);
         result = 31 * result + volume;
         return result;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public String getName() {
-        return stockView == null ? null : stockView.getName();
-    }
-
-    public Date getLastTradeDateTime() {
-        return stockView.getLastTradeDateTime();
-    }
-
-    public BigDecimal getGains() {
-        return stockView.getGains();
-    }
-
-    public BigDecimal getValue() {
-        return stockView.getValue();
-    }
-
-    public BigDecimal getOpenValue() {
-        return stockView.getOpenValue();
-    }
-
-    public BigDecimal getCloseValue() {
-        return stockView.getCloseValue();
-    }
-
-    public int getVolume() {
-        return volume;
     }
 }
