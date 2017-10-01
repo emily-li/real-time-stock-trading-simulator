@@ -15,18 +15,25 @@ public class StockGenerationRandomiser {
     private Random random;
     private int minValue;
     private int maxValue;
+    private int minVol;
+    private int maxVol;
 
     @Autowired
     public StockGenerationRandomiser(@Value("${stock.generation.value.min}") int minValue,
                                      @Value("${stock.generation.value.max}") int maxValue,
+                                     @Value("${stock.generation.vol.min}") int minVol,
+                                     @Value("${stock.generation.vol.max}") int maxVol,
                                      Random random) {
         this.minValue = minValue;
         this.maxValue = maxValue;
+        this.minVol = minVol;
+        this.maxVol = maxVol;
         this.random = random;
     }
 
     Stock randomise(String stockId) {
         BigDecimal value = new BigDecimal(random.nextInt((maxValue - minValue) + 1) + minValue);
-        return new Stock(stockId, value, 2500000);
+        int vol = random.nextInt((maxVol - minVol) + 1) + minVol;
+        return new Stock(stockId, value, vol);
     }
 }

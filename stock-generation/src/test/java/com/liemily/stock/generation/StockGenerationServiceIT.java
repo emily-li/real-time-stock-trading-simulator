@@ -104,10 +104,22 @@ public class StockGenerationServiceIT {
      * S.S04 - Stocks should be generated with volumes between 2,000,000 and 1,000,000,000
      */
     @Test
-    public void testStocksVolumeGeneratedWithRequirementsRange() {
-        int volume = persistedStockView.getVolume();
-        assertTrue(volume >= 2000000);
-        assertTrue(volume <= 1000000000);
+    public void testStocksVolumeGeneratedWithRequirementsRange() throws Exception {
+        Integer prevVol = null;
+        for (int i = 0; i < 5; i++) {
+            int volume = persistedStockView.getVolume();
+
+            assertTrue(volume >= 2000000);
+            assertTrue(volume <= 1000000000);
+            if (prevVol != null) {
+                assertTrue(volume - prevVol != 0);
+            }
+
+            prevVol = volume;
+            stockId = UUID.randomUUID().toString();
+            stockGenerationService.generateStock(stockId);
+            persistedStockView = stockViewRepository.findOne(stockId);
+        }
     }
 
     /**
