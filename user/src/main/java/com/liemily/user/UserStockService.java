@@ -54,6 +54,14 @@ public class UserStockService {
         return userStockRepository.findByUsernameAndStockViewStockValueGreaterThan(username, value, stocksPageable);
     }
 
+    public List<UserStock> getUserStocksByVolumeLessThan(String username, int volume, Pageable stocksPageable) {
+        return userStockRepository.findByUsernameAndVolumeLessThan(username, volume, stocksPageable);
+    }
+
+    public List<UserStock> getUserStocksByVolumeGreaterThan(String username, int volume, Pageable stocksPageable) {
+        return userStockRepository.findByUsernameAndVolumeGreaterThan(username, volume, stocksPageable);
+    }
+
     public void save(UserStock userStock) {
         userStockRepository.save(userStock);
     }

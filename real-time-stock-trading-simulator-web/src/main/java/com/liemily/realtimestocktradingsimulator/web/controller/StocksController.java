@@ -71,7 +71,8 @@ public class StocksController {
                              @RequestParam(required = false) String name,
                              @RequestParam(required = false) String op,
                              @RequestParam(required = false) BigDecimal gains,
-                             @RequestParam(required = false) BigDecimal value) {
+                             @RequestParam(required = false) BigDecimal value,
+                             @RequestParam(required = false) Integer volume) {
         String username = principal.getName();
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
         List<UserStock> userStocks = null;
@@ -81,7 +82,7 @@ public class StocksController {
         } else if (name != null) {
             userStocks = userStockService.getUserStocksByName(username, name, stocksPageable);
         } else if (op != null) {
-            userStocks = searchSellableStocksWithOperator(principal, op, gains, value, stocksPageable);
+            userStocks = searchSellableStocksWithOperator(principal, op, gains, value, volume, stocksPageable);
         }
 
         userStocks = userStocks == null ? userStockService.getUserStocks(username, stocksPageable) : userStocks;
@@ -115,7 +116,7 @@ public class StocksController {
         return stockViews;
     }
 
-    private List<UserStock> searchSellableStocksWithOperator(Principal principal, String op, BigDecimal gains, BigDecimal value, Pageable stocksPageable) {
+    private List<UserStock> searchSellableStocksWithOperator(Principal principal, String op, BigDecimal gains, BigDecimal value, Integer volume, Pageable stocksPageable) {
         final String username = principal.getName();
         List<UserStock> userStocks = null;
 
@@ -124,13 +125,18 @@ public class StocksController {
                 userStocks = userStockService.getUserStocksByGainsLessThan(username, gains, stocksPageable);
             } else if (value != null) {
                 userStocks = userStockService.getUserStocksByValueLessThan(username, value, stocksPageable);
+            } else if (volume != null) {
+                userStocks = userStockService.getUserStocksByVolumeLessThan(username, volume, stocksPageable);
             }
         } else if (op.equalsIgnoreCase("gt")) {
             if (gains != null) {
                 userStocks = userStockService.getUserStocksByGainsGreaterThan(username, gains, stocksPageable);
             } else if (value != null) {
                 userStocks = userStockService.getUserStocksByValueGreaterThan(username, value, stocksPageable);
+            } else if (volume != null) {
+                userStocks = userStockService.getUserStocksByVolumeGreaterThan(username, volume, stocksPageable);
             }
+
         }
         return userStocks;
     }

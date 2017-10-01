@@ -29,4 +29,10 @@ public interface UserStockRepository extends JpaRepository<UserStock, UserStockI
 
     @Query
     List<UserStock> findByUsernameAndStockViewStockValueGreaterThan(String username, BigDecimal value, Pageable stocksPageable);
+
+    @Query
+    List<UserStock> findByUsernameAndVolumeLessThan(String username, int volume, Pageable stocksPageable);
+
+    @Query
+    List<UserStock> findByUsernameAndVolumeGreaterThan(String username, int volume, Pageable stocksPageable);
 }

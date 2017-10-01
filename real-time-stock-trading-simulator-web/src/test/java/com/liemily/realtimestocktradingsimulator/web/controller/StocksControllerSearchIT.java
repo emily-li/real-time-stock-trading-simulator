@@ -79,7 +79,7 @@ public class StocksControllerSearchIT {
         stockService.save(stock2);
 
         UserStock userStock1 = new UserStock(username, symbol, 1);
-        UserStock userStock2 = new UserStock(username, stock2.getSymbol(), 1);
+        UserStock userStock2 = new UserStock(username, stock2.getSymbol(), 3);
         userStockService.save(userStock1);
         userStockService.save(userStock2);
 
@@ -105,7 +105,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksBySymbol() {
-        setupSellableTest(symbol.substring(10), null, null, null, null);
+        setupSellableTest(symbol.substring(10), null, null, null, null, null);
         userStocks.forEach(userStock -> assertTrue(userStock.getSymbol().equalsIgnoreCase(symbol)));
     }
 
@@ -123,7 +123,7 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByName() {
-        setupSellableTest(null, companyName.substring(10), null, null, null);
+        setupSellableTest(null, companyName.substring(10), null, null, null, null);
         userStocks.forEach(userStock -> assertTrue(userStock.getName().equalsIgnoreCase(companyName.toUpperCase())));
     }
 
@@ -143,9 +143,9 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByGains() {
-        setupSellableTest(null, null, LT_OP, new BigDecimal(2), null);
+        setupSellableTest(null, null, LT_OP, new BigDecimal(2), null, null);
         userStocks.forEach(userStock -> assertTrue(userStock.getGains().compareTo(new BigDecimal(2)) == comparison));
-        setupSellableTest(null, null, GT_OP, new BigDecimal(1), null);
+        setupSellableTest(null, null, GT_OP, new BigDecimal(1), null, null);
         userStocks.forEach(userStock -> assertTrue(userStock.getGains().compareTo(new BigDecimal(1)) == comparison));
     }
 
@@ -165,9 +165,9 @@ public class StocksControllerSearchIT {
      */
     @Test
     public void testSearchUserStocksByValue() {
-        setupSellableTest(null, null, LT_OP, null, new BigDecimal(2));
+        setupSellableTest(null, null, LT_OP, null, new BigDecimal(2), null);
         userStocks.forEach(userStock -> assertTrue(userStock.getValue().compareTo(new BigDecimal(2)) == comparison));
-        setupSellableTest(null, null, GT_OP, null, new BigDecimal(1));
+        setupSellableTest(null, null, GT_OP, null, new BigDecimal(1), null);
         userStocks.forEach(userStock -> assertTrue(userStock.getValue().compareTo(new BigDecimal(1)) == comparison));
     }
 
@@ -182,6 +182,17 @@ public class StocksControllerSearchIT {
         stockViews.forEach(stockView -> assertTrue(Integer.compare(stockView.getVolume(), 2) == comparison));
     }
 
+    /**
+     * C.S19 The user should be able to search user stocks given a volume, greater or lesser than the variable
+     */
+    @Test
+    public void testSearchUserStocksByVolume() {
+        setupSellableTest(null, null, LT_OP, null, null, 2);
+        userStocks.forEach(userStock -> assertTrue(Integer.compare(userStock.getVolume(), 2) == comparison));
+        setupSellableTest(null, null, GT_OP, null, null, 2);
+        userStocks.forEach(userStock -> assertTrue(Integer.compare(userStock.getVolume(), 2) == comparison));
+    }
+
     private void setupBuyableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value, Integer volume) {
         model = new ExtendedModelMap();
         comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
@@ -190,10 +201,10 @@ public class StocksControllerSearchIT {
         assertTrue(stockViews.size() > 0);
     }
 
-    private void setupSellableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value) {
+    private void setupSellableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value, Integer volume) {
         model = new ExtendedModelMap();
         comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value, volume);
         userStocks = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertTrue(userStocks.size() > 0);
     }
