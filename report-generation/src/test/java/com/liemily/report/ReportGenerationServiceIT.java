@@ -2,6 +2,7 @@ package com.liemily.report;
 
 import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
+import com.liemily.report.domain.*;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockItem;
@@ -19,7 +20,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -50,6 +56,7 @@ public class ReportGenerationServiceIT {
     private User user;
     private Collection<UserStock> userStocks;
 
+
     @Before
     public void setup() {
         company1 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
@@ -75,6 +82,8 @@ public class ReportGenerationServiceIT {
         userStocks.add(new UserStock(user.getUsername(), company1.getSymbol(), 1));
         userStocks.add(new UserStock(user.getUsername(), company2.getSymbol(), 1));
         userStockService.save(userStocks);
+
+        userStocks = userStockService.getUserStocks(user.getUsername(), null);
     }
 
     /**
@@ -82,7 +91,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCompanyStockReportOrderedByCompanyName() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK);
+        ReportRequest reportRequest = new StockReportRequest(FileType.CSV);
         assertOrderedByCompanyName(reportRequest);
     }
 
@@ -91,7 +100,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testUserStocksReportOrderedByCompanyName() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.USER_STOCK, user.getUsername());
+        ReportRequest reportRequest = new UserStockReportRequest(FileType.CSV, user.getUsername());
         assertOrderedByCompanyName(reportRequest);
     }
 
@@ -113,7 +122,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testReportFields() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol());
+        ReportRequest reportRequest = new StockReportRequest(FileType.CSV, company1.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
         List<? extends StockItem> stockDetailLists = report.getStockDetails();
@@ -131,7 +140,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testUserStockReport() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.USER_STOCK, user.getUsername());
+        ReportRequest reportRequest = new UserStockReportRequest(FileType.CSV, user.getUsername());
         Report report = reportGenerationService.generate(reportRequest);
         assertTrue(report.getStockDetails().containsAll(userStocks));
     }
@@ -141,7 +150,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCompanyStockReport() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK);
+        ReportRequest reportRequest = new StockReportRequest(FileType.CSV);
         Report report = reportGenerationService.generate(reportRequest);
 
         Collection<String> stocks = getStockSymbols(report);
@@ -155,7 +164,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCompanyStockReportGeneratedGivenStockSymbol() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol(), company2.getSymbol());
+        ReportRequest reportRequest = new StockReportRequest(FileType.CSV, company1.getSymbol(), company2.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
         Collection<String> stocks = getStockSymbols(report);
@@ -179,7 +188,7 @@ public class ReportGenerationServiceIT {
     public void testStockValueReportAsc() {
         for (Sort.Direction direction : Sort.Direction.values()) {
             Sort sort = new Sort(direction, "stock.value");
-            ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, sort);
+            ReportRequest reportRequest = new StockReportRequest(FileType.CSV, sort);
             Report report = reportGenerationService.generate(reportRequest);
 
             List<BigDecimal> values = new ArrayList<>();
@@ -192,42 +201,36 @@ public class ReportGenerationServiceIT {
             assertEquals(orderedValues, values);
         }
     }
-/*
-    *//**
+
+    /**
      * S.R09 The report service should be able to create reports in XML
-     *//*
+     */
     @Test
-    public void testXMLReport() {
-        final Sort.Direction[] DIRECTIONS = new Sort.Direction[]{Sort.Direction.ASC, Sort.Direction.DESC};
-        final Map<Sort.Direction, BigDecimal[]> EXPECTED_DIRECTION_VALUES = new HashMap<>();
+    public void testXMLReport() throws Exception {
+        Collection<ReportItem> expectedReportItems = new ArrayList<>();
+        userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getLastTradeDateTime(), userStock.getGains(), userStock.getOpenValue(), userStock.getCloseValue())));
 
-        TreeSet<BigDecimal> stockValues = new TreeSet<>();
-        repositoryStocks.forEach(stock -> stockValues.add(stock.getValue()));
+        ReportRequest reportRequest = new StockReportRequest(FileType.XML);
+        Report report = reportGenerationService.generate(reportRequest);
 
-        EXPECTED_DIRECTION_VALUES.put(Sort.Direction.ASC, stockValues.toArray(new BigDecimal[repositoryStocks.size()]));
-        EXPECTED_DIRECTION_VALUES.put(Sort.Direction.DESC, stockValues.descendingSet().toArray(new BigDecimal[repositoryStocks.size()]));
+        String reportContents = report.getReport();
+        Path path = Paths.get(UUID.randomUUID().toString() + "." + FileType.XML.toString().toLowerCase());
+        path.toFile().deleteOnExit();
+        Files.write(path, reportContents.getBytes());
 
-        for (Sort.Direction direction : DIRECTIONS) {
-            ReportRequest reportRequest = new ReportRequest(REPORT_NAME.STOCK_REPORT, FILE_TYPE.XML, direction);
-            Path reportPath = reportGenerator.generate(reportRequest).getLocation();
-
-            List<Stock> marshalledStocks = getStocksFromXML(reportPath);
-            List<BigDecimal> marshalledStockValues = new ArrayList<>();
-            marshalledStocks.forEach(stock -> marshalledStockValues.add(stock.getValue()));
-
-            assertArrayEquals(EXPECTED_DIRECTION_VALUES.get(direction), marshalledStockValues.toArray(new BigDecimal[repositoryStocks.size()]));
-        }
+        List<ReportItem> marshalledStocks = getStocksFromXML(path);
+        assertTrue(marshalledStocks.containsAll(expectedReportItems));
     }
 
-    private List<Stock> getStocksFromXML(Path xmlPath) throws Exception {
+    private List<ReportItem> getStocksFromXML(Path xmlPath) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(ReportItems.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         ReportItems reportItems = (ReportItems) unmarshaller.unmarshal(xmlPath.toFile());
 
-        List<Stock> marshalledStocks = new ArrayList<>();
-        reportItems.getReportItemCollection().forEach(reportItem -> marshalledStocks.add(new Stock(reportItem.getStockSymbol(), reportItem.getValue(), reportItem.getVolume())));
+        List<ReportItem> marshalledStocks = new ArrayList<>();
+        reportItems.getReportItems().forEach(reportItem -> marshalledStocks.add(new ReportItem(reportItem.getSymbol(), reportItem.getName(), reportItem.getValue(), reportItem.getVolume(), reportItem.getLastTradeDateTime(), reportItem.getGains(), reportItem.getOpenValue(), reportItem.getCloseValue())));
         return marshalledStocks;
-    }*/
+    }
     /**
      * S.R10 The report service should be able to create reports in CSV
      */

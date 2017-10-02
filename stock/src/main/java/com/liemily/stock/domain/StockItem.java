@@ -1,8 +1,5 @@
 package com.liemily.stock.domain;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -14,8 +11,6 @@ import java.util.Date;
  * This is an interface as the properties can be got in any way
  * Created by Emily Li on 01/10/2017.
  */
-@XmlRootElement(name = "Stock")
-@XmlAccessorType(XmlAccessType.FIELD)
 public interface StockItem {
     String getSymbol();
 

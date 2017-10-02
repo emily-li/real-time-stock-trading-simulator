@@ -1,5 +1,9 @@
 package com.liemily.report;
 
+import com.liemily.report.domain.Report;
+import com.liemily.report.domain.ReportRequest;
+import com.liemily.report.domain.StockReportRequest;
+import com.liemily.report.domain.UserStockReportRequest;
 import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.service.StockViewService;
 import com.liemily.user.UserStockService;
@@ -29,15 +33,15 @@ public class ReportGenerationService {
     public Report generate(ReportRequest reportRequest) {
         List<? extends StockItem> stockDetails = new ArrayList<>();
         Sort sort = reportRequest.getSort();
-        String[] searchTerms = reportRequest.getSearchTerms();
 
-        switch (reportRequest.getReportName()) {
-            case STOCK:
-                stockDetails = (searchTerms == null || searchTerms.length == 0) ? stockViewService.getStocks(sort) : stockViewService.getStocksBySymbol(searchTerms, sort);
-                break;
-            case USER_STOCK:
-                stockDetails = userStockService.getUserStocksOrderByCompanyName(searchTerms[0]);
-                break;
+        if (reportRequest instanceof StockReportRequest) {
+            StockReportRequest stockReportRequest = (StockReportRequest) reportRequest;
+            String[] searchTerms = stockReportRequest.getSearchTerms();
+            stockDetails = (searchTerms == null || searchTerms.length == 0) ? stockViewService.getStocks(sort) : stockViewService.getStocksBySymbol(searchTerms, sort);
+        } else if (reportRequest instanceof UserStockReportRequest) {
+            UserStockReportRequest userStockReportRequest = (UserStockReportRequest) reportRequest;
+            String username = userStockReportRequest.getUsername();
+            stockDetails = userStockService.getUserStocksOrderByCompanyName(username);
         }
         return new Report(stockDetails);
     }
