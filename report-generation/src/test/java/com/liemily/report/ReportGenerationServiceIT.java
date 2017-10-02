@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
@@ -172,18 +173,24 @@ public class ReportGenerationServiceIT {
 
     /**
      * S.R07 The report service should be able to create a report of stock values in ascending order
-     */
-    @Test
-    public void testStockValueReportAsc() {
-
-    }
-
-    /**
      * S.R08 The report service should be able to create a report of stock values in descending order
      */
     @Test
-    public void testStockValueReportDesc() {
+    public void testStockValueReportAsc() {
+        for (Sort.Direction direction : Sort.Direction.values()) {
+            Sort sort = new Sort(direction, "stock.value");
+            ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, sort);
+            Report report = reportGenerationService.generate(reportRequest);
 
+            List<BigDecimal> values = new ArrayList<>();
+            report.getStockDetails().forEach(stockDetails -> values.add(stockDetails.getValue()));
+            List<BigDecimal> orderedValues = new ArrayList<>(values);
+            Collections.sort(orderedValues);
+            if (direction.equals(Sort.Direction.DESC)) {
+                Collections.reverse(orderedValues);
+            }
+            assertEquals(orderedValues, values);
+        }
     }
 
     /**

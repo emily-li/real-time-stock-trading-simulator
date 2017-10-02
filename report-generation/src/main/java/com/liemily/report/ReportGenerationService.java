@@ -5,6 +5,7 @@ import com.liemily.stock.service.StockViewService;
 import com.liemily.user.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -27,11 +28,12 @@ public class ReportGenerationService {
 
     public Report generate(ReportRequest reportRequest) {
         List<? extends StockDetails> stockDetails = new ArrayList<>();
+        Sort sort = reportRequest.getSort();
         String[] searchTerms = reportRequest.getSearchTerms();
 
         switch (reportRequest.getReportName()) {
             case STOCK:
-                stockDetails = (searchTerms == null || searchTerms.length == 0) ? stockViewService.getStocksBySymbolOrderByName() : stockViewService.getStocksBySymbolOrderByName(searchTerms);
+                stockDetails = (searchTerms == null || searchTerms.length == 0) ? stockViewService.getStocks(sort) : stockViewService.getStocksBySymbol(searchTerms, sort);
                 break;
             case USER_STOCK:
                 stockDetails = userStockService.getUserStocksOrderByCompanyName(searchTerms[0]);

@@ -2,6 +2,7 @@ package com.liemily.stock.repository;
 
 import com.liemily.stock.domain.StockView;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -37,5 +38,5 @@ public interface StockViewRepository extends JpaRepository<StockView, String> {
     List<StockView> findByStockValueGreaterThanAndStockVolumeGreaterThan(BigDecimal value, int volume, Pageable stocksPageable);
 
     @Query
-    List<StockView> findBySymbolIgnoreCaseInOrderByCompanyName(String[] symbols);
+    List<StockView> findBySymbolIgnoreCaseIn(String[] symbols, Sort sort);
 }

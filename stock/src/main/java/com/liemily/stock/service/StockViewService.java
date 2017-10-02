@@ -64,12 +64,11 @@ public class StockViewService {
         return stockViewRepository.findByStockValueGreaterThanAndStockVolumeGreaterThan(value, 0, pageable);
     }
 
-    public List<StockView> getStocksBySymbolOrderByName() {
-        Sort sort = new Sort(Sort.Direction.ASC, "company.name");
-        return stockViewRepository.findAll(sort);
+    public List<StockView> getStocksBySymbol(String[] symbols, Sort sort) {
+        return stockViewRepository.findBySymbolIgnoreCaseIn(symbols, sort);
     }
 
-    public List<StockView> getStocksBySymbolOrderByName(String[] symbols) {
-        return stockViewRepository.findBySymbolIgnoreCaseInOrderByCompanyName(symbols);
+    public List<StockView> getStocks(Sort sort) {
+        return stockViewRepository.findAll(sort);
     }
 }
