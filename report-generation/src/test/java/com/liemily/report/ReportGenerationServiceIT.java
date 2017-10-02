@@ -23,9 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -58,7 +56,7 @@ public class ReportGenerationServiceIT {
 
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         company1 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         company2 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         companyService.save(company1);
@@ -90,8 +88,8 @@ public class ReportGenerationServiceIT {
      * S.R01 The company stocks report should be ordered by company name
      */
     @Test
-    public void testCompanyStockReportOrderedByCompanyName() {
-        ReportRequest reportRequest = new StockReportRequest(FileType.CSV);
+    public void testCompanyStockReportOrderedByCompanyName() throws Exception {
+        ReportRequest reportRequest = new StockReportRequest(FileType.XML);
         assertOrderedByCompanyName(reportRequest);
     }
 
@@ -99,15 +97,15 @@ public class ReportGenerationServiceIT {
      * S.R02 The current shares report should be ordered by company name
      */
     @Test
-    public void testUserStocksReportOrderedByCompanyName() {
-        ReportRequest reportRequest = new UserStockReportRequest(FileType.CSV, user.getUsername());
+    public void testUserStocksReportOrderedByCompanyName() throws Exception {
+        ReportRequest reportRequest = new UserStockReportRequest(FileType.XML, user.getUsername());
         assertOrderedByCompanyName(reportRequest);
     }
 
-    private void assertOrderedByCompanyName(ReportRequest reportRequest) {
+    private void assertOrderedByCompanyName(ReportRequest reportRequest) throws Exception {
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<? extends StockItem> stockDetails = report.getStockDetails();
+        List<? extends StockItem> stockDetails = getStocksFromXML(report.getPath());
         assertTrue(stockDetails.size() > 0);
 
         List<String> companyNames = new ArrayList<>();
@@ -121,11 +119,11 @@ public class ReportGenerationServiceIT {
      * S.R03 The reports must display values: Stock Symbol, Stock Company, Value, Volume, Gains
      */
     @Test
-    public void testReportFields() {
-        ReportRequest reportRequest = new StockReportRequest(FileType.CSV, company1.getSymbol());
+    public void testReportFields() throws Exception {
+        ReportRequest reportRequest = new StockReportRequest(FileType.XML, company1.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<? extends StockItem> stockDetailLists = report.getStockDetails();
+        List<? extends StockItem> stockDetailLists = getStocksFromXML(report.getPath());
         for (StockItem stockItem : stockDetailLists) {
             assertNotNull(stockItem.getSymbol());
             assertNotNull(stockItem.getName());
@@ -136,21 +134,11 @@ public class ReportGenerationServiceIT {
     }
 
     /**
-     * S.R04 The report service should be able to create a report of current user shares
-     */
-    @Test
-    public void testUserStockReport() {
-        ReportRequest reportRequest = new UserStockReportRequest(FileType.CSV, user.getUsername());
-        Report report = reportGenerationService.generate(reportRequest);
-        assertTrue(report.getStockDetails().containsAll(userStocks));
-    }
-
-    /**
      * S.R05 The report service should be able to create a report of a list of company stock details
      */
     @Test
-    public void testCompanyStockReport() {
-        ReportRequest reportRequest = new StockReportRequest(FileType.CSV);
+    public void testCompanyStockReport() throws Exception {
+        ReportRequest reportRequest = new StockReportRequest(FileType.XML);
         Report report = reportGenerationService.generate(reportRequest);
 
         Collection<String> stocks = getStockSymbols(report);
@@ -163,8 +151,8 @@ public class ReportGenerationServiceIT {
      * S.R06 The report service should be able to create a report of company stock details via stock symbols
      */
     @Test
-    public void testCompanyStockReportGeneratedGivenStockSymbol() {
-        ReportRequest reportRequest = new StockReportRequest(FileType.CSV, company1.getSymbol(), company2.getSymbol());
+    public void testCompanyStockReportGeneratedGivenStockSymbol() throws Exception {
+        ReportRequest reportRequest = new StockReportRequest(FileType.XML, company1.getSymbol(), company2.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
         Collection<String> stocks = getStockSymbols(report);
@@ -174,25 +162,20 @@ public class ReportGenerationServiceIT {
         assertTrue(stocks.size() == 2);
     }
 
-    private Collection<String> getStockSymbols(Report report) {
-        Collection<String> stockSymbols = new ArrayList<>();
-        report.getStockDetails().forEach(stockDetails -> stockSymbols.add(stockDetails.getSymbol()));
-        return stockSymbols;
-    }
-
     /**
      * S.R07 The report service should be able to create a report of stock values in ascending order
      * S.R08 The report service should be able to create a report of stock values in descending order
      */
     @Test
-    public void testStockValueReportAsc() {
+    public void testStockValueReportAsc() throws Exception {
         for (Sort.Direction direction : Sort.Direction.values()) {
             Sort sort = new Sort(direction, "stock.value");
-            ReportRequest reportRequest = new StockReportRequest(FileType.CSV, sort);
+            ReportRequest reportRequest = new StockReportRequest(FileType.XML, sort);
             Report report = reportGenerationService.generate(reportRequest);
 
+            List<? extends StockItem> stockItems = getStocksFromXML(report.getPath());
             List<BigDecimal> values = new ArrayList<>();
-            report.getStockDetails().forEach(stockDetails -> values.add(stockDetails.getValue()));
+            stockItems.forEach(stockDetails -> values.add(stockDetails.getValue()));
             List<BigDecimal> orderedValues = new ArrayList<>(values);
             Collections.sort(orderedValues);
             if (direction.equals(Sort.Direction.DESC)) {
@@ -203,23 +186,27 @@ public class ReportGenerationServiceIT {
     }
 
     /**
+     * S.R04 The report service should be able to create a report of current user shares
      * S.R09 The report service should be able to create reports in XML
      */
     @Test
     public void testXMLReport() throws Exception {
+        ReportRequest reportRequest = new UserStockReportRequest(FileType.XML, user.getUsername());
+        Report report = reportGenerationService.generate(reportRequest);
+
         Collection<ReportItem> expectedReportItems = new ArrayList<>();
         userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getLastTradeDateTime(), userStock.getGains(), userStock.getOpenValue(), userStock.getCloseValue())));
 
-        ReportRequest reportRequest = new StockReportRequest(FileType.XML);
-        Report report = reportGenerationService.generate(reportRequest);
-
-        String reportContents = report.getReport();
-        Path path = Paths.get(UUID.randomUUID().toString() + "." + FileType.XML.toString().toLowerCase());
-        path.toFile().deleteOnExit();
-        Files.write(path, reportContents.getBytes());
-
-        List<ReportItem> marshalledStocks = getStocksFromXML(path);
+        List<ReportItem> marshalledStocks = getStocksFromXML(report.getPath());
         assertTrue(marshalledStocks.containsAll(expectedReportItems));
+    }
+
+    /**
+     * S.R10 The report service should be able to create reports in CSV
+     */
+    @Test
+    public void testCSVReport() throws Exception {
+
     }
 
     private List<ReportItem> getStocksFromXML(Path xmlPath) throws Exception {
@@ -228,14 +215,14 @@ public class ReportGenerationServiceIT {
         ReportItems reportItems = (ReportItems) unmarshaller.unmarshal(xmlPath.toFile());
 
         List<ReportItem> marshalledStocks = new ArrayList<>();
-        reportItems.getReportItems().forEach(reportItem -> marshalledStocks.add(new ReportItem(reportItem.getSymbol(), reportItem.getName(), reportItem.getValue(), reportItem.getVolume(), reportItem.getLastTradeDateTime(), reportItem.getGains(), reportItem.getOpenValue(), reportItem.getCloseValue())));
+        reportItems.getStock().forEach(reportItem -> marshalledStocks.add(new ReportItem(reportItem.getSymbol(), reportItem.getName(), reportItem.getValue(), reportItem.getVolume(), reportItem.getLastTradeDateTime(), reportItem.getGains(), reportItem.getOpenValue(), reportItem.getCloseValue())));
         return marshalledStocks;
     }
-    /**
-     * S.R10 The report service should be able to create reports in CSV
-     */
-    @Test
-    public void testCSVReport() {
 
+    private Collection<String> getStockSymbols(Report report) throws Exception {
+        Collection<String> stockSymbols = new ArrayList<>();
+        List<? extends StockItem> stockItems = getStocksFromXML(report.getPath());
+        stockItems.forEach(stockDetails -> stockSymbols.add(stockDetails.getSymbol()));
+        return stockSymbols;
     }
 }

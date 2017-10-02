@@ -8,16 +8,16 @@ import java.util.List;
 @XmlRootElement(name = "Report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ReportItems {
-    private List<ReportItem> reportItems;
+    private List<ReportItem> stock;
 
     private ReportItems() {
     }
 
-    public ReportItems(List<ReportItem> reportItems) {
-        this.reportItems = reportItems;
+    public ReportItems(List<ReportItem> stock) {
+        this.stock = stock;
     }
 
-    public List<ReportItem> getReportItems() {
-        return reportItems;
+    public List<ReportItem> getStock() {
+        return stock;
     }
 }
