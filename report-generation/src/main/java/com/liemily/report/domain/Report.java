@@ -1,18 +1,16 @@
 package com.liemily.report.domain;
 
-import java.nio.file.Path;
-
 /**
  * Created by Emily Li on 01/10/2017.
  */
 public class Report {
-    private Path report;
+    private String report;
 
-    public Report(Path report) {
+    public Report(String report) {
         this.report = report;
     }
 
-    public Path getPath() {
+    public String getReport() {
         return report;
     }
 }

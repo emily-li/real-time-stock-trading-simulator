@@ -1,9 +1,11 @@
 package com.liemily.report;
 
 import com.liemily.report.domain.FileType;
+import com.liemily.report.domain.ReportItem;
 import com.liemily.report.domain.ReportItems;
 import com.liemily.report.exception.ReportGenerationException;
 import com.liemily.report.exception.ReportMarshallingException;
+import com.liemily.stock.domain.StockItem;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Lazy;
@@ -15,20 +17,17 @@ import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Lazy
 public class ReportWriter {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
-    void write(ReportItems reportItems, FileType fileType, Path path) throws ReportGenerationException {
-        String reportItemsString = generateReport(reportItems, fileType);
-        writeFile(reportItemsString, path);
-    }
+    String generateReport(List<? extends StockItem> stockItems, FileType fileType) throws ReportGenerationException {
+        ReportItems reportItems = generateReportItems(stockItems);
 
-    private String generateReport(ReportItems reportItems, FileType fileType) throws ReportGenerationException {
         String contents;
         if (fileType.equals(FileType.XML)) {
             contents = generateXML(reportItems);
@@ -36,6 +35,12 @@ public class ReportWriter {
             throw new ReportGenerationException("Unsupported report file type " + fileType);
         }
         return contents;
+    }
+
+    private ReportItems generateReportItems(List<? extends StockItem> stockItems) {
+        List<ReportItem> reportItems = new ArrayList<>();
+        stockItems.forEach(stock -> reportItems.add(new ReportItem(stock.getSymbol(), stock.getName(), stock.getValue(), stock.getVolume(), stock.getLastTradeDateTime(), stock.getGains(), stock.getOpenValue(), stock.getCloseValue())));
+        return new ReportItems(reportItems);
     }
 
     private String generateXML(ReportItems reportItems) throws ReportMarshallingException {
@@ -53,15 +58,5 @@ public class ReportWriter {
             logger.info(msg, e);
             throw new ReportMarshallingException(msg, e);
         }
-    }
-
-    private void writeFile(String reportContents, Path path) throws ReportGenerationException {
-        try {
-            Files.write(path, reportContents.getBytes());
-        } catch (IOException e) {
-            logger.info("Failed to write report to " + path.toAbsolutePath());
-            throw new ReportGenerationException("Failed to write report to " + path.toAbsolutePath(), e);
-        }
-        logger.info("Wrote report to " + path.toAbsolutePath());
     }
 }

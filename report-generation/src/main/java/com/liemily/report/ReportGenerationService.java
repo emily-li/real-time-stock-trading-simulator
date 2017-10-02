@@ -1,6 +1,9 @@
 package com.liemily.report;
 
-import com.liemily.report.domain.*;
+import com.liemily.report.domain.Report;
+import com.liemily.report.domain.ReportRequest;
+import com.liemily.report.domain.StockReportRequest;
+import com.liemily.report.domain.UserStockReportRequest;
 import com.liemily.report.exception.ReportGenerationException;
 import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.service.StockViewService;
@@ -10,11 +13,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Emily Li on 01/10/2017.
@@ -37,7 +37,7 @@ public class ReportGenerationService {
 
     public Report generate(ReportRequest reportRequest) throws ReportGenerationException {
         List<? extends StockItem> stockItems = getStockItems(reportRequest);
-        Path reportContents = getReportPath(reportRequest, stockItems);
+        String reportContents = reportWriter.generateReport(stockItems, reportRequest.getFileType());
         return new Report(reportContents);
     }
 
@@ -55,24 +55,5 @@ public class ReportGenerationService {
             stockItems = userStockService.getUserStocksOrderByCompanyName(username);
         }
         return stockItems;
-    }
-
-    private Path getReportPath(ReportRequest reportRequest, List<? extends StockItem> stockItems) throws ReportGenerationException {
-        ReportItems reportItems = generateReportItems(stockItems);
-        Path reportPath = generateReportPath(reportRequest.getFileType());
-        reportWriter.write(reportItems, reportRequest.getFileType(), reportPath);
-        return reportPath;
-    }
-
-    private ReportItems generateReportItems(List<? extends StockItem> stockItems) {
-        List<ReportItem> reportItems = new ArrayList<>();
-        stockItems.forEach(stock -> reportItems.add(new ReportItem(stock.getSymbol(), stock.getName(), stock.getValue(), stock.getVolume(), stock.getLastTradeDateTime(), stock.getGains(), stock.getOpenValue(), stock.getCloseValue())));
-        return new ReportItems(reportItems);
-    }
-
-    private Path generateReportPath(FileType fileType) {
-        Path path = Paths.get(UUID.randomUUID().toString() + "." + fileType.toString().toLowerCase());
-        path.toFile().deleteOnExit();
-        return path;
     }
 }

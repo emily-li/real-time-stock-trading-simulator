@@ -23,7 +23,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -105,7 +107,7 @@ public class ReportGenerationServiceIT {
     private void assertOrderedByCompanyName(ReportRequest reportRequest) throws Exception {
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<? extends StockItem> stockDetails = getStocksFromXML(report.getPath());
+        List<? extends StockItem> stockDetails = getStocksFromXML(report.getReport());
         assertTrue(stockDetails.size() > 0);
 
         List<String> companyNames = new ArrayList<>();
@@ -123,7 +125,7 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new StockReportRequest(FileType.XML, company1.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<? extends StockItem> stockDetailLists = getStocksFromXML(report.getPath());
+        List<? extends StockItem> stockDetailLists = getStocksFromXML(report.getReport());
         for (StockItem stockItem : stockDetailLists) {
             assertNotNull(stockItem.getSymbol());
             assertNotNull(stockItem.getName());
@@ -173,7 +175,7 @@ public class ReportGenerationServiceIT {
             ReportRequest reportRequest = new StockReportRequest(FileType.XML, sort);
             Report report = reportGenerationService.generate(reportRequest);
 
-            List<? extends StockItem> stockItems = getStocksFromXML(report.getPath());
+            List<? extends StockItem> stockItems = getStocksFromXML(report.getReport());
             List<BigDecimal> values = new ArrayList<>();
             stockItems.forEach(stockDetails -> values.add(stockDetails.getValue()));
             List<BigDecimal> orderedValues = new ArrayList<>(values);
@@ -197,7 +199,7 @@ public class ReportGenerationServiceIT {
         Collection<ReportItem> expectedReportItems = new ArrayList<>();
         userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getLastTradeDateTime(), userStock.getGains(), userStock.getOpenValue(), userStock.getCloseValue())));
 
-        List<ReportItem> marshalledStocks = getStocksFromXML(report.getPath());
+        List<ReportItem> marshalledStocks = getStocksFromXML(report.getReport());
         assertTrue(marshalledStocks.containsAll(expectedReportItems));
     }
 
@@ -209,19 +211,27 @@ public class ReportGenerationServiceIT {
 
     }
 
-    private List<ReportItem> getStocksFromXML(Path xmlPath) throws Exception {
+    private List<ReportItem> getStocksFromXML(String xml) throws Exception {
+        Path path = generateReportPath(FileType.XML);
+        Files.write(path, xml.getBytes());
         JAXBContext jaxbContext = JAXBContext.newInstance(ReportItems.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        ReportItems reportItems = (ReportItems) unmarshaller.unmarshal(xmlPath.toFile());
+        ReportItems reportItems = (ReportItems) unmarshaller.unmarshal(path.toFile());
 
         List<ReportItem> marshalledStocks = new ArrayList<>();
         reportItems.getStock().forEach(reportItem -> marshalledStocks.add(new ReportItem(reportItem.getSymbol(), reportItem.getName(), reportItem.getValue(), reportItem.getVolume(), reportItem.getLastTradeDateTime(), reportItem.getGains(), reportItem.getOpenValue(), reportItem.getCloseValue())));
         return marshalledStocks;
     }
 
+    private Path generateReportPath(FileType fileType) {
+        Path path = Paths.get(UUID.randomUUID().toString() + "." + fileType.toString().toLowerCase());
+        path.toFile().deleteOnExit();
+        return path;
+    }
+
     private Collection<String> getStockSymbols(Report report) throws Exception {
         Collection<String> stockSymbols = new ArrayList<>();
-        List<? extends StockItem> stockItems = getStocksFromXML(report.getPath());
+        List<? extends StockItem> stockItems = getStocksFromXML(report.getReport());
         stockItems.forEach(stockDetails -> stockSymbols.add(stockDetails.getSymbol()));
         return stockSymbols;
     }
