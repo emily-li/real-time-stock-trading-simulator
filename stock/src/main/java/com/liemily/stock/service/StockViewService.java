@@ -5,6 +5,7 @@ import com.liemily.stock.repository.StockViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -63,7 +64,12 @@ public class StockViewService {
         return stockViewRepository.findByStockValueGreaterThanAndStockVolumeGreaterThan(value, 0, pageable);
     }
 
+    public List<StockView> getStocksBySymbolOrderByName() {
+        Sort sort = new Sort(Sort.Direction.ASC, "company.name");
+        return stockViewRepository.findAll(sort);
+    }
+
     public List<StockView> getStocksBySymbolOrderByName(String[] symbols) {
-        return stockViewRepository.findBySymbolInOrderByCompanyName(symbols);
+        return stockViewRepository.findBySymbolIgnoreCaseInOrderByCompanyName(symbols);
     }
 }

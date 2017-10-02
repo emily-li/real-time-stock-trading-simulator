@@ -81,7 +81,7 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCompanyStockReportOrderedByCompanyName() {
-        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol(), company2.getSymbol());
+        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK);
         assertOrderedByCompanyName(reportRequest);
     }
 
@@ -143,11 +143,10 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new ReportRequest(ReportName.STOCK);
         Report report = reportGenerationService.generate(reportRequest);
 
-        Collection<String> stocks = new ArrayList<>();
-        report.getStockDetails().forEach(stockDetails -> stocks.add(stockDetails.getSymbol()));
+        Collection<String> stocks = getStockSymbols(report);
 
-        assertTrue(stocks.contains(company1.getSymbol()));
-        assertTrue(stocks.contains(company2.getSymbol()));
+        assertTrue(stocks.contains(company1.getSymbol().toUpperCase()));
+        assertTrue(stocks.contains(company2.getSymbol().toUpperCase()));
     }
 
     /**
@@ -155,7 +154,20 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCompanyStockReportGeneratedGivenStockSymbol() {
+        ReportRequest reportRequest = new ReportRequest(ReportName.STOCK, company1.getSymbol(), company2.getSymbol());
+        Report report = reportGenerationService.generate(reportRequest);
 
+        Collection<String> stocks = getStockSymbols(report);
+
+        assertTrue(stocks.contains(company1.getSymbol().toUpperCase()));
+        assertTrue(stocks.contains(company2.getSymbol().toUpperCase()));
+        assertTrue(stocks.size() == 2);
+    }
+
+    private Collection<String> getStockSymbols(Report report) {
+        Collection<String> stockSymbols = new ArrayList<>();
+        report.getStockDetails().forEach(stockDetails -> stockSymbols.add(stockDetails.getSymbol()));
+        return stockSymbols;
     }
 
     /**

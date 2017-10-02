@@ -31,7 +31,7 @@ public class ReportGenerationService {
 
         switch (reportRequest.getReportName()) {
             case STOCK:
-                stockDetails = searchTerms == null ? stockViewService.getStocksBySymbolOrderByName(searchTerms) : null;
+                stockDetails = (searchTerms == null || searchTerms.length == 0) ? stockViewService.getStocksBySymbolOrderByName() : stockViewService.getStocksBySymbolOrderByName(searchTerms);
                 break;
             case USER_STOCK:
                 stockDetails = userStockService.getUserStocksOrderByCompanyName(searchTerms[0]);

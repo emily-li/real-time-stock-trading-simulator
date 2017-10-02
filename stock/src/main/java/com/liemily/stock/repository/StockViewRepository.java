@@ -37,5 +37,5 @@ public interface StockViewRepository extends JpaRepository<StockView, String> {
     List<StockView> findByStockValueGreaterThanAndStockVolumeGreaterThan(BigDecimal value, int volume, Pageable stocksPageable);
 
     @Query
-    List<StockView> findBySymbolInOrderByCompanyName(String[] symbols);
+    List<StockView> findBySymbolIgnoreCaseInOrderByCompanyName(String[] symbols);
 }
