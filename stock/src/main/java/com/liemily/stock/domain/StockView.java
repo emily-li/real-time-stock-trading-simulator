@@ -13,7 +13,7 @@ import java.util.Date;
  * Created by Emily Li on 17/09/2017.
  */
 @Entity
-public class StockView implements StockDetails {
+public class StockView implements StockItem {
     @Id
     private String symbol;
     private BigDecimal gains;

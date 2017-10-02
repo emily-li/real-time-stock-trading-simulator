@@ -1,6 +1,6 @@
 package com.liemily.report;
 
-import com.liemily.stock.domain.StockDetails;
+import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.service.StockViewService;
 import com.liemily.user.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class ReportGenerationService {
     }
 
     public Report generate(ReportRequest reportRequest) {
-        List<? extends StockDetails> stockDetails = new ArrayList<>();
+        List<? extends StockItem> stockDetails = new ArrayList<>();
         Sort sort = reportRequest.getSort();
         String[] searchTerms = reportRequest.getSearchTerms();
 

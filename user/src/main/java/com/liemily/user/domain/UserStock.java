@@ -1,6 +1,6 @@
 package com.liemily.user.domain;
 
-import com.liemily.stock.domain.StockDetails;
+import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.domain.StockView;
 
 import javax.persistence.*;
@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Entity
 @IdClass(UserStockId.class)
-public class UserStock implements StockDetails {
+public class UserStock implements StockItem {
     @Id
     private String username;
     @Id
