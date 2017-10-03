@@ -12,6 +12,8 @@ import com.liemily.user.UserStockService;
 import com.liemily.user.domain.User;
 import com.liemily.user.domain.UserStock;
 import com.liemily.user.service.UserService;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +41,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReportGenerationServiceIT {
+    private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
     @Autowired
     private ReportGenerationService reportGenerationService;
     @Autowired
@@ -196,6 +200,8 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new UserStockReportRequest(FileType.XML, user.getUsername());
         Report report = reportGenerationService.generate(reportRequest);
 
+        logger.info("Generated XML stock report:\n" + report.getReport());
+
         Collection<ReportItem> expectedReportItems = new ArrayList<>();
         userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getLastTradeDateTime(), userStock.getGains(), userStock.getOpenValue(), userStock.getCloseValue())));
 
@@ -208,7 +214,18 @@ public class ReportGenerationServiceIT {
      */
     @Test
     public void testCSVReport() throws Exception {
+        ReportRequest reportRequest = new UserStockReportRequest(FileType.CSV, user.getUsername());
+        Report report = reportGenerationService.generate(reportRequest);
 
+        logger.info("Generated CSV stock report:\n" + report.getReport());
+
+        String reportContents = report.getReport();
+
+        String expectedHeader = ReportItem.getCsvHeader();
+        String actualHeader = reportContents.split("\n")[0];
+        assertEquals(expectedHeader, actualHeader);
+
+        userStocks.forEach(userStock -> assertTrue(reportContents.contains(userStock.getSymbol())));
     }
 
     private List<ReportItem> getStocksFromXML(String xml) throws Exception {

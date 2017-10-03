@@ -6,6 +6,10 @@ import com.liemily.report.domain.ReportItems;
 import com.liemily.report.exception.ReportGenerationException;
 import com.liemily.report.exception.ReportMarshallingException;
 import com.liemily.stock.domain.StockItem;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Lazy;
@@ -16,6 +20,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +36,8 @@ public class ReportWriter {
         String contents;
         if (fileType.equals(FileType.XML)) {
             contents = generateXML(reportItems);
+        } else if (fileType.equals(FileType.CSV)) {
+            contents = generateCSV(reportItems);
         } else {
             throw new ReportGenerationException("Unsupported report file type " + fileType);
         }
@@ -41,6 +48,19 @@ public class ReportWriter {
         List<ReportItem> reportItems = new ArrayList<>();
         stockItems.forEach(stock -> reportItems.add(new ReportItem(stock.getSymbol(), stock.getName(), stock.getValue(), stock.getVolume(), stock.getLastTradeDateTime(), stock.getGains(), stock.getOpenValue(), stock.getCloseValue())));
         return new ReportItems(reportItems);
+    }
+
+    private String generateCSV(ReportItems reportItems) throws ReportMarshallingException {
+        try (Writer stringWriter = new StringWriter()) {
+            stringWriter.write(ReportItem.getCsvHeader());
+            stringWriter.append("\n");
+
+            StatefulBeanToCsv<ReportItem> reportItemToCsv = new StatefulBeanToCsvBuilder<ReportItem>(stringWriter).build();
+            reportItemToCsv.write(reportItems.getStock());
+            return stringWriter.toString();
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | IOException e) {
+            throw new ReportMarshallingException("Failed to marshall CSV", e);
+        }
     }
 
     private String generateXML(ReportItems reportItems) throws ReportMarshallingException {

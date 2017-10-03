@@ -1,26 +1,32 @@
 package com.liemily.report.domain;
 
 import com.liemily.stock.domain.StockItem;
+import com.opencsv.bean.CsvBindByPosition;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@XmlRootElement(name = "Stock")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ReportItem implements StockItem {
+    private static final String CSV_HEADER = "\"symbol\",\"name\",\"value\",\"volume\",\"gains\"";
+
+    @CsvBindByPosition(position = 0)
     private String symbol;
+    @CsvBindByPosition(position = 1)
     private String name;
+    @CsvBindByPosition(position = 2)
     private BigDecimal value;
+    @CsvBindByPosition(position = 3)
     private int volume;
-    private Date lastTradeDateTime;
+    @CsvBindByPosition(position = 4)
     private BigDecimal gains;
+    private Date lastTradeDateTime;
     private BigDecimal open;
     private BigDecimal close;
 
-    private ReportItem() {
+    public ReportItem() {
     }
 
     public ReportItem(String symbol, String name, BigDecimal value, int volume, Date lastTradeDateTime, BigDecimal gains, BigDecimal open, BigDecimal close) {
@@ -72,6 +78,10 @@ public class ReportItem implements StockItem {
     @Override
     public BigDecimal getCloseValue() {
         return close;
+    }
+
+    public static String getCsvHeader() {
+        return CSV_HEADER;
     }
 
     @Override
