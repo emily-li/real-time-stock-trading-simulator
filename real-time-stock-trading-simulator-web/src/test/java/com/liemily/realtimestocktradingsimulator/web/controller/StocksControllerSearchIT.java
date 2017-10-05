@@ -177,7 +177,7 @@ public class StocksControllerSearchIT {
         setupBuyableTest(null, null, LT_OP, null, null, 2);
         stockViews.forEach(stockView -> assertTrue(Integer.compare(stockView.getVolume(), 2) == comparison));
         setupBuyableTest(null, null, GT_OP, null, null, 1);
-        stockViews.forEach(stockView -> assertTrue(Integer.compare(stockView.getVolume(), 2) == comparison));
+        stockViews.forEach(stockView -> assertTrue(Integer.compare(stockView.getVolume(), 1) == comparison));
     }
 
     /**
