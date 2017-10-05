@@ -26,7 +26,7 @@ public abstract class ReportRequest {
         return sort;
     }
 
-    Sort getDefaultSort() {
+    private Sort getDefaultSort() {
         return new Sort(Sort.Direction.ASC, "company.name");
     }
 }

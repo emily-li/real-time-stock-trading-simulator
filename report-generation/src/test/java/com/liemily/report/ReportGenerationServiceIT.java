@@ -62,7 +62,7 @@ public class ReportGenerationServiceIT {
 
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         company1 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         company2 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         companyService.save(company1);
@@ -203,7 +203,7 @@ public class ReportGenerationServiceIT {
         logger.info("Generated XML stock report:\n" + report.getReport());
 
         Collection<ReportItem> expectedReportItems = new ArrayList<>();
-        userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getLastTradeDateTime(), userStock.getGains(), userStock.getOpenValue(), userStock.getCloseValue())));
+        userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getGains())));
 
         List<ReportItem> marshalledStocks = getStocksFromXML(report.getReport());
         assertTrue(marshalledStocks.containsAll(expectedReportItems));
@@ -229,19 +229,19 @@ public class ReportGenerationServiceIT {
     }
 
     private List<ReportItem> getStocksFromXML(String xml) throws Exception {
-        Path path = generateReportPath(FileType.XML);
+        Path path = generateXMLReportPath();
         Files.write(path, xml.getBytes());
         JAXBContext jaxbContext = JAXBContext.newInstance(ReportItems.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         ReportItems reportItems = (ReportItems) unmarshaller.unmarshal(path.toFile());
 
         List<ReportItem> marshalledStocks = new ArrayList<>();
-        reportItems.getStock().forEach(reportItem -> marshalledStocks.add(new ReportItem(reportItem.getSymbol(), reportItem.getName(), reportItem.getValue(), reportItem.getVolume(), reportItem.getLastTradeDateTime(), reportItem.getGains(), reportItem.getOpenValue(), reportItem.getCloseValue())));
+        reportItems.getStock().forEach(reportItem -> marshalledStocks.add(new ReportItem(reportItem.getSymbol(), reportItem.getName(), reportItem.getValue(), reportItem.getVolume(), reportItem.getGains())));
         return marshalledStocks;
     }
 
-    private Path generateReportPath(FileType fileType) {
-        Path path = Paths.get(UUID.randomUUID().toString() + "." + fileType.toString().toLowerCase());
+    private Path generateXMLReportPath() {
+        Path path = Paths.get(UUID.randomUUID().toString() + "." + FileType.XML.toString().toLowerCase());
         path.toFile().deleteOnExit();
         return path;
     }

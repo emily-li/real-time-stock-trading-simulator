@@ -27,7 +27,7 @@ import java.util.List;
 
 @Component
 @Lazy
-public class ReportWriter {
+class ReportWriter {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
     String generateReport(List<? extends StockItem> stockItems, FileType fileType) throws ReportGenerationException {
@@ -46,7 +46,7 @@ public class ReportWriter {
 
     private ReportItems generateReportItems(List<? extends StockItem> stockItems) {
         List<ReportItem> reportItems = new ArrayList<>();
-        stockItems.forEach(stock -> reportItems.add(new ReportItem(stock.getSymbol(), stock.getName(), stock.getValue(), stock.getVolume(), stock.getLastTradeDateTime(), stock.getGains(), stock.getOpenValue(), stock.getCloseValue())));
+        stockItems.forEach(stock -> reportItems.add(new ReportItem(stock.getSymbol(), stock.getName(), stock.getValue(), stock.getVolume(), stock.getGains())));
         return new ReportItems(reportItems);
     }
 

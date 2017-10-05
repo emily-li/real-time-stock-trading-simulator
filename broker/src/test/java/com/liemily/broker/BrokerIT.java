@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
  * See "../docs/FDM05-05 Functional Test Plan.doc"
  * Created by Emily Li on 01/10/2017.
  */
+@SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BrokerIT {
