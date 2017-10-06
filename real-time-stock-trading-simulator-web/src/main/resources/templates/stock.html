@@ -16,8 +16,8 @@
             <th>Stock Symbol</th>
             <th>Stock Name</th>
             <th>Last Trade</th>
-            <th>Gains</th>
             <th>Value</th>
+            <th>Gains</th>
             <th>Open</th>
             <th>Close</th>
         </tr>
@@ -27,8 +27,8 @@
             <td th:text="${stock.symbol}"></td>
             <td th:text="${stock.name}"></td>
             <td th:text="${stock.lastTradeDateTime} ? ${#dates.format(stock.lastTradeDateTime, 'HH:mm:ss')} : ''"></td>
-            <td th:text="${stock.gains}"></td>
             <td th:text="${stock.value}"></td>
+            <td th:text="${stock.gains}"></td>
             <td th:text="${stock.openValue}"></td>
             <td th:text="${stock.closeValue}"></td>
         </tr>
