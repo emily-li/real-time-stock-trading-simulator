@@ -89,7 +89,7 @@ public class StockAsOfUpdaterIT {
     }
 
     private StockAsOfDetails getUpdatedStockAsOf(STOCK_AS_OF stockAsOf) {
-        Awaitility.await().atMost(initialDelay + 1, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
+        Awaitility.await().atMost(initialDelay + 5, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
         return stockAsOfDetailsRepository.findOne(symbol);
     }
 

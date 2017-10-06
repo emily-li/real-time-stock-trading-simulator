@@ -67,7 +67,6 @@ public class StocksControllerIT {
     private int pageStockDefaultSize;
 
     private String stockURL;
-    private String stockURLAll;
     private Model model;
     private String username;
     private Principal principal;
@@ -97,8 +96,7 @@ public class StocksControllerIT {
         stockAsOfDetails.setCloseValue(new BigDecimal(3));
         stockAsOfDetailsRepository.save(stockAsOfDetails);
 
-        stockURL = "http://localhost:" + port + "/stock/buy";
-        stockURLAll = stockURL + "?page=0&size=" + Integer.MAX_VALUE;
+        stockURL = "http://localhost:" + port + "/stock/buy?page=0&size=" + Integer.MAX_VALUE;
         stockView = stockViewService.getStockView(company.getSymbol());
     }
 
@@ -226,7 +224,7 @@ public class StocksControllerIT {
 
         stockView = stockViewService.getStockView(stockView.getSymbol());
 
-        String stockPageContents = restTemplate.getForObject(stockURLAll, String.class);
+        String stockPageContents = restTemplate.getForObject(stockURL, String.class);
         assertTrue(stockPageContents.contains("Stock Symbol"));
         assertTrue(stockPageContents.contains(stockView.getSymbol().toUpperCase()));
         assertTrue(stockPageContents.contains("Stock Name"));
@@ -295,7 +293,7 @@ public class StocksControllerIT {
     public void testViewAllStocks() {
         generateStocks(pageStockDefaultSize * 2);
         Collection<StockView> stockViews = stockViewService.getStocksWithVolume(null);
-        String pageContents = restTemplate.getForObject(stockURLAll, String.class);
+        String pageContents = restTemplate.getForObject(stockURL, String.class);
         stockViews.forEach(stockView -> assertTrue(pageContents.contains(stockView.getSymbol())));
     }
 

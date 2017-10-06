@@ -116,7 +116,9 @@ public class ReportGenerationServiceIT {
 
         List<String> companyNames = new ArrayList<>();
         stockDetails.forEach(stockDetail -> companyNames.add(stockDetail.getName()));
+        companyNames.removeAll(Collections.singleton(null));
         List<String> orderedCompanyNames = new ArrayList<>(companyNames);
+        orderedCompanyNames.removeAll(Collections.singleton(null));
         Collections.sort(orderedCompanyNames);
         assertEquals(orderedCompanyNames, companyNames);
     }
