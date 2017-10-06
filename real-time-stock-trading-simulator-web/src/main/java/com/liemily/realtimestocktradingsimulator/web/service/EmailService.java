@@ -2,7 +2,7 @@ package com.liemily.realtimestocktradingsimulator.web.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
 /**
  * Created by Emily Li on 06/10/2017.
  */
-@Component
+@Service
 @Lazy
 public class EmailService {
     private final Session emailSession;
