@@ -1,43 +1,32 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.realtimestocktradingsimulator.web.service.EmailService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests exception handler e-mail functionality
- * <p>
  * Created by Emily Li on 04/10/2017.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class ControllerExceptionHandlerIT {
-    @Mock
-    private StocksController stocksController;
+    private ControllerExceptionHandler controllerExceptionHandler;
+    private EmailService emailService;
 
     @Before
     public void setup() {
-        when(stocksController.getStocksAttribute()).thenThrow(Exception.class);
+        emailService = mock(EmailService.class);
+        controllerExceptionHandler = new ControllerExceptionHandler(emailService, "");
     }
 
     /**
      * S.M01 The administrator should receive an e-mail should an exception occur
      */
     @Test
-    public void testAdminEmailedOnException() {
-        stocksController.getStocksAttribute();
-    }
-
-    /**
-     * S.M02 The administrator should receive an e-mail should an exception occur with creation date time, logs, and stack trace
-     */
-    @Test
-    public void testAdminEmailContainsExceptionDetails() {
-
+    public void testAdminEmailedOnException() throws Exception {
+        controllerExceptionHandler.handleException(new Exception("Exception message", new Throwable("Throwable message")));
+        verify(emailService, times(1)).email(anyString(), anyString(), anyString());
     }
 }

@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Import;
  * Created by Emily Li on 20/09/2017.
  */
 @Configuration
-@Import({TradeConfig.class, UserConfig.class})
+@Import({EmailConfig.class, TradeConfig.class, UserConfig.class})
 class RealTimeStockTradingSimulatorConfig {
 }
