@@ -40,7 +40,7 @@ public class StockAsOfDetailsIT {
 
         stockAsOfUpdateRunnable = new StockAsOfUpdateRunnable(stockRepository, stockAsOfDetailsRepository, null);
         stockAsOfUpdateRunnable.insertNewStocks();
-        stockAsOfDetails = stockAsOfDetailsRepository.findOne(symbol);
+        stockAsOfDetails = stockAsOfDetailsRepository.findById(symbol).orElse(null);
     }
 
     /**
@@ -50,7 +50,8 @@ public class StockAsOfDetailsIT {
     public void testStocksOpenAsOf() {
         stockAsOfUpdateRunnable = new StockAsOfUpdateRunnable(stockRepository, stockAsOfDetailsRepository, STOCK_AS_OF.OPEN);
         stockAsOfUpdateRunnable.updateAsOf();
-        stockAsOfDetails = stockAsOfDetailsRepository.findOne(symbol);
+        stockAsOfDetails = stockAsOfDetailsRepository.findById(symbol).orElse(null);
+        assert stockAsOfDetails != null;
         BigDecimal open = stockAsOfDetails.getOpenValue();
         assertTrue(open.compareTo(new BigDecimal(1)) == 0);
     }
@@ -62,7 +63,8 @@ public class StockAsOfDetailsIT {
     public void testStocksCloseAsOf() {
         stockAsOfUpdateRunnable = new StockAsOfUpdateRunnable(stockRepository, stockAsOfDetailsRepository, STOCK_AS_OF.CLOSE);
         stockAsOfUpdateRunnable.updateAsOf();
-        stockAsOfDetails = stockAsOfDetailsRepository.findOne(symbol);
+        stockAsOfDetails = stockAsOfDetailsRepository.findById(symbol).orElse(null);
+        assert stockAsOfDetails != null;
         BigDecimal close = stockAsOfDetails.getCloseValue();
         assertTrue(close.compareTo(new BigDecimal(1)) == 0);
     }

@@ -40,7 +40,7 @@ public class StockViewIT {
         symbol = UUID.randomUUID().toString();
         Stock stock = new Stock(symbol, new BigDecimal(1), 0);
         stockRepository.save(stock);
-        stockView = stockViewRepository.findOne(symbol);
+        stockView = stockViewRepository.findById(symbol).orElse(null);
     }
 
     /**
@@ -51,11 +51,13 @@ public class StockViewIT {
         StockAsOfUpdateRunnable stockAsOfUpdateRunnable = new StockAsOfUpdateRunnable(stockRepository, stockAsOfDetailsRepository, STOCK_AS_OF.OPEN);
         stockAsOfUpdateRunnable.run();
 
-        Stock stock = stockRepository.findOne(symbol);
+        Stock stock = stockRepository.findById(symbol).orElse(null);
+        assert stock != null;
         stock.setValue(new BigDecimal("0.7"));
         stockRepository.save(stock);
 
-        stockView = stockViewRepository.findOne(symbol);
+        stockView = stockViewRepository.findById(symbol).orElse(null);
+        assert stockView != null;
         BigDecimal gains = stockView.getGains();
 
         assertTrue(gains.compareTo(new BigDecimal("-0.3")) == 0);

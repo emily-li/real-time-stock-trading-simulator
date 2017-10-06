@@ -147,12 +147,7 @@ public class ReportGenerationServiceIT {
     @Test
     public void testCompanyStockReport() throws Exception {
         ReportRequest reportRequest = new StockReportRequest(FileType.XML);
-        Report report = reportGenerationService.generate(reportRequest);
-
-        Collection<String> stocks = getStockSymbols(report);
-
-        assertTrue(stocks.contains(company1.getSymbol().toUpperCase()));
-        assertTrue(stocks.contains(company2.getSymbol().toUpperCase()));
+        assertReportRequestRetrievesCompanyStocks(reportRequest);
     }
 
     /**
@@ -161,12 +156,7 @@ public class ReportGenerationServiceIT {
     @Test
     public void testCompanyStockReportGeneratedGivenStockSymbol() throws Exception {
         ReportRequest reportRequest = new StockReportRequest(FileType.XML, company1.getSymbol(), company2.getSymbol());
-        Report report = reportGenerationService.generate(reportRequest);
-
-        Collection<String> stocks = getStockSymbols(report);
-
-        assertTrue(stocks.contains(company1.getSymbol().toUpperCase()));
-        assertTrue(stocks.contains(company2.getSymbol().toUpperCase()));
+        Collection<String> stocks = assertReportRequestRetrievesCompanyStocks(reportRequest);
         assertTrue(stocks.size() == 2);
     }
 
@@ -253,5 +243,16 @@ public class ReportGenerationServiceIT {
         List<? extends StockItem> stockItems = getStocksFromXML(report.getReport());
         stockItems.forEach(stockDetails -> stockSymbols.add(stockDetails.getSymbol()));
         return stockSymbols;
+    }
+
+    private Collection<String> assertReportRequestRetrievesCompanyStocks(ReportRequest reportRequest) throws Exception {
+        Report report = reportGenerationService.generate(reportRequest);
+
+        Collection<String> stocks = getStockSymbols(report);
+
+        assertTrue(stocks.contains(company1.getSymbol().toUpperCase()));
+        assertTrue(stocks.contains(company2.getSymbol().toUpperCase()));
+
+        return stocks;
     }
 }

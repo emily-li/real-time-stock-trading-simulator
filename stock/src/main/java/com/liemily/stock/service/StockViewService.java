@@ -37,7 +37,7 @@ public class StockViewService {
     }
 
     public StockView getStockView(String symbol) {
-        return stockViewRepository.findOne(symbol);
+        return stockViewRepository.findById(symbol).orElse(null);
     }
 
     public List<StockView> getStocksWithVolumeBySymbol(String symbol, Pageable pageable) {

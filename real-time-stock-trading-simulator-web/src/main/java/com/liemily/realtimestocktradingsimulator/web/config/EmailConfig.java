@@ -15,7 +15,7 @@ import java.util.Properties;
  */
 @Configuration
 @Lazy
-public class EmailConfig {
+class EmailConfig {
     @Value("${mail.smtp.host}")
     private String host;
     @Value("${mail.smtp.port}")

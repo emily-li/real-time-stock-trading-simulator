@@ -37,7 +37,7 @@ public class StockEdgeCaseIT {
 
     @After
     public void tearDown() {
-        stockRepository.delete(id);
+        stockRepository.deleteById(id);
     }
 
     @Test
@@ -47,8 +47,7 @@ public class StockEdgeCaseIT {
         Stock stock = new Stock(id, MIN, 0);
         stockRepository.save(stock);
 
-        Stock persistedStock = stockRepository.findOne(id);
-        assertTrue(persistedStock.getValue().compareTo(stock.getValue()) == 0);
+        assertStockValue(stock);
     }
 
     @Test
@@ -58,8 +57,7 @@ public class StockEdgeCaseIT {
         Stock stock = new Stock(id, MAX, 0);
         stockRepository.save(stock);
 
-        Stock persistedStock = stockRepository.findOne(id);
-        assertTrue(persistedStock.getValue().compareTo(stock.getValue()) == 0);
+        assertStockValue(stock);
     }
 
     @Test
@@ -69,7 +67,8 @@ public class StockEdgeCaseIT {
         Stock stock = new Stock(id, new BigDecimal(0), MIN);
         stockRepository.save(stock);
 
-        Stock persistedStock = stockRepository.findOne(id);
+        Stock persistedStock = stockRepository.findById(id).orElse(null);
+        assert persistedStock != null;
         assertEquals(persistedStock.getVolume(), stock.getVolume());
     }
 
@@ -80,7 +79,14 @@ public class StockEdgeCaseIT {
         Stock stock = new Stock(id, new BigDecimal(0), MAX);
         stockRepository.save(stock);
 
-        Stock persistedStock = stockRepository.findOne(id);
+        Stock persistedStock = stockRepository.findById(id).orElse(null);
+        assert persistedStock != null;
         assertEquals(persistedStock.getVolume(), stock.getVolume());
+    }
+
+    private void assertStockValue(Stock stock) {
+        Stock persistedStock = stockRepository.findById(id).orElse(null);
+        assert persistedStock != null;
+        assertTrue(persistedStock.getValue().compareTo(stock.getValue()) == 0);
     }
 }

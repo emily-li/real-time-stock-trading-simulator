@@ -20,7 +20,7 @@ public class StockService {
     }
 
     public Stock getStock(String stockSymbol) {
-        return stockRepository.findOne(stockSymbol);
+        return stockRepository.findById(stockSymbol).orElse(null);
     }
 
     public List<Stock> getStocks() {
@@ -32,6 +32,6 @@ public class StockService {
     }
 
     public void save(Collection<Stock> stocks) {
-        stockRepository.save(stocks);
+        stockRepository.saveAll(stocks);
     }
 }

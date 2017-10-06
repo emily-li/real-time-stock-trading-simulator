@@ -28,8 +28,8 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <spring.version>4.3.11.RELEASE</spring.version>
-        <spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+        <spring.version>5.0.0.RELEASE</spring.version>
+        <spring.boot.version>2.0.0.M3</spring.boot.version>
     </properties>
 
     <build>
@@ -60,4 +60,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 public class Trade {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String stockSymbol;
     private String username;

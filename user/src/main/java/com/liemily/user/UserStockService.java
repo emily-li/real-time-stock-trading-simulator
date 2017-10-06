@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Lazy
@@ -23,7 +24,8 @@ public class UserStockService {
     }
 
     public UserStock getUserStock(String username, String symbol) {
-        return userStockRepository.findOne(new UserStockId(username, symbol));
+        Optional<UserStock> userStock = userStockRepository.findById(new UserStockId(username, symbol));
+        return userStock.orElse(null);
     }
 
     public List<UserStock> getUserStocks(String username, Pageable pageable) {
@@ -71,6 +73,6 @@ public class UserStockService {
     }
 
     public void save(Collection<UserStock> userStocks) {
-        userStockRepository.save(userStocks);
+        userStockRepository.saveAll(userStocks);
     }
 }

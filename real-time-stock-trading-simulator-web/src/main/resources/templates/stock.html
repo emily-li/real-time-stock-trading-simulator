@@ -22,7 +22,7 @@
             <th>Close</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="stockTable">
         <tr th:each="stock : ${stocks}">
             <td th:text="${stock.symbol}"></td>
             <td th:text="${stock.name}"></td>
@@ -35,6 +35,17 @@
         </tbody>
     </table>
 </div>
+
+<script>
+
+    var stockTable = document.getElementById("stockTable");
+
+    var source = new EventSource("/events");
+    source.addEventListener("message", function (event) {
+        stockTable.innerHTML = event.data + stockTable.innerHTML;
+    });
+
+</script>
 
 </body>
 </html>

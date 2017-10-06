@@ -47,7 +47,7 @@ class StocksController {
                             @RequestParam(required = false) BigDecimal gains,
                             @RequestParam(required = false) BigDecimal value,
                             @RequestParam(required = false) Integer volume) {
-        Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
+        Pageable stocksPageable = pageable == null ? PageRequest.of(0, pageStockDefaultSize) : pageable;
         List<StockView> stockViews = null;
 
         if (symbol != null) {
@@ -74,7 +74,7 @@ class StocksController {
                              @RequestParam(required = false) BigDecimal value,
                              @RequestParam(required = false) Integer volume) {
         String username = principal.getName();
-        Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
+        Pageable stocksPageable = pageable == null ? PageRequest.of(0, pageStockDefaultSize) : pageable;
         List<UserStock> userStocks = null;
 
         if (symbol != null) {
