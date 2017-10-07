@@ -92,4 +92,13 @@ public class UserStock implements StockItem {
         result = 31 * result + volume;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "UserStock{" +
+                "username='" + username + '\'' +
+                ", symbol='" + symbol + '\'' +
+                ", volume=" + volume +
+                '}';
+    }
 }
