@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 @ControllerAdvice
 @Lazy
-class ControllerExceptionHandler {
+public class ControllerExceptionHandler {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final String SUBJECT = "ControllerExceptionHandler caught Exception: ";

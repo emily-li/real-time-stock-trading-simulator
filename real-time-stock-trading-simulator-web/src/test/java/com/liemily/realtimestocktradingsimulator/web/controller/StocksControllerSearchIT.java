@@ -194,7 +194,7 @@ public class StocksControllerSearchIT {
     private void setupBuyableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value, Integer volume) {
         model = new ExtendedModelMap();
         comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
-        stocksController.getBuyableStocks(model, PageRequest.of(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value, volume);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value, volume);
         stockViews = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         assertTrue(stockViews.size() > 0);
     }
@@ -202,7 +202,7 @@ public class StocksControllerSearchIT {
     private void setupSellableTest(String symbol, String companyName, String op, BigDecimal gains, BigDecimal value, Integer volume) {
         model = new ExtendedModelMap();
         comparison = op == null || op.equalsIgnoreCase(LT_OP) ? -1 : 1;
-        stocksController.getSellableStocks(model, principal, PageRequest.of(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value, volume);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), symbol, companyName, op, gains, value, volume);
         userStocks = (List<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertTrue(userStocks.size() > 0);
     }

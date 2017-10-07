@@ -48,16 +48,12 @@ public class StockModulationServiceIT {
      */
     @Test
     public void testStocksModulation() throws Exception {
-        Stock stock = stockRepository.findById(symbol).orElse(null);
-        assert stock != null;
-        BigDecimal prevValue = stock.getValue();
+        BigDecimal prevValue = stockRepository.findOne(symbol).getValue();
         for (int i = 0; i < 3; i++) {
             await().atMost(updateRateMs + 5000, TimeUnit.MILLISECONDS).until(new StockChangeWaiter(prevValue));
-            Stock retrievedStock = stockRepository.findById(symbol).orElse(null);
-            assert retrievedStock != null;
-            BigDecimal currValue = retrievedStock.getValue();
+            BigDecimal currValue = stockRepository.findOne(symbol).getValue();
             assertTrue(prevValue.compareTo(currValue) != 0);
-            prevValue = currValue;
+            prevValue = stockRepository.findOne(symbol).getValue();
         }
     }
 
@@ -70,13 +66,9 @@ public class StockModulationServiceIT {
 
         @Override
         public void run() {
-            Stock stock = stockRepository.findById(symbol).orElse(null);
-            assert stock != null;
-            BigDecimal currValue = stock.getValue();
+            BigDecimal currValue = stockRepository.findOne(symbol).getValue();
             while (prevValue.compareTo(currValue) == 0) {
-                stock = stockRepository.findById(symbol).orElse(null);
-                assert stock != null;
-                currValue = stock.getValue();
+                currValue = stockRepository.findOne(symbol).getValue();
             }
         }
     }

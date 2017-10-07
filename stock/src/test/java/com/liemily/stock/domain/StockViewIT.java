@@ -35,7 +35,7 @@ public class StockViewIT {
 
     @Before
     public void setup() {
-        stockView = stockViewRepository.findById(SYMBOL).orElse(null);
+        stockView = stockViewRepository.findOne(SYMBOL);
     }
 
     /**

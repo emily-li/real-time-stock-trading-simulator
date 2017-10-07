@@ -18,7 +18,6 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -90,8 +89,8 @@ public class StockAsOfUpdaterIT {
     }
 
     private StockAsOfDetails getUpdatedStockAsOf(STOCK_AS_OF stockAsOf) {
-        Awaitility.await().atMost(initialDelay + 10, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
-        return stockAsOfDetailsRepository.findById(symbol).orElse(null);
+        Awaitility.await().atMost(initialDelay + 5, TimeUnit.SECONDS).until(new StockAsOfUpdateWaiter(stockAsOf));
+        return stockAsOfDetailsRepository.findOne(symbol);
     }
 
     private class StockAsOfUpdaterTester extends StockAsOfUpdater implements Runnable {
@@ -117,9 +116,8 @@ public class StockAsOfUpdaterIT {
             BigDecimal asOfValue = null;
 
             while (asOfValue == null) {
-                Optional<StockAsOfDetails> optionalStockAsOfDetails = stockAsOfDetailsRepository.findById(symbol);
-                if (optionalStockAsOfDetails.isPresent()) {
-                    StockAsOfDetails stockAsOfDetails = optionalStockAsOfDetails.get();
+                StockAsOfDetails stockAsOfDetails = stockAsOfDetailsRepository.findOne(symbol);
+                if (stockAsOfDetails != null) {
                     asOfValue = stockAsOf.equals(STOCK_AS_OF.OPEN) ? stockAsOfDetails.getOpenValue() : stockAsOfDetails.getCloseValue();
                 }
             }

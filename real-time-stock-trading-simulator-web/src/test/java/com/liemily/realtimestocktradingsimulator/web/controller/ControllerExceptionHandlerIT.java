@@ -4,6 +4,7 @@ import com.liemily.realtimestocktradingsimulator.web.service.EmailService;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**

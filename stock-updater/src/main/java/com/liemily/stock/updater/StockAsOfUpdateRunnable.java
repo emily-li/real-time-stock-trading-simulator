@@ -52,7 +52,7 @@ class StockAsOfUpdateRunnable implements Runnable {
                 stockAsOfs.setCloseValue(stockValue);
             }
         }
-        stockAsOfDetailsRepository.saveAll(stockAsOfDetails);
+        stockAsOfDetailsRepository.save(stockAsOfDetails);
     }
 
     @Transactional
@@ -69,6 +69,6 @@ class StockAsOfUpdateRunnable implements Runnable {
         List<StockAsOfDetails> newStockAsOfDetails = new ArrayList<>();
         stocksSymbols.forEach(stockSymbol -> newStockAsOfDetails.add(new StockAsOfDetails(stocksSymbolsMap.get(stockSymbol))));
 
-        stockAsOfDetailsRepository.saveAll(newStockAsOfDetails);
+        stockAsOfDetailsRepository.save(newStockAsOfDetails);
     }
 }

@@ -17,9 +17,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -107,7 +107,7 @@ public class StocksControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stocksController.getBuyableStocks(model, PageRequest.of(0, stockViewService.getStocksWithVolume(null).size()), null, null, null, null, null, null);
+        String stockPage = stocksController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()), null, null, null, null, null, null);
         StockView expectedStockView = stockViewService.getStockView(stockView.getSymbol());
         Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stocksController.getStocksAttribute());
 
@@ -142,7 +142,7 @@ public class StocksControllerIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        stocksController.getBuyableStocks(model, PageRequest.of(0, Integer.MAX_VALUE), null, null, null, null, null, null);
+        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
         List<StockView> stocks = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
         Integer stock1Idx = null;
         Integer stock2Idx = null;
@@ -168,7 +168,7 @@ public class StocksControllerIT {
         final int PAGE_SIZE = 2;
         generateStocks(PAGE_SIZE + 1);
 
-        Pageable pageable = PageRequest.of(0, PAGE_SIZE);
+        Pageable pageable = new PageRequest(0, PAGE_SIZE);
         testPaginationSize(PAGE_SIZE, pageable);
     }
 
@@ -301,7 +301,7 @@ public class StocksControllerIT {
     public void testViewAllUserStocks() {
         generateStocks(pageStockDefaultSize * 2);
         Collection<UserStock> userStocks = userStockService.getUserStocks(username, null);
-        stocksController.getSellableStocks(model, principal, PageRequest.of(0, Integer.MAX_VALUE), null, null, null, null, null, null);
+        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
         Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
         assertTrue(retrievedUserStocks.containsAll(userStocks));
     }

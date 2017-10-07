@@ -47,13 +47,13 @@ public class StockGenerationServiceIT {
     public void setup() throws Exception {
         stockId = UUID.randomUUID().toString();
         stockGenerationService.generateStock(stockId);
-        persistedStockView = stockViewRepository.findById(stockId).orElse(null);
+        persistedStockView = stockViewRepository.findOne(stockId);
     }
 
     @After
     public void tearDown() {
         try {
-            stockRepository.deleteById(stockId);
+            stockRepository.delete(stockId);
         } catch (EmptyResultDataAccessException e) {
             logger.info("Failed to delete stock as it was already deleted: " + stockId);
         }
@@ -75,7 +75,6 @@ public class StockGenerationServiceIT {
     public void testStocksValuesGeneratedWithRequirementsRange() throws Exception {
         BigDecimal prevValue = null;
         for (int i = 0; i < 5; i++) {
-            assert persistedStockView != null;
             BigDecimal value = persistedStockView.getValue();
             boolean ge5 = value.compareTo(new BigDecimal(5)) >= 0;
             boolean le550 = value.compareTo(new BigDecimal(550)) <= 0;
@@ -89,7 +88,7 @@ public class StockGenerationServiceIT {
             prevValue = value;
             stockId = UUID.randomUUID().toString();
             stockGenerationService.generateStock(stockId);
-            persistedStockView = stockViewRepository.findById(stockId).orElse(null);
+            persistedStockView = stockViewRepository.findOne(stockId);
         }
     }
 
@@ -109,7 +108,6 @@ public class StockGenerationServiceIT {
     public void testStocksVolumeGeneratedWithRequirementsRange() throws Exception {
         Integer prevVol = null;
         for (int i = 0; i < 5; i++) {
-            assert persistedStockView != null;
             int volume = persistedStockView.getVolume();
 
             assertTrue(volume >= 2000000);
@@ -121,7 +119,7 @@ public class StockGenerationServiceIT {
             prevVol = volume;
             stockId = UUID.randomUUID().toString();
             stockGenerationService.generateStock(stockId);
-            persistedStockView = stockViewRepository.findById(stockId).orElse(null);
+            persistedStockView = stockViewRepository.findOne(stockId);
         }
     }
 
