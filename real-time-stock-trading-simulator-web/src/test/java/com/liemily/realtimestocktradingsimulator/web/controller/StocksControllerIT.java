@@ -4,6 +4,7 @@ import com.liemily.company.domain.Company;
 import com.liemily.company.service.CompanyService;
 import com.liemily.stock.domain.Stock;
 import com.liemily.stock.domain.StockAsOfDetails;
+import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
@@ -12,20 +13,20 @@ import com.liemily.trade.domain.Trade;
 import com.liemily.trade.service.TradeService;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
@@ -42,12 +43,17 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StocksControllerIT {
+    private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
+
     private static final String DATETIME_FORMAT = "HH:mm:ss";
+    private static final int PAGE_STOCK_DEFAULT_SIZE = 20;
 
     @LocalServerPort
     private int port;
     @Autowired
     private TestRestTemplate restTemplate;
+    @Autowired
+    private StocksAPIController stocksAPIController;
     @Autowired
     private StocksController stocksController;
 
@@ -63,11 +69,9 @@ public class StocksControllerIT {
     private TradeService tradeService;
     @Autowired
     private StockAsOfDetailsRepository stockAsOfDetailsRepository;
-    @Value("${page.stock.defaultSize}")
-    private int pageStockDefaultSize;
 
     private String stockURL;
-    private Model model;
+    private String stockViewURL;
     private String username;
     private Principal principal;
 
@@ -77,7 +81,6 @@ public class StocksControllerIT {
 
     @Before
     public void setup() {
-        model = new ExtendedModelMap();
         username = UUID.randomUUID().toString();
         principal = (UserPrincipal) () -> username;
 
@@ -96,7 +99,8 @@ public class StocksControllerIT {
         stockAsOfDetails.setCloseValue(new BigDecimal(3));
         stockAsOfDetailsRepository.save(stockAsOfDetails);
 
-        stockURL = "http://localhost:" + port + "/stock/buy?page=0&size=" + Integer.MAX_VALUE;
+        stockURL = "http://localhost:" + port + "/api/v1/buy?page=0&size=" + Integer.MAX_VALUE;
+        stockViewURL = "http://localhost:" + port + "/stock/buy";
         stockView = stockViewService.getStockView(company.getSymbol());
     }
 
@@ -107,11 +111,9 @@ public class StocksControllerIT {
      */
     @Test
     public void testGetBuyableShares() throws Exception {
-        String stockPage = stocksController.getBuyableStocks(model, new PageRequest(0, stockViewService.getStocksWithVolume(null).size()), null, null, null, null, null, null);
+        Collection<StockItem> stockViews = stocksAPIController.getBuyableStocks(new PageRequest(0, stockViewService.getStocksWithVolume(null).size()), null, null, null, null, null, null);
         StockView expectedStockView = stockViewService.getStockView(stockView.getSymbol());
-        Collection<StockView> stockViews = (Collection<StockView>) model.asMap().get(stocksController.getStocksAttribute());
 
-        assertEquals("stock", stockPage);
         assertTrue(stockViews.contains(expectedStockView));
     }
 
@@ -125,11 +127,9 @@ public class StocksControllerIT {
         UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
         userStockService.save(userStock);
 
-        String stockPage = stocksController.getSellableStocks(model, principal, null, null, null, null, null, null, null);
-        Collection<UserStock> stocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
+        Collection<StockItem> stockItems = stocksAPIController.getSellableStocks(principal, null, null, null, null, null, null, null);
 
-        assertEquals("stock", stockPage);
-        assertTrue(stocks.contains(userStock));
+        assertTrue(stockItems.contains(userStock));
     }
 
     /**
@@ -142,22 +142,14 @@ public class StocksControllerIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        stocksController.getBuyableStocks(model, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
-        List<StockView> stocks = (List<StockView>) model.asMap().get(stocksController.getStocksAttribute());
-        Integer stock1Idx = null;
-        Integer stock2Idx = null;
+        List<StockItem> stockItems = stocksAPIController.getBuyableStocks(new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
+        List<String> stockSymbols = new ArrayList<>();
+        stockItems.forEach(stockItem -> stockSymbols.add(stockItem.getSymbol()));
 
-        for (int i = 0; i < stocks.size(); i++) {
-            if (stocks.get(i).getSymbol().equals(stock1.getSymbol())) {
-                stock1Idx = i;
-            } else if (stocks.get(i).getSymbol().equals(stock2.getSymbol())) {
-                stock2Idx = i;
-            }
-            if (stock1Idx != null && stock2Idx != null) {
-                break;
-            }
-        }
-        assertTrue(stock2Idx > stock1Idx);
+        List<String> expectedOrder = new ArrayList<>(stockSymbols);
+        Collections.sort(expectedOrder);
+
+        assertEquals(expectedOrder, stockSymbols);
     }
 
     /**
@@ -199,14 +191,11 @@ public class StocksControllerIT {
         stockService.save(stocks);
         userStockService.save(userStocks);
 
-        stocksController.getBuyableStocks(model, null, null, null, null, null, null, null);
-        Collection<StockView> retrievedStocks = (Collection<StockView>) model.asMap().get(stocksController.getStocksAttribute());
+        Collection<StockItem> retrievedStocks = stocksAPIController.getBuyableStocks(null, null, null, null, null, null, null);
         Collection<String> retrievedStockSymbols = new ArrayList<>();
         retrievedStocks.forEach(stock -> retrievedStockSymbols.add(stock.getSymbol()));
 
-        model = new ExtendedModelMap();
-        stocksController.getSellableStocks(model, principal, null, null, null, null, null, null, null);
-        Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
+        Collection<StockItem> retrievedUserStocks = stocksAPIController.getSellableStocks(principal, null, null, null, null, null, null, null);
         Collection<String> retrievedUserStockSymbols = new ArrayList<>();
         retrievedUserStocks.forEach(userStock -> retrievedUserStockSymbols.add(userStock.getSymbol()));
 
@@ -218,26 +207,34 @@ public class StocksControllerIT {
      * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
      */
     @Test
-    public void testStockFields() {
+    public void testStockFieldNamess() {
+        String stockPageContents = restTemplate.getForObject(stockViewURL, String.class);
+        assertTrue(stockPageContents.contains("Stock Symbol"));
+        assertTrue(stockPageContents.contains("Stock Name"));
+        assertTrue(stockPageContents.contains("Last Trade"));
+        assertTrue(stockPageContents.contains("Gains"));
+        assertTrue(stockPageContents.contains("Value"));
+        assertTrue(stockPageContents.contains("Open"));
+        assertTrue(stockPageContents.contains("Close"));
+    }
+
+    /**
+     * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
+     */
+    public void testStockFieldValues() {
         String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
         expectedGains = new BigDecimal(2);
 
         stockView = stockViewService.getStockView(stockView.getSymbol());
 
         String stockPageContents = restTemplate.getForObject(stockURL, String.class);
-        assertTrue(stockPageContents.contains("Stock Symbol"));
+
         assertTrue(stockPageContents.contains(stockView.getSymbol().toUpperCase()));
-        assertTrue(stockPageContents.contains("Stock Name"));
-        assertTrue(stockPageContents.contains(stockView.getName()));
-        assertTrue(stockPageContents.contains("Last Trade"));
         assertTrue(stockPageContents.contains(expectedLastTradeDateTime));
-        assertTrue(stockPageContents.contains("Gains"));
+        assertTrue(stockPageContents.contains(stockView.getName()));
         assertTrue(stockPageContents.contains(stockView.getGains().toString()));
-        assertTrue(stockPageContents.contains("Value"));
         assertTrue(stockPageContents.contains(stockView.getValue().toString()));
-        assertTrue(stockPageContents.contains("Open"));
         assertTrue(stockPageContents.contains(stockView.getOpenValue().toString()));
-        assertTrue(stockPageContents.contains("Close"));
         assertTrue(stockPageContents.contains(stockView.getCloseValue().toString()));
     }
 
@@ -276,22 +273,11 @@ public class StocksControllerIT {
     }
 
     /**
-     * C.S13 Last Trade should be presented in format HH:mm:ss
-     */
-    @Test
-    public void testLastTradeFormat() {
-        String expectedLastTradeDateTime = new SimpleDateFormat(DATETIME_FORMAT).format(trade.getTradeDateTime());
-        String stockPageContents = restTemplate.getForObject(stockURL, String.class);
-
-        assertTrue(stockPageContents.contains(">" + expectedLastTradeDateTime + "<"));
-    }
-
-    /**
      * C.S14 The user should be able to view all stocks on a single page
      */
     @Test
     public void testViewAllStocks() {
-        generateStocks(pageStockDefaultSize * 2);
+        generateStocks(PAGE_STOCK_DEFAULT_SIZE * 2);
         Collection<StockView> stockViews = stockViewService.getStocksWithVolume(null);
         String pageContents = restTemplate.getForObject(stockURL, String.class);
         stockViews.forEach(stockView -> assertTrue(pageContents.contains(stockView.getSymbol())));
@@ -299,10 +285,9 @@ public class StocksControllerIT {
 
     @Test
     public void testViewAllUserStocks() {
-        generateStocks(pageStockDefaultSize * 2);
+        generateStocks(PAGE_STOCK_DEFAULT_SIZE * 2);
         Collection<UserStock> userStocks = userStockService.getUserStocks(username, null);
-        stocksController.getSellableStocks(model, principal, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
-        Collection<UserStock> retrievedUserStocks = (Collection<UserStock>) model.asMap().get(stocksController.getStocksAttribute());
+        Collection<StockItem> retrievedUserStocks = stocksAPIController.getSellableStocks(principal, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
         assertTrue(retrievedUserStocks.containsAll(userStocks));
     }
 
@@ -325,10 +310,12 @@ public class StocksControllerIT {
         Stock stock = new Stock(stockView.getSymbol(), stockView.getValue(), 0);
         stockService.save(stock);
         stock = new Stock(stockView.getSymbol(), stockView.getValue(), 1);
-        stockService.save(stock);
+        stock = stockService.save(stock);
 
-        String pageContents = restTemplate.getForObject(stockURL, String.class);
-        assertTrue(pageContents.contains(stock.getSymbol().toUpperCase()));
+        List<StockItem> stocks = stocksAPIController.getBuyableStocks(null, stock.getSymbol(), null, null, null, null, null);
+
+        assert stocks.size() == 1;
+        assertEquals(stock.getSymbol(), stocks.get(0).getSymbol());
     }
 
     private void generateStocks(int num) {
@@ -345,13 +332,10 @@ public class StocksControllerIT {
     }
 
     private void testPaginationSize(int expectedSize, Pageable pageable) {
-        stocksController.getBuyableStocks(model, pageable, null, null, null, null, null, null);
-        Collection<Stock> paginatedStocks = (Collection<Stock>) model.asMap().get(stocksController.getStocksAttribute());
+        Collection<StockItem> paginatedStocks = stocksAPIController.getBuyableStocks(pageable, null, null, null, null, null, null);
         assertEquals(expectedSize, paginatedStocks.size());
 
-        model = new ExtendedModelMap();
-        stocksController.getSellableStocks(model, principal, pageable, null, null, null, null, null, null);
-        paginatedStocks = (Collection<Stock>) model.asMap().get(stocksController.getStocksAttribute());
+        paginatedStocks = stocksAPIController.getSellableStocks(principal, pageable, null, null, null, null, null, null);
         assertEquals(expectedSize, paginatedStocks.size());
     }
 }
