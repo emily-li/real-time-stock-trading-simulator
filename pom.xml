@@ -38,6 +38,11 @@
                 <directory>resources</directory>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>resources-test</directory>
+            </testResource>
+        </testResources>
     </build>
 
     <dependencies>
