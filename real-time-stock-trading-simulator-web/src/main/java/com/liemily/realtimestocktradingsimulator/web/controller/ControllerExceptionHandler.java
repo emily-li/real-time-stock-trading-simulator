@@ -34,7 +34,7 @@ class ControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     void handleException(Exception e) throws MessagingException {
-        logger.info("Caught exception " + e.getCause());
+        logger.info("Caught exception", e);
 
         String subject = SUBJECT + e.getCause();
         String contents = e.getStackTrace() != null ? Arrays.toString(e.getStackTrace()) : e.toString();
