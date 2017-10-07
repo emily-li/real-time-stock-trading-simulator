@@ -1,3 +1,10 @@
+DROP TABLE IF EXISTS company;
+DROP TABLE IF EXISTS stock;
+DROP TABLE IF EXISTS stock_as_of_details;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS trade;
+DROP TABLE IF EXISTS user_stock;
+
 CREATE TABLE IF NOT EXISTS company (
     symbol          VARCHAR(50)     NOT NULL    PRIMARY KEY,
     name            VARCHAR(50)     NOT NULL
