@@ -27,8 +27,8 @@ public class StockService {
         return stockRepository.findAll();
     }
 
-    public void save(Stock stock) {
-        stockRepository.save(stock);
+    public Stock save(Stock stock) {
+        return stockRepository.save(stock);
     }
 
     public void save(Collection<Stock> stocks) {
