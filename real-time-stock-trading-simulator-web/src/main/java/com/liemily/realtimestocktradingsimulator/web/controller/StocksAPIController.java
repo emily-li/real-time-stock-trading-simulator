@@ -91,15 +91,15 @@ public class StocksAPIController {
         } catch (InsufficientStockException ise) {
             logger.info("Failed to process trade due to insufficient stock for trade: " + trade);
             bindingResult.rejectValue(TradeProperty.VOLUME.toString(),
-                    ControllerError.INSUFFICIENT_STOCK_ERROR.toString(),
+                    ControllerError.TRADE_INSUFFICIENT_STOCK_ERROR.toString(),
                     "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
         } catch (InsufficientCreditException ice) {
             logger.info("Failed to process trade due to insufficient credits for user: " + trade.getUsername());
-            bindingResult.reject(ControllerError.INSUFFICIENT_CREDITS_ERROR.toString(),
+            bindingResult.reject(ControllerError.TRADE_INSUFFICIENT_CREDITS_ERROR.toString(),
                     "There are insufficient credits to perform the trade");
         } catch (BrokerException be) {
             logger.info("Failed to process trade: " + trade);
-            bindingResult.reject(ControllerError.BROKER_ERROR.toString());
+            bindingResult.reject(ControllerError.TRADE_BROKER_ERROR.toString());
         }
     }
 
