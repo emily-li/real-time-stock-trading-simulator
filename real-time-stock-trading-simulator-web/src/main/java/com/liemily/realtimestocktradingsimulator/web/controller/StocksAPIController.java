@@ -54,27 +54,6 @@ public class StocksAPIController {
         this.broker = broker;
     }
 
-    @RequestMapping(value = "buy", method = RequestMethod.POST)
-    void buy(Trade trade,
-             BindingResult bindingResult) {
-        logger.info("Received order for purchase " + trade);
-        try {
-            broker.process(trade);
-        } catch (InsufficientStockException ise) {
-            logger.info("Failed to process trade due to insufficient stock for trade: " + trade);
-            bindingResult.rejectValue(TradeProperty.VOLUME.toString(),
-                    ControllerError.INSUFFICIENT_STOCK_ERROR.toString(),
-                    "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
-        } catch (InsufficientCreditException ice) {
-            logger.info("Failed to process trade due to insufficient credits for user: " + trade.getUsername());
-            bindingResult.reject(ControllerError.INSUFFICIENT_CREDITS_ERROR.toString(),
-                    "There are insufficient credits to perform the trade");
-        } catch (BrokerException be) {
-            logger.info("Failed to process trade: " + trade);
-            bindingResult.reject(ControllerError.BROKER_ERROR.toString());
-        }
-    }
-
     @RequestMapping("buy")
     List<StockItem> getBuyableStocks(Pageable pageable,
                                      @RequestParam(required = false) String symbol,
@@ -96,6 +75,32 @@ public class StocksAPIController {
 
         stockViews = stockViews == null ? new ArrayList<>(stockViewService.getStocksWithVolume(stocksPageable)) : stockViews;
         return stockViews;
+    }
+
+    @RequestMapping("buy/all")
+    List<StockItem> getBuyableStocks() {
+        return getBuyableStocks(new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
+    }
+
+    @RequestMapping(value = "buy", method = RequestMethod.POST)
+    void buy(Trade trade,
+             BindingResult bindingResult) {
+        logger.info("Received order for purchase " + trade);
+        try {
+            broker.process(trade);
+        } catch (InsufficientStockException ise) {
+            logger.info("Failed to process trade due to insufficient stock for trade: " + trade);
+            bindingResult.rejectValue(TradeProperty.VOLUME.toString(),
+                    ControllerError.INSUFFICIENT_STOCK_ERROR.toString(),
+                    "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
+        } catch (InsufficientCreditException ice) {
+            logger.info("Failed to process trade due to insufficient credits for user: " + trade.getUsername());
+            bindingResult.reject(ControllerError.INSUFFICIENT_CREDITS_ERROR.toString(),
+                    "There are insufficient credits to perform the trade");
+        } catch (BrokerException be) {
+            logger.info("Failed to process trade: " + trade);
+            bindingResult.reject(ControllerError.BROKER_ERROR.toString());
+        }
     }
 
     @RequestMapping("sell")

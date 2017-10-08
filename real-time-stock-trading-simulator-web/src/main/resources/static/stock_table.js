@@ -105,6 +105,16 @@ function buyStock(username, stockSymbol, volume) {
     });
 }
 
+function searchStock() {
+    page = 0;
+    $.ajax({
+        url: `/api/v1/buy?${currSearch}`,
+        method: "get"
+    }).done((stocks) => {
+        repopulateStocks(stocks);
+    });
+}
+
 // Events
 
 // Navigation
@@ -118,6 +128,19 @@ $("#nextBtn").click(() => {
     updateStocks();
 });
 
+$("#allBtn").click(() => {
+    page = 0;
+    currSearch = '';
+
+    $.ajax({
+        url: `/api/v1/buy/all`,
+        method: "get"
+    }).done((stocks) => {
+        repopulateStocks(stocks);
+    });
+});
+
+// Transactional
 $("#buyBtn").click(() => {
     $("#stocksTBody").find("input").each((index, element) => {
         if ($(element).val()) {
@@ -128,16 +151,16 @@ $("#buyBtn").click(() => {
 
 // Search
 $("#searchSymbolLi").click(() => {
-    page = 0;
     let symbol = $("#searchText").val();
     currSearch = symbol ? `symbol=${symbol}` : '';
+    searchStock();
+});
 
-    $.ajax({
-        url: `/api/v1/buy?${currSearch}`,
-        method: "get"
-    }).done((stocks) => {
-        repopulateStocks(stocks);
-    });
+$("#searchNameLi").click(() => {
+    let name = $("#searchText").val();
+    currSearch = name ? `name=${name}` : '';
+    searchStock();
+
 });
 
 // Init
