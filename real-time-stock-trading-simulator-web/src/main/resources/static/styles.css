@@ -1,3 +1,8 @@
+body {
+    background-color: honeydew !important;
+}
+
 .bordered {
     border: 1px solid silver;
+    background-color: mintcream;
 }
