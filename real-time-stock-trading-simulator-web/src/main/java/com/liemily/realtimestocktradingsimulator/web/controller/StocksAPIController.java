@@ -16,6 +16,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
@@ -35,6 +36,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/v1")
+@Lazy
 public class StocksAPIController {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
