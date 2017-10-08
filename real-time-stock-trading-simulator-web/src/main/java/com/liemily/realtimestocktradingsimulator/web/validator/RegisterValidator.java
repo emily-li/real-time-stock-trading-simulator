@@ -36,10 +36,15 @@ public class RegisterValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         User user = (User) target;
-        if (user.getUsername().length() < usernameLengthMin || user.getUsername().length() > usernameLengthMax) {
+        validateUsername(user.getUsername(), errors);
+        validatePassword(user.getPassword(), errors);
+        validateEmail(user.getEmail(), errors);
+    }
+
+    private void validateUsername(String username, Errors errors) {
+        if (username.length() < usernameLengthMin || username.length() > usernameLengthMax) {
             errors.reject(UserProperty.USERNAME.toString(), String.format("Username must be between %d and %d characters in length", usernameLengthMin, usernameLengthMax));
         }
-        validatePassword(user.getPassword(), errors);
     }
 
     private void validatePassword(String password, Errors errors) {
@@ -54,10 +59,24 @@ public class RegisterValidator implements Validator {
         }
     }
 
-    public void validatePasswordsMatch(Object target, String matchingPassword, Errors errors) {
-        User user = (User) target;
+    private void validateEmail(String email, Errors errors) {
+        final String emailRegEx =
+                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        if (!email.matches(emailRegEx)) {
+            errors.reject(UserProperty.EMAIL.toString(), "Email " + email + " is invalid");
+        }
+    }
+
+    public void validatePasswordsMatch(User user, String matchingPassword, Errors errors) {
         if (!user.getPassword().equals(matchingPassword)) {
             errors.reject("password_confirmation", "Passwords do not match");
+        }
+    }
+
+    public void validateEmailsMatch(User user, String emailConfirmation, Errors errors) {
+        if (!user.getEmail().equals(emailConfirmation)) {
+            errors.reject("email_confirmation", "Email addresses do not match");
         }
     }
 }

@@ -37,6 +37,8 @@ public class RegisterControllerIT {
 
     private String username;
     private String password;
+    private String email;
+
     private String url;
 
     @Before
@@ -45,6 +47,7 @@ public class RegisterControllerIT {
         username = UUID.randomUUID().toString();
         username = username.substring(0, 15);
         password = "1234asdf";
+        email = "asdf@asdf.com";
     }
 
     /**
@@ -53,7 +56,7 @@ public class RegisterControllerIT {
     @Test
     public void testUserCanBeRegistered() {
         assert username.length() > 3 && username.length() < 16;
-        registerUser(username, password, password);
+        registerUser(username, password);
         assertNotNull(userService.getUser(username));
     }
 
@@ -64,7 +67,7 @@ public class RegisterControllerIT {
     public void testInvalidUsernameLessThan4Characters() {
         username = username.substring(0, 3);
         assert username.length() <= 3;
-        registerUser(username, password, password);
+        registerUser(username, password);
         assertNull(userService.getUser(username));
     }
 
@@ -75,7 +78,7 @@ public class RegisterControllerIT {
     public void testInvalidUsernameGreaterThan15Characters() {
         username = UUID.randomUUID().toString();
         assert username.length() >= 16;
-        registerUser(username, password, password);
+        registerUser(username, password);
         assertNull(userService.getUser(username));
     }
 
@@ -84,7 +87,7 @@ public class RegisterControllerIT {
      */
     @Test
     public void testNonMatchingPasswords() {
-        registerUser(username, password, password + password);
+        registerUser(username, password, password + password, email, email);
         assertNull(userService.getUser(username));
     }
 
@@ -93,7 +96,7 @@ public class RegisterControllerIT {
      */
     @Test
     public void testPasswordHasNumbersAndLetters() {
-        registerUser(username, "123456789", "123456789");
+        registerUser(username, "123456789");
         assertNull(userService.getUser(username));
     }
 
@@ -104,17 +107,42 @@ public class RegisterControllerIT {
     public void testPasswordGreaterThan7Characters() {
         password = "123456a";
         assert password.length() <= 7;
-        registerUser(username, password, password);
+        registerUser(username, password);
         assertNull(userService.getUser(username));
     }
 
-    private void registerUser(String username, String password, String matchingPassword) {
+    /**
+     * C.Reg06 An e-mail address must match in two field inputs
+     */
+    @Test
+    public void testNonMatchingEmails() {
+        registerUser(username, password, password, email, "1" + email);
+        assertNull(userService.getUser(username));
+    }
+
+    /**
+     * C.Reg07 An e-mail address must be valid
+     */
+    @Test
+    public void testInvalidEmail() {
+        email = "1@1.1";
+        registerUser(username, password, password, email, email);
+        assertNull(userService.getUser(username));
+    }
+
+    private void registerUser(String username, String password) {
+        registerUser(username, password, password, email, email);
+    }
+
+    private void registerUser(String username, String password, String matchingPassword, String email, String matchingEmail) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add(UserProperty.USERNAME.toString(), username);
         map.add(UserProperty.PASSWORD.toString(), password);
         map.add("password_confirmation", matchingPassword);
+        map.add(UserProperty.EMAIL.toString(), email);
+        map.add("email_confirmation", matchingEmail);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         restTemplate.postForEntity(url, request, String.class);

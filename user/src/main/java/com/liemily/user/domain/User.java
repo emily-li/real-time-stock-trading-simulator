@@ -15,6 +15,7 @@ public class User {
     private boolean enabled;
     private UserRole role;
     private BigDecimal credits;
+    private String email;
 
     public User() {
     }
@@ -68,5 +69,13 @@ public class User {
 
     public void setCredits(BigDecimal credits) {
         this.credits = credits;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

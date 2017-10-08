@@ -54,12 +54,15 @@ public class RegisterController {
                            @ModelAttribute("user") User user,
                            BindingResult bindingResultUser,
                            @ModelAttribute("password_confirmation") String passwordConfirmation,
-                           BindingResult bindingResultPwd) {
+                           BindingResult bindingResultPwd,
+                           @ModelAttribute("email_confirmation") String emailConfirmation,
+                           BindingResult bindingResultEmail) {
         logger.info("Received registration request for user: " + user.getUsername());
         registerValidator.validate(user, bindingResultUser);
         registerValidator.validatePasswordsMatch(user, passwordConfirmation, bindingResultPwd);
+        registerValidator.validateEmailsMatch(user, emailConfirmation, bindingResultEmail);
 
-        if (bindingResultUser.hasErrors() || bindingResultPwd.hasErrors()) {
+        if (bindingResultUser.hasErrors() || bindingResultPwd.hasErrors() || bindingResultEmail.hasErrors()) {
             return REGISTER_PAGE;
         }
 
