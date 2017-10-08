@@ -62,7 +62,7 @@ public class StocksAPIController {
             broker.process(trade);
         } catch (InsufficientStockException ise) {
             logger.info("Failed to process trade due to insufficient stock for trade: " + trade);
-            bindingResult.rejectValue(TradeProperty.VOLUME,
+            bindingResult.rejectValue(TradeProperty.VOLUME.toString(),
                     ControllerError.INSUFFICIENT_STOCK_ERROR.toString(),
                     "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
         } catch (InsufficientCreditException ice) {
