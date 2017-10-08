@@ -1,5 +1,6 @@
 package com.liemily.realtimestocktradingsimulator.web.validator;
 
+import com.liemily.realtimestocktradingsimulator.web.domain.UserProperty;
 import com.liemily.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +34,21 @@ public class RegisterValidator implements Validator {
     public void validate(Object target, Errors errors) {
         User user = (User) target;
         if (user.getUsername().length() < usernameLengthMin || user.getUsername().length() > usernameLengthMax) {
-            errors.reject("username", String.format("Username must be between %d and %d characters in length", usernameLengthMin, usernameLengthMax));
+            errors.reject(UserProperty.USERNAME.toString(), String.format("Username must be between %d and %d characters in length", usernameLengthMin, usernameLengthMax));
+        }
+        validatePassword(user.getPassword(), errors);
+    }
+
+    private void validatePassword(String password, Errors errors) {
+        boolean containsNumbers = password.matches(".*[0-9].*");
+        boolean containsLetters = password.matches(".*[A-Z].*") || password.matches(".*[a-z].*");
+
+        if (!(containsNumbers && containsLetters)) {
+            errors.reject(UserProperty.PASSWORD.toString(), "Password must contain both letters and numbers");
         }
     }
 
-    public void validatePasswords(Object target, String matchingPassword, Errors errors) {
+    public void validatePasswordsMatch(Object target, String matchingPassword, Errors errors) {
         User user = (User) target;
         if (!user.getPassword().equals(matchingPassword)) {
             errors.reject("password_confirmation", "Passwords do not match");

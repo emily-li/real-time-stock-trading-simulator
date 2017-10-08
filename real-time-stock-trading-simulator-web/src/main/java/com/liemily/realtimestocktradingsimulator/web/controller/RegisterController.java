@@ -1,6 +1,7 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import com.liemily.realtimestocktradingsimulator.web.domain.ControllerError;
+import com.liemily.realtimestocktradingsimulator.web.domain.UserProperty;
 import com.liemily.realtimestocktradingsimulator.web.validator.RegisterValidator;
 import com.liemily.user.domain.User;
 import com.liemily.user.exception.UserAlreadyExistsException;
@@ -51,13 +52,14 @@ public class RegisterController {
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public String register(Model model,
                            @ModelAttribute("user") User user,
+                           BindingResult bindingResultUser,
                            @ModelAttribute("password_confirmation") String passwordConfirmation,
-                           BindingResult bindingResult) {
+                           BindingResult bindingResultPwd) {
         logger.info("Received registration request for user: " + user.getUsername());
-        registerValidator.validate(user, bindingResult);
-        registerValidator.validatePasswords(user, passwordConfirmation, bindingResult);
+        registerValidator.validate(user, bindingResultUser);
+        registerValidator.validatePasswordsMatch(user, passwordConfirmation, bindingResultPwd);
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResultUser.hasErrors() || bindingResultPwd.hasErrors()) {
             return REGISTER_PAGE;
         }
 
@@ -66,7 +68,7 @@ public class RegisterController {
             logger.info("Registered user: " + user.getUsername());
             return REGISTER_SUCCESS_PAGE;
         } catch (UserAlreadyExistsException uaee) {
-            bindingResult.rejectValue("username", ControllerError.REGISTRATION_USERNAME_ALREADY_EXISTS_ERROR.toString(), uaee.getMessage());
+            bindingResultUser.rejectValue(UserProperty.USERNAME.toString(), ControllerError.REGISTRATION_USERNAME_ALREADY_EXISTS_ERROR.toString(), uaee.getMessage());
             return REGISTER_PAGE;
         }
     }

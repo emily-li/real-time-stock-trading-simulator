@@ -1,5 +1,6 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.realtimestocktradingsimulator.web.domain.UserProperty;
 import com.liemily.user.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class RegisterControllerIT {
         url = "http://localhost:" + port + "/" + RegisterController.getRegisterPage();
         username = UUID.randomUUID().toString();
         username = username.substring(0, 15);
-        password = "pwd";
+        password = "1234asdf";
     }
 
     /**
@@ -84,7 +85,15 @@ public class RegisterControllerIT {
     @Test
     public void testNonMatchingPasswords() {
         registerUser(username, password, password + password);
+        assertNull(userService.getUser(username));
+    }
 
+    /**
+     * C.Reg04 A password must contain numbers and letters
+     */
+    @Test
+    public void testInvalidPassword() {
+        registerUser(username, "123456789", "123456789");
         assertNull(userService.getUser(username));
     }
 
@@ -92,8 +101,8 @@ public class RegisterControllerIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("username", username);
-        map.add("password", password);
+        map.add(UserProperty.USERNAME.toString(), username);
+        map.add(UserProperty.PASSWORD.toString(), password);
         map.add("password_confirmation", matchingPassword);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);

@@ -20,7 +20,7 @@
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Username" th:field="*{username}"/>
                 <div class="alert alert-danger" th:if="${#fields.hasErrors('username')}">
-                    <p th:each="err : ${#fields.errors('username')}" th:text="${err}"></p>
+                    <span th:each="err : ${#fields.errors('username')}" th:text="${err}"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -51,6 +51,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js"></script>
 
 <script>
+    $.validator.addMethod("passwordCheck",
+        function (password) {
+            if (!/[a-z]/.test(password)) {
+                return false;
+            } else if (!/[0-9]/.test(password)) {
+                return false;
+            }
+            return true;
+        },
+        "Password must contain numbers and letters");
+
     $("#registerForm").validate({
         rules: {
             username: {
@@ -60,6 +71,7 @@
             },
             password: {
                 required: true,
+                passwordCheck: "#password",
             },
             password_confirmation: {
                 equalTo: "#password"

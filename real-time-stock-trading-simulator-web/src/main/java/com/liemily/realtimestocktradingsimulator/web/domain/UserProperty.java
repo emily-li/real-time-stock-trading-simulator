@@ -1,10 +1,11 @@
 package com.liemily.realtimestocktradingsimulator.web.domain;
 
 /**
- * Created by Emily Li on 07/10/2017.
+ * Created by Emily Li on 08/10/2017.
  */
-public enum TradeProperty {
-    VOLUME,;
+public enum UserProperty {
+    USERNAME,
+    PASSWORD,;
 
     @Override
     public String toString() {
