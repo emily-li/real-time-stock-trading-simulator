@@ -44,7 +44,7 @@
         </form>
 
         <div th:if="${param.error}" class="alert alert-danger">
-            Invalid username and password.
+            No enabled user matching this username and password found.
         </div>
         <div th:if="${param.logout}" class="alert alert-success">
             You have been logged out.
