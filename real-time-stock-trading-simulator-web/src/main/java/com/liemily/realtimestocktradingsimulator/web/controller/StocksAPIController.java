@@ -135,7 +135,7 @@ public class StocksAPIController {
                 stockViews = stockViewService.getStocksWithVolumeByGainsLessThan(gains, stocksPageable);
             } else if (value != null) {
                 stockViews = stockViewService.getStocksWithVolumeByValueLessThan(value, stocksPageable);
-            } else if (volume != null) {
+            } else if (volume != null && volume > 1) {
                 stockViews = stockViewService.getStocksWithVolumeLessThan(volume, stocksPageable);
             }
         } else if (op.equalsIgnoreCase("gt")) {
@@ -147,7 +147,7 @@ public class StocksAPIController {
                 stockViews = stockViewService.getStocksWithVolumeGreaterThan(volume, stocksPageable);
             }
         }
-        return new ArrayList<>(stockViews);
+        return stockViews == null ? new ArrayList<>() : new ArrayList<>(stockViews);
     }
 
     private List<StockItem> searchSellableStocksWithOperator(Principal principal, String op, BigDecimal gains, BigDecimal value, Integer volume, Pageable stocksPageable) {
@@ -171,6 +171,6 @@ public class StocksAPIController {
                 userStocks = userStockService.getUserStocksByVolumeGreaterThan(username, volume, stocksPageable);
             }
         }
-        return new ArrayList<>(userStocks);
+        return userStocks == null ? new ArrayList<>() : new ArrayList<>(userStocks);
     }
 }

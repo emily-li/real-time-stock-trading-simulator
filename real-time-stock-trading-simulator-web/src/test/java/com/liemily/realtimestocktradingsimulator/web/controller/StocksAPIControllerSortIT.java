@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings("WeakerAccess")
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class StocksControllerSortIT {
+public class StocksAPIControllerSortIT {
     @Autowired
     private StocksAPIController stocksAPIController;
 
