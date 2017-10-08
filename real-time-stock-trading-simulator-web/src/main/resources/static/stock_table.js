@@ -5,6 +5,7 @@ let page = 0;
 let size = 20;
 let prevBtnDisabled = true;
 let nextBtnDisabled = false;
+let currSearch;
 
 // Public Functions
 function updatePageLabel() {
@@ -67,37 +68,46 @@ function createTableRow(stock) {
     return tr;
 }
 
+function repopulateStocks(stocks) {
+    // Clear stocksTBody
+    $("#stocksTBody").html("");
+
+    // Repopulate
+    stocks.forEach((stock) => {
+        let tr = createTableRow(stock);
+        $("#stocksTBody").append(tr);
+    });
+
+    updatePageNav(stocks.length);
+}
+
 function updateStocks() {
+    let url = `/api/v1/buy?page=${page}&size=${size}`;
+    url = currSearch ? `${url}&${currSearch}` : url;
+
     $.ajax({
-        url: `/api/v1/buy?page=${page}&amp;size=${size}`,
+        url: url,
         method: "get"
     }).done((stocks) => {
-        // Clear stocksTBody
-        $("#stocksTBody").html("");
-
-        // Repopulate
-        stocks.forEach((stock) => {
-            let tr = createTableRow(stock);
-            $("#stocksTBody").append(tr);
-        });
-
-        updatePageNav(stocks.length);
+        repopulateStocks(stocks);
     });
 }
 
 function buyStock(username, stockSymbol, volume) {
     $.ajax({
-        url: "/api/v1/buy",
+        url: `/api/v1/buy`,
         method: "post",
         data: {
             username: username,
             stockSymbol: stockSymbol,
             volume: volume
         }
-    }).onerror({});
+    });
 }
 
 // Events
+
+// Navigation
 $("#prevBtn").click(() => {
     page--;
     updateStocks();
@@ -113,6 +123,20 @@ $("#buyBtn").click(() => {
         if ($(element).val()) {
             buyStock("foo", $(element).attr("data-symbol"), $(element).val());
         }
+    });
+});
+
+// Search
+$("#searchSymbolLi").click(() => {
+    page = 0;
+    let symbol = $("#searchText").val();
+    currSearch = symbol ? `symbol=${symbol}` : '';
+
+    $.ajax({
+        url: `/api/v1/buy?${currSearch}`,
+        method: "get"
+    }).done((stocks) => {
+        repopulateStocks(stocks);
     });
 });
 
