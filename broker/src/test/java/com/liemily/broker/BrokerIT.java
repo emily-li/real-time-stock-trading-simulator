@@ -74,7 +74,7 @@ public class BrokerIT {
         stock = new Stock(stock.getSymbol(), stock.getValue(), 2);
         stockService.save(stock);
         trade = new Trade(stock.getSymbol(), user.getUsername(), 2);
-        userService.save(user);
+        userService.update(user);
         broker.process(trade);
     }
 

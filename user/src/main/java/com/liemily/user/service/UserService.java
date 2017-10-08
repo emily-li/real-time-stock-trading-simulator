@@ -37,6 +37,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void update(User user) {
+        userRepository.save(user);
+    }
+
     public User getUser(String username) {
         return userRepository.findOne(username);
     }
