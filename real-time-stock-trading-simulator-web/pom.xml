@@ -26,6 +26,14 @@
                 <directory>../resources</directory>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>../resources-test</directory>
+            </testResource>
+        </testResources>
     </build>
 
     <dependencies>

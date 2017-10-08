@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,6 +66,10 @@ public class StocksAPIController {
                                      @RequestParam(required = false) BigDecimal value,
                                      @RequestParam(required = false) Integer volume) {
         Pageable stocksPageable = pageable == null ? new PageRequest(0, pageStockDefaultSize) : pageable;
+        if (stocksPageable.getSort() == null) {
+            Sort sort = new Sort(Sort.Direction.ASC, "symbol");
+            stocksPageable = new PageRequest(stocksPageable.getPageNumber(), stocksPageable.getPageSize(), sort);
+        }
         List<StockItem> stockViews = null;
 
         if (symbol != null) {

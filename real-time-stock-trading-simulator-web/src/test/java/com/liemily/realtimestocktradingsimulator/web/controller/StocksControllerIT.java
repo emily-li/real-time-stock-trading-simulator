@@ -22,14 +22,14 @@ public class StocksControllerIT {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String stockViewURL = "http://localhost:" + port + "/stock/buy";
-
     /**
      * C.S11 Stock data should be displayed with fields: Stock Symbol, Stock Name, Last Trade, Gains, Value, Volume, Open, Close
      */
     @Test
     public void testStockFieldNamess() {
-        String stockPageContents = restTemplate.getForObject(stockViewURL, String.class);
+        String stockURL = "http://localhost:" + port + "/stock/buy";
+        String stockPageContents = restTemplate.getForObject(stockURL, String.class);
+
         assertTrue(stockPageContents.contains("Stock Symbol"));
         assertTrue(stockPageContents.contains("Stock Name"));
         assertTrue(stockPageContents.contains("Last Trade"));
