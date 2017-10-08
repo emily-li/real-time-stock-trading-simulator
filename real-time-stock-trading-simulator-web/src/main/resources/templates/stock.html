@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -20,9 +20,7 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <form class="nav-link" th:action="@{/logout}" method="post">
-                    <input type="submit" value="Log out"/>
-                </form>
+                <a class="nav-link" href="logout" method="post">Log out</a>
             </li>
         </ul>
     </div>
