@@ -1,5 +1,3 @@
-DROP TABLE user;
-
 CREATE TABLE IF NOT EXISTS company (
     symbol          VARCHAR(50)     NOT NULL    PRIMARY KEY,
     name            VARCHAR(50)     NOT NULL
