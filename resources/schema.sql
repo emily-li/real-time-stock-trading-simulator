@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS stock_as_of_details (
 CREATE TABLE IF NOT EXISTS user (
     username        VARCHAR(50)     NOT NULL    PRIMARY KEY,
     password        VARCHAR(100)    NOT NULL,
+    enabled         BOOLEAN         NOT NULL,
+    role            VARCHAR(50)     NOT NULL,
     credits         DECIMAL(65, 2)
 );
 

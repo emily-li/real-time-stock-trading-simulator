@@ -1,5 +1,7 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.user.domain.User;
+import com.liemily.user.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -23,32 +27,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LoginControllerIT {
-
     private final int AVG_RUN_COUNT = 100;
     private final long MAX_REQUEST_WAIT_MS = 1000;
+
     @LocalServerPort
     private int port;
     @Autowired
     private TestRestTemplate restTemplate;
-    private String user;
+
+    @Autowired
+    private UserService userService;
+
+    private String username;
     private String password;
     private String url;
 
     @Before
     public void setup() {
         url = "http://localhost:" + port;
-        restTemplate.getForObject(url, String.class); // First server request initialises server components which takes longer, so run this before performance checks
+        username = UUID.randomUUID().toString();
+        password = "pwd";
+        User user = new User(username, password);
+        user.setEnabled(true);
+        userService.save(user);
     }
 
     @Test
     public void testSuccessfulLogin() throws Exception {
-        ResponseEntity<String> response = postForLogin(user, password);
+        ResponseEntity<String> response = postForLogin(username, password);
         assertThat(response.getHeaders().get("Location").get(0)).isEqualTo(url + "/");
     }
 
     @Test
     public void testUnsuccessfulLogin() throws Exception {
-        ResponseEntity<String> response = postForLogin(user, null);
+        ResponseEntity<String> response = postForLogin(username, null);
         assertThat(response.getHeaders().get("Location").get(0)).isEqualTo(url + "/login?error");
     }
 
@@ -56,11 +68,11 @@ public class LoginControllerIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("username", user);
         map.add("password", password);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
         return restTemplate.postForEntity(url + "/login", request, String.class);
     }

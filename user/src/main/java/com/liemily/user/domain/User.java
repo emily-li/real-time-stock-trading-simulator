@@ -12,14 +12,22 @@ public class User {
     @Id
     private String username;
     private String password;
+    private boolean enabled;
+    private UserRole role;
     private BigDecimal credits;
 
     private User() {
     }
 
     public User(String username, String password) {
+        this(username, password, UserRole.USER);
+    }
+
+    public User(String username, String password, UserRole role) {
         this.username = username;
         this.password = password;
+        this.role = role;
+        enabled = false;
     }
 
     public String getUsername() {
@@ -32,5 +40,9 @@ public class User {
 
     public void setCredits(BigDecimal credits) {
         this.credits = credits;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
