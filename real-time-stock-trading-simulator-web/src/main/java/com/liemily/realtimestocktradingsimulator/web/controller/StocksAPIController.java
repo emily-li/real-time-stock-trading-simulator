@@ -1,18 +1,30 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
+import com.liemily.broker.Broker;
+import com.liemily.broker.exception.BrokerException;
+import com.liemily.broker.exception.InsufficientCreditException;
+import com.liemily.broker.exception.InsufficientStockException;
+import com.liemily.realtimestocktradingsimulator.web.domain.ControllerError;
+import com.liemily.realtimestocktradingsimulator.web.domain.TradeProperty;
 import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockViewService;
+import com.liemily.trade.domain.Trade;
 import com.liemily.user.UserStockService;
 import com.liemily.user.domain.UserStock;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -24,17 +36,43 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1")
 public class StocksAPIController {
+    private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
+
     private StockViewService stockViewService;
     private UserStockService userStockService;
+    private Broker broker;
     private int pageStockDefaultSize;
 
     @Autowired
     public StocksAPIController(@Value("${page.stock.defaultSize}") int pageStockDefaultSize,
                                StockViewService stockViewService,
-                               UserStockService userStockService) {
+                               UserStockService userStockService,
+                               Broker broker) {
         this.pageStockDefaultSize = pageStockDefaultSize;
         this.stockViewService = stockViewService;
         this.userStockService = userStockService;
+        this.broker = broker;
+    }
+
+    @RequestMapping(value = "buy", method = RequestMethod.POST)
+    void buy(Trade trade,
+             BindingResult bindingResult) {
+        logger.info("Received order for purchase " + trade);
+        try {
+            broker.process(trade);
+        } catch (InsufficientStockException ise) {
+            logger.info("Failed to process trade due to insufficient stock for trade: " + trade);
+            bindingResult.rejectValue(TradeProperty.VOLUME,
+                    ControllerError.INSUFFICIENT_STOCK_ERROR.toString(),
+                    "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
+        } catch (InsufficientCreditException ice) {
+            logger.info("Failed to process trade due to insufficient credits for user: " + trade.getUsername());
+            bindingResult.reject(ControllerError.INSUFFICIENT_CREDITS_ERROR.toString(),
+                    "There are insufficient credits to perform the trade");
+        } catch (BrokerException be) {
+            logger.info("Failed to process trade: " + trade);
+            bindingResult.reject(ControllerError.BROKER_ERROR.toString());
+        }
     }
 
     @RequestMapping("buy")

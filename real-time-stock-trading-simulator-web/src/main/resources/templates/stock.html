@@ -6,137 +6,46 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
           integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
-
+    <link rel="stylesheet" href="/styles.css" type="text/css"/>
 </head>
 <body>
 
-<div id="stocksBlock">
-    <table class="table table-striped table-sm">
-        <thead>
-        <tr>
-            <th>Stock Symbol</th>
-            <th>Stock Name</th>
-            <th>Last Trade</th>
-            <th>Value</th>
-            <th>Gains</th>
-            <th>Open</th>
-            <th>Close</th>
-        </tr>
-        </thead>
-        <tbody id="stocksTBody">
-        </tbody>
-    </table>
-</div>
+<div class="m-2">
+    <form>
+        <input id="buyBtn" type="submit" class="btn btn-outline-secondary mb-2" value="Buy"/>
 
-<div class="btn-toolbar">
-    <div class="btn-group">
-        <button id="prevBtn" type="button" class="btn btn-secondary">Previous</button>
-        <button id="pageLabel" type="button" class="btn btn-secondary" disabled="true"></button>
-        <button id="nextBtn" type="button" class="btn btn-secondary">Next</button>
+        <div id="stocksBlock" class="bordered p-3">
+            <table class="table table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>Stock Symbol</th>
+                    <th>Stock Name</th>
+                    <th>Last Trade</th>
+                    <th>Value</th>
+                    <th>Volume</th>
+                    <th>Gains</th>
+                    <th>Open</th>
+                    <th>Close</th>
+                    <th>Quantity</th>
+                </tr>
+                </thead>
+                <tbody id="stocksTBody">
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <div class="btn-toolbar">
+        <div class="btn-group">
+            <button id="prevBtn" type="button" class="btn btn-secondary">Previous</button>
+            <button id="pageLabel" type="button" class="btn btn-secondary" disabled="true"></button>
+            <button id="nextBtn" type="button" class="btn btn-secondary">Next</button>
+        </div>
     </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="http://momentjs.com/downloads/moment.min.js"></script>
-<script type="text/javascript">
-    /*<![CDATA[*/
-
-    // Variables
-    let page = 0;
-    let size = 20;
-    let prevBtnDisabled = true;
-    let nextBtnDisabled = false;
-
-    // Public Functions
-    function updatePageLabel() {
-        $("#pageLabel").text(page);
-        $("#prevBtn").prop("disabled", prevBtnDisabled);
-        $("#nextBtn").prop("disabled", nextBtnDisabled);
-    }
-
-    function updatePageNav(numCurrentItems) {
-        nextBtnDisabled = numCurrentItems < size;
-        prevBtnDisabled = page === 0;
-        updatePageLabel();
-    }
-
-    function formatCurrency(currency) {
-        let curr = currency ? currency : 0;
-        return curr.toFixed(2);
-    }
-
-    function createTableRow(stock) {
-        let tr = $("<tr></tr>");
-
-        let tdSymbol = $("<td></td>");
-        tdSymbol.text(stock.symbol);
-        tr.append(tdSymbol);
-
-        let tdName = $("<td></td>");
-        tdName.text(stock.name);
-        tr.append(tdName);
-
-        let tdDateTime = $("<td></td>");
-        let date = stock.lastTradeDateTime ? moment(stock.lastTradeDateTime) : '';
-        let formattedDate = date ? date.format("hh:mm:ss") : '';
-        tdDateTime.text(formattedDate);
-        tr.append(tdDateTime);
-
-        let tdValue = $("<td></td>");
-        tdValue.text(formatCurrency(stock.value));
-        tr.append(tdValue);
-
-        let tdGains = $("<td></td>");
-        tdGains.text(formatCurrency(stock.gains));
-        tr.append(tdGains);
-
-        let tdOpenValue = $("<td></td>");
-        tdOpenValue.text(formatCurrency(stock.openValue));
-        tr.append(tdOpenValue);
-
-        let tdCloseValue = $("<td></td>");
-        tdCloseValue.text(formatCurrency(stock.closeValue));
-        tr.append(tdCloseValue);
-
-        return tr;
-    }
-
-    function updateStocks() {
-        $.ajax({
-            url: `/api/v1/buy?page=${page}&amp;size=${size}`,
-            method: "get"
-        }).done((stocks) => {
-            // Clear stocksTBody
-            $("#stocksTBody").html("");
-
-            // Repopulate
-            stocks.forEach((stock) => {
-                let tr = createTableRow(stock);
-                $("#stocksTBody").append(tr);
-            });
-
-            updatePageNav(stocks.length);
-        });
-    }
-
-    // Events
-    $("#prevBtn").click(() => {
-        page--;
-        updateStocks();
-    });
-
-    $("#nextBtn").click(() => {
-        page++;
-        updateStocks();
-    });
-
-    // Init
-    updateStocks();
-    setInterval(() => {
-            updateStocks();
-        },
-        60000);
-    /*]]>*/
-</script>
+<script src="/stock_table.js"></script>
 </body>
 </html>

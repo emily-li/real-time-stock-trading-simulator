@@ -46,12 +46,25 @@ public class Trade {
         return volume;
     }
 
+    // Setters required for AJAX calls
+    public void setStockSymbol(String stockSymbol) {
+        this.stockSymbol = stockSymbol;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
+
     @Override
     public String toString() {
         return "Trade{" +
-                "id=" + id +
-                ", stockSymbol='" + stockSymbol + '\'' +
+                "stockSymbol='" + stockSymbol + '\'' +
                 ", username='" + username + '\'' +
+                ", volume=" + volume +
                 '}';
     }
 }
