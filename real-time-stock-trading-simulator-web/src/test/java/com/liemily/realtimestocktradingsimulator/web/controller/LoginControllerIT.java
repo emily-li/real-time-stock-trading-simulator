@@ -43,7 +43,7 @@ public class LoginControllerIT {
     private String url;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         url = "http://localhost:" + port;
         username = UUID.randomUUID().toString();
         password = "pwd";

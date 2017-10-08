@@ -44,7 +44,7 @@ public class BrokerIT {
     private Trade trade;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         String username = UUID.randomUUID().toString();
         user = new User(username, "pwd");
         user.setCredits(new BigDecimal(9));
