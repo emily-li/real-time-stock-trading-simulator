@@ -1,4 +1,4 @@
-package com.liemily.user;
+package com.liemily.user.service;
 
 import com.liemily.user.domain.UserStock;
 import com.liemily.user.domain.UserStockId;
