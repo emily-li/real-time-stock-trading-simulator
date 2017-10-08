@@ -1,4 +1,4 @@
-package com.liemily.realtimestocktradingsimulator.web.config;
+package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class LoginController {
-    @RequestMapping("/login")
+    @RequestMapping("login")
     String login() {
         return "login";
     }

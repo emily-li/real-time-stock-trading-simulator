@@ -1,21 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Login page</title>
     <meta charset="utf-8"/>
-    <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <link rel="stylesheet" href="/styles.css" type="text/css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
+
+    <title>Login</title>
 </head>
+
 <body>
-<h1>Login page</h1>
-<p>Example user: user / password</p>
-<p th:if="${loginError}" class="error">Wrong user or password</p>
-<form th:action="@{/login}" method="post">
-    <label for="username">Username</label>:
-    <input type="text" id="username" name="username" autofocus="autofocus"/> <br/>
-    <label for="password">Password</label>:
-    <input type="password" id="password" name="password"/> <br/>
-    <input type="submit" value="Log in"/>
-</form>
-<p><a href="/index" th:href="@{/index}">Back to home page</a></p>
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <a class="navbar-brand" href="/">Real Time Stock Trading Simulator</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="col-md-4">
+        <form action="@{/login}" method="post">
+            <div class="form-group">
+                <input id="username" type="text" class="form-control" placeholder="Username" autofocus="autofocus"/>
+            </div>
+            <div class="form-group">
+                <input id="password" type="password" class="form-control" placeholder="Password"/> <br/>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-outline-secondary" value="Log in"/>
+            </div>
+        </form>
+
+        <div if="${param.error}" class="alert alert-error">
+            Invalid username and password.
+        </div>
+        <div if="${param.logout}" class="alert alert-success">
+            You have been logged out.
+        </div>
+    </div>
+    <div class="col-md-8"></div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
+        integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+        crossorigin="anonymous"></script>
+
 </body>
 </html>
