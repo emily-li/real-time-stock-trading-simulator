@@ -165,6 +165,23 @@ public class RegisterControllerIT {
         assertNotNull(userService.getUser(username));
     }
 
+    /**
+     * C.Reg11 A user should be able to register not denoting their birth date
+     */
+    @Test
+    public void testMissingBirthDate() {
+        registerUser(username, password, password, email, email, forename, surname, null);
+        assertNotNull(userService.getUser(username));
+    }
+
+    /**
+     * C.Reg12 A birth date must be a valid date
+     */
+    @Test
+    public void testInvalidBirthDate() {
+        registerUser(username, password, password, email, email, forename, surname, "01011990");
+        assertNull(userService.getUser(username));
+    }
 
     private void registerUser(String username, String password) {
         registerUser(username, password, password, email, email, forename, surname, null);
