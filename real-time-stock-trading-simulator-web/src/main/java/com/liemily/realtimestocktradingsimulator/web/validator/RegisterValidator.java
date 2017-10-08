@@ -36,4 +36,11 @@ public class RegisterValidator implements Validator {
             errors.reject("username", String.format("Username must be between %d and %d characters in length", usernameLengthMin, usernameLengthMax));
         }
     }
+
+    public void validatePasswords(Object target, String matchingPassword, Errors errors) {
+        User user = (User) target;
+        if (!user.getPassword().equals(matchingPassword)) {
+            errors.reject("password_confirmation", "Passwords do not match");
+        }
+    }
 }

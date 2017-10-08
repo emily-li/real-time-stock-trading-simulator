@@ -35,8 +35,6 @@
         <form id="login" action="login" method="post">
             <div class="form-group">
                 <input id="username" type="text" class="form-control" placeholder="Username" autofocus="autofocus"
-                       data-validation="length"
-                       data-validation-length="4-15"
                        required="true"/>
             </div>
             <div class="form-group">
@@ -47,10 +45,10 @@
             </div>
         </form>
 
-        <div th:if="${param.error}" class="alert alert-danger">
+        <div th:if="${param.error}" class="alert alert-danger mt-3">
             No enabled user matching this username and password found.
         </div>
-        <div th:if="${param.logout}" class="alert alert-success">
+        <div th:if="${param.logout}" class="alert alert-success mt-3">
             You have been logged out.
         </div>
     </div>
@@ -64,14 +62,5 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
         integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
         crossorigin="anonymous"></script>
-
-<!-- Validation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
-<script>
-    $.validate({
-        form: '#login',
-        modules: 'html5, security, date, sanitize'
-    });
-</script>
 </body>
 </html>

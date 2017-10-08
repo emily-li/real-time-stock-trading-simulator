@@ -35,12 +35,15 @@ public class RegisterControllerIT {
     private UserService userService;
 
     private String username;
+    private String password;
     private String url;
 
     @Before
     public void setup() {
         url = "http://localhost:" + port + "/" + RegisterController.getRegisterPage();
         username = UUID.randomUUID().toString();
+        username = username.substring(0, 15);
+        password = "pwd";
     }
 
     /**
@@ -48,11 +51,8 @@ public class RegisterControllerIT {
      */
     @Test
     public void testUserCanBeRegistered() {
-        username = username.substring(0, 15);
         assert username.length() > 3 && username.length() < 16;
-
-        registerUser(username);
-
+        registerUser(username, password, password);
         assertNotNull(userService.getUser(username));
     }
 
@@ -63,9 +63,7 @@ public class RegisterControllerIT {
     public void testInvalidUsernameLessThan4Characters() {
         username = username.substring(0, 3);
         assert username.length() <= 3;
-
-        registerUser(username);
-
+        registerUser(username, password, password);
         assertNull(userService.getUser(username));
     }
 
@@ -74,19 +72,29 @@ public class RegisterControllerIT {
      */
     @Test
     public void testInvalidUsernameGreaterThan15Characters() {
+        username = UUID.randomUUID().toString();
         assert username.length() >= 16;
+        registerUser(username, password, password);
+        assertNull(userService.getUser(username));
+    }
 
-        registerUser(username);
+    /**
+     * C.Reg03 A password must match in two field inputs
+     */
+    @Test
+    public void testNonMatchingPasswords() {
+        registerUser(username, password, password + password);
 
         assertNull(userService.getUser(username));
     }
 
-    private void registerUser(String username) {
+    private void registerUser(String username, String password, String matchingPassword) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("username", username);
-        map.add("password", "pwd");
+        map.add("password", password);
+        map.add("password_confirmation", matchingPassword);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         restTemplate.postForEntity(url, request, String.class);

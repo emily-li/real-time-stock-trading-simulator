@@ -51,9 +51,12 @@ public class RegisterController {
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public String register(Model model,
                            @ModelAttribute("user") User user,
+                           @ModelAttribute("password_confirmation") String passwordConfirmation,
                            BindingResult bindingResult) {
         logger.info("Received registration request for user: " + user.getUsername());
         registerValidator.validate(user, bindingResult);
+        registerValidator.validatePasswords(user, passwordConfirmation, bindingResult);
+
         if (bindingResult.hasErrors()) {
             return REGISTER_PAGE;
         }

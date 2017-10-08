@@ -18,25 +18,18 @@
     <div class="col-md-4">
         <form id="registerForm" th:action="register" th:method="post" th:object="${user}">
             <div class="form-group">
-                <input class="form-control" type="text" placeholder="Username"
-                       th:field="*{username}"
-                       data-validation="length"
-                       data-validation-length="3-16"
-                       required="required"/>
+                <input class="form-control" type="text" placeholder="Username" th:field="*{username}"/>
                 <div class="alert alert-danger" th:if="${#fields.hasErrors('username')}">
                     <p th:each="err : ${#fields.errors('username')}" th:text="${err}"></p>
                 </div>
             </div>
             <div class="form-group">
-                <input class="form-control" type="password" name="password" placeholder="Password"
-                       data-validation="length"
-                       data-validation-length="min7"
-                       required="required"/>
+                <input id="password" class="form-control" type="password" name="password" placeholder="Password"
+                       th:field="*{password}"/>
             </div>
             <div class="form-group">
                 <input type="password" class="form-control" name="password_confirmation"
-                       placeholder="Password Confirmation"
-                       required="required"/>
+                       placeholder="Password Confirmation"/>
             </div>
             <div>
                 <input type="submit" class="btn btn-outline-secondary" value="Register"/>
@@ -58,12 +51,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js"></script>
 
 <script>
-    jQuery.validator.setDefaults({
-        debug: true,
-        success: "valid"
-    });
     $("#registerForm").validate({
         rules: {
+            username: {
+                required: true,
+                minlength: 4,
+                maxlength: 15,
+            },
+            password: {
+                required: true,
+            },
             password_confirmation: {
                 equalTo: "#password"
             }
