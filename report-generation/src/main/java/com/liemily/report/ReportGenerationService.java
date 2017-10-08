@@ -7,7 +7,7 @@ import com.liemily.report.domain.UserStockReportRequest;
 import com.liemily.report.exception.ReportGenerationException;
 import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.service.StockViewService;
-import com.liemily.user.UserStockService;
+import com.liemily.user.service.UserStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;

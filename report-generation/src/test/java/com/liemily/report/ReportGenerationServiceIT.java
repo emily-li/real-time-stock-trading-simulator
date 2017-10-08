@@ -8,10 +8,10 @@ import com.liemily.stock.domain.StockAsOfDetails;
 import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.repository.StockAsOfDetailsRepository;
 import com.liemily.stock.service.StockService;
-import com.liemily.user.UserStockService;
 import com.liemily.user.domain.User;
 import com.liemily.user.domain.UserStock;
 import com.liemily.user.service.UserService;
+import com.liemily.user.service.UserStockService;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -62,7 +62,7 @@ public class ReportGenerationServiceIT {
 
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         company1 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         company2 = new Company(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         companyService.save(company1);
