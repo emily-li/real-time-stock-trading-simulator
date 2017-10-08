@@ -3,6 +3,7 @@ package com.liemily.user.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by Emily Li on 21/09/2017.
@@ -18,6 +19,7 @@ public class User {
     private String email;
     private String forename;
     private String surname;
+    private Date birthDate;
 
     public User() {
     }
@@ -95,5 +97,13 @@ public class User {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

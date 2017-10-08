@@ -48,8 +48,10 @@ public class RegisterControllerIT {
         url = "http://localhost:" + port + "/" + RegisterController.getRegisterPage();
         username = UUID.randomUUID().toString();
         username = username.substring(0, 15);
-        password = "1234asdf";
-        email = "asdf@asdf.com";
+        password = "password123";
+        email = "email@email.com";
+        forename = "forename";
+        surname = "surname";
     }
 
     /**
@@ -89,7 +91,7 @@ public class RegisterControllerIT {
      */
     @Test
     public void testNonMatchingPasswords() {
-        registerUser(username, password, password + password, email, email, forename, surname);
+        registerUser(username, password, password + password, email, email, forename, surname, null);
         assertNull(userService.getUser(username));
     }
 
@@ -118,7 +120,7 @@ public class RegisterControllerIT {
      */
     @Test
     public void testNonMatchingEmails() {
-        registerUser(username, password, password, email, "1" + email, forename, surname);
+        registerUser(username, password, password, email, "1" + email, forename, surname, null);
         assertNull(userService.getUser(username));
     }
 
@@ -128,7 +130,7 @@ public class RegisterControllerIT {
     @Test
     public void testInvalidEmail() {
         email = "1@1.1";
-        registerUser(username, password, password, email, email, forename, surname);
+        registerUser(username, password, password, email, email, forename, surname, null);
         assertNull(userService.getUser(username));
     }
 
@@ -138,7 +140,7 @@ public class RegisterControllerIT {
     @Test
     public void testMissingForename() {
         for (String forename : new String[]{"", null}) {
-            registerUser(username, password, password, email, email, forename, surname);
+            registerUser(username, password, password, email, email, forename, surname, null);
             assertNull(userService.getUser(username));
         }
     }
@@ -149,16 +151,26 @@ public class RegisterControllerIT {
     @Test
     public void testMissingSurname() {
         for (String surname : new String[]{"", null}) {
-            registerUser(username, password, password, email, email, forename, surname);
+            registerUser(username, password, password, email, email, forename, surname, null);
             assertNull(userService.getUser(username));
         }
     }
 
-    private void registerUser(String username, String password) {
-        registerUser(username, password, password, email, email, "A", "B");
+    /**
+     * C.Reg10 A user should be able to register denoting their birth date
+     */
+    @Test
+    public void testBirthDate() {
+        registerUser(username, password, password, email, email, forename, surname, "01/01/1990");
+        assertNotNull(userService.getUser(username));
     }
 
-    private void registerUser(String username, String password, String matchingPassword, String email, String matchingEmail, String forename, String surname) {
+
+    private void registerUser(String username, String password) {
+        registerUser(username, password, password, email, email, forename, surname, null);
+    }
+
+    private void registerUser(String username, String password, String matchingPassword, String email, String matchingEmail, String forename, String surname, String birthDate) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -169,6 +181,9 @@ public class RegisterControllerIT {
         map.add("email_confirmation", matchingEmail);
         map.add("forename", forename);
         map.add("surname", surname);
+        if (birthDate != null) {
+            map.add("birthDate", birthDate);
+        }
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         restTemplate.postForEntity(url, request, String.class);

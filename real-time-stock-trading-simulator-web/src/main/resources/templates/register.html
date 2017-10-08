@@ -24,8 +24,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <input class="form-control" type="password" name="password" placeholder="Password"
-                       th:field="*{password}"/>
+                <input class="form-control" type="password" name="password" placeholder="Password"/>
             </div>
             <div class="form-group">
                 <input class="form-control" type="password" name="password_confirmation"
@@ -40,10 +39,14 @@
                        placeholder="Surname"/>
             </div>
             <div class="form-group">
-                <input class="form-control" type="email" name="email" placeholder="Email" th:field="*{email}"/>
+                <input class="form-control" type="email" name="email" placeholder="Email"/>
             </div>
             <div class="form-group">
                 <input class="form-control" type="email" name="email_confirmation" placeholder="Email Confirmation"/>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="date" name="birthdate" placeholder="Birth date"
+                       data-validation="birthdate"/>
             </div>
             <div>
                 <input type="submit" class="btn btn-outline-secondary" value="Register"/>
@@ -61,6 +64,7 @@
         integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
         crossorigin="anonymous"></script>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js"></script>
 

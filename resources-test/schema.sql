@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS USER (
     credits         DECIMAL(65, 2),
     email           VARCHAR(255),
     forename        VARCHAR(255),
-    surname         VARCHAR(255)
+    surname         VARCHAR(255),
+    birth_date      DATE
 );
 
 CREATE TABLE IF NOT EXISTS user_stock (

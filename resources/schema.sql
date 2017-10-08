@@ -1,3 +1,5 @@
+DROP TABLE user;
+
 CREATE TABLE IF NOT EXISTS company (
     symbol          VARCHAR(50)     NOT NULL    PRIMARY KEY,
     name            VARCHAR(50)     NOT NULL
@@ -23,7 +25,8 @@ CREATE TABLE IF NOT EXISTS user (
     credits         DECIMAL(65, 2),
     email           VARCHAR(255),
     forename        VARCHAR(255),
-    surname         VARCHAR(255)
+    surname         VARCHAR(255),
+    birth_date      DATE
 );
 
 CREATE TABLE IF NOT EXISTS user_stock (
