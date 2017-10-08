@@ -92,8 +92,19 @@ public class RegisterControllerIT {
      * C.Reg04 A password must contain numbers and letters
      */
     @Test
-    public void testInvalidPassword() {
+    public void testPasswordHasNumbersAndLetters() {
         registerUser(username, "123456789", "123456789");
+        assertNull(userService.getUser(username));
+    }
+
+    /**
+     * C.Reg05 A password must be greater than 7 characters
+     */
+    @Test
+    public void testPasswordGreaterThan7Characters() {
+        password = "123456a";
+        assert password.length() <= 7;
+        registerUser(username, password, password);
         assertNull(userService.getUser(username));
     }
 

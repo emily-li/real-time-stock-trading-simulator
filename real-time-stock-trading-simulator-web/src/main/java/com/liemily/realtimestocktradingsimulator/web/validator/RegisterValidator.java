@@ -17,12 +17,15 @@ import org.springframework.validation.Validator;
 public class RegisterValidator implements Validator {
     private final int usernameLengthMin;
     private final int usernameLengthMax;
+    private final int passwordLengthMin;
 
     @Autowired
     public RegisterValidator(@Value("${validation.user.username.min}") int usernameLengthMin,
-                             @Value("${validation.user.username.max}") int usernameLengthMax) {
+                             @Value("${validation.user.username.max}") int usernameLengthMax,
+                             @Value("${validation.user.password.min}") int passwordLengthMin) {
         this.usernameLengthMin = usernameLengthMin;
         this.usernameLengthMax = usernameLengthMax;
+        this.passwordLengthMin = passwordLengthMin;
     }
 
     @Override
@@ -45,6 +48,9 @@ public class RegisterValidator implements Validator {
 
         if (!(containsNumbers && containsLetters)) {
             errors.reject(UserProperty.PASSWORD.toString(), "Password must contain both letters and numbers");
+        }
+        if (password.length() < passwordLengthMin) {
+            errors.reject("Password must have at least " + passwordLengthMin + " characters");
         }
     }
 
