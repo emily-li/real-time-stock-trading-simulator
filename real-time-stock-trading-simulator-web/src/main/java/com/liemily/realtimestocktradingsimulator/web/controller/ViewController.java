@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ViewController {
     @RequestMapping("/")
     String index() {
-        return StocksController.getStocksPage();
+        return "redirect:" + StocksController.getStocksPage();
     }
 }
