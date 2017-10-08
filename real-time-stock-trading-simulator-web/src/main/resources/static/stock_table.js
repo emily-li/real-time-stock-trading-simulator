@@ -163,6 +163,18 @@ $("#searchNameLi").click(() => {
 
 });
 
+$("#searchGainsGtLi").click(() => {
+    let gains = $("#searchText").val();
+    currSearch = gains ? `gains=${gains}&op=gt` : '';
+    searchStock();
+});
+
+$("#searchGainsLtLi").click(() => {
+    let gains = $("#searchText").val();
+    currSearch = gains ? `gains=${gains}&op=lt` : '';
+    searchStock();
+});
+
 // Init
 updateStocks();
 setInterval(() => {
