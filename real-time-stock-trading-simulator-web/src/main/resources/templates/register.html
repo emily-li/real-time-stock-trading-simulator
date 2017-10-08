@@ -12,10 +12,10 @@
 </head>
 
 <body>
-<div th:replace="nav-register :: nav"></div>
+<div th:replace="fragments/nav-unauthenticated :: nav"></div>
 
 <div class="container mt-5">
-    <div class="col-md-6">
+    <div class="col-md-6 bordered p-3">
         <form id="registerForm" th:action="register" th:method="post" th:object="${user}">
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Username" th:field="*{username}"/>
