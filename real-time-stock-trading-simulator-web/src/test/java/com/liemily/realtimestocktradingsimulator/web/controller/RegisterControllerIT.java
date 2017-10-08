@@ -12,14 +12,14 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by Emily Li on 08/10/2017.
@@ -42,10 +42,13 @@ public class RegisterControllerIT {
     private String surname;
 
     private String url;
+    private String successUrl;
 
     @Before
     public void setup() {
-        url = "http://localhost:" + port + "/" + RegisterController.getRegisterPage();
+        String baseUrl = "http://localhost:" + port;
+        url = baseUrl + "/" + RegisterController.getRegisterPage();
+        successUrl = baseUrl + "/" + RegisterController.getRegisterSuccessPage();
         username = UUID.randomUUID().toString();
         username = username.substring(0, 15);
         password = "password123";
@@ -183,11 +186,21 @@ public class RegisterControllerIT {
         assertNull(userService.getUser(username));
     }
 
-    private void registerUser(String username, String password) {
-        registerUser(username, password, password, email, email, forename, surname, null);
+    /**
+     * C.Reg14 The user should be notified if their registration has been successfully submitted
+     */
+    @Test
+    public void testUserNotifiedOnRegistrationSubmission() throws Exception {
+        ResponseEntity<String> response = registerUser(username, password);
+        assertNotNull(userService.getUser(username));
+        assertEquals(successUrl, response.getHeaders().get("Location").get(0));
     }
 
-    private void registerUser(String username, String password, String matchingPassword, String email, String matchingEmail, String forename, String surname, String birthDate) {
+    private ResponseEntity<String> registerUser(String username, String password) {
+        return registerUser(username, password, password, email, email, forename, surname, null);
+    }
+
+    private ResponseEntity<String> registerUser(String username, String password, String matchingPassword, String email, String matchingEmail, String forename, String surname, String birthDate) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -203,6 +216,6 @@ public class RegisterControllerIT {
         }
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        restTemplate.postForEntity(url, request, String.class);
+        return restTemplate.postForEntity(url, request, String.class);
     }
 }

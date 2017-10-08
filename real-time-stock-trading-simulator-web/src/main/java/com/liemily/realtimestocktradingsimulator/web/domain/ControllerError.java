@@ -5,6 +5,7 @@ package com.liemily.realtimestocktradingsimulator.web.domain;
  */
 public enum ControllerError {
     REGISTRATION_USERNAME_ALREADY_EXISTS_ERROR,
+    REGISTRATION_EMAIL_ERROR,
 
     TRADE_INSUFFICIENT_STOCK_ERROR,
     TRADE_INSUFFICIENT_CREDITS_ERROR,
