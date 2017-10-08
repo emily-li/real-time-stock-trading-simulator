@@ -31,6 +31,12 @@ $("#registerForm").validate({
         password_confirmation: {
             equalTo: "#password"
         },
+        forename: {
+            required: true,
+        },
+        surname: {
+            required: true,
+        },
         email: {
             required: true,
             emailCheck: "#email"

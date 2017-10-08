@@ -6,7 +6,9 @@ package com.liemily.realtimestocktradingsimulator.web.domain;
 public enum UserProperty {
     USERNAME,
     PASSWORD,
-    EMAIL,;
+    EMAIL,
+    FORENAME,
+    SURNAME;
 
     @Override
     public String toString() {

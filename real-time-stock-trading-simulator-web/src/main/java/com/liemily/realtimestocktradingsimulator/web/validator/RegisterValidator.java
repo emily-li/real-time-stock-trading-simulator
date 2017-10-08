@@ -38,12 +38,13 @@ public class RegisterValidator implements Validator {
         User user = (User) target;
         validateUsername(user.getUsername(), errors);
         validatePassword(user.getPassword(), errors);
+        validateName(user, errors);
         validateEmail(user.getEmail(), errors);
     }
 
     private void validateUsername(String username, Errors errors) {
         if (username.length() < usernameLengthMin || username.length() > usernameLengthMax) {
-            errors.reject(UserProperty.USERNAME.toString(), String.format("Username must be between %d and %d characters in length", usernameLengthMin, usernameLengthMax));
+            errors.rejectValue(UserProperty.USERNAME.toString(), String.format("Username must be between %d and %d characters in length", usernameLengthMin, usernameLengthMax));
         }
     }
 
@@ -52,10 +53,10 @@ public class RegisterValidator implements Validator {
         boolean containsLetters = password.matches(".*[A-Z].*") || password.matches(".*[a-z].*");
 
         if (!(containsNumbers && containsLetters)) {
-            errors.reject(UserProperty.PASSWORD.toString(), "Password must contain both letters and numbers");
+            errors.rejectValue(UserProperty.PASSWORD.toString(), "Password must contain both letters and numbers");
         }
         if (password.length() < passwordLengthMin) {
-            errors.reject("Password must have at least " + passwordLengthMin + " characters");
+            errors.rejectValue(UserProperty.PASSWORD.toString(), "Password must have at least " + passwordLengthMin + " characters");
         }
     }
 
@@ -64,19 +65,28 @@ public class RegisterValidator implements Validator {
                 "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                         + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         if (!email.matches(emailRegEx)) {
-            errors.reject(UserProperty.EMAIL.toString(), "Email " + email + " is invalid");
+            errors.rejectValue(UserProperty.EMAIL.toString(), "Email " + email + " is invalid");
+        }
+    }
+
+    private void validateName(User user, Errors errors) {
+        if (user.getForename() == null || user.getForename().trim().isEmpty()) {
+            errors.rejectValue(UserProperty.FORENAME.toString(), "Forename must not be empty");
+        }
+        if (user.getSurname() == null || user.getSurname().trim().isEmpty()) {
+            errors.rejectValue(UserProperty.SURNAME.toString(), "Surname must not be empty");
         }
     }
 
     public void validatePasswordsMatch(User user, String matchingPassword, Errors errors) {
         if (!user.getPassword().equals(matchingPassword)) {
-            errors.reject("password_confirmation", "Passwords do not match");
+            errors.rejectValue("password_confirmation", "Passwords do not match");
         }
     }
 
     public void validateEmailsMatch(User user, String emailConfirmation, Errors errors) {
         if (!user.getEmail().equals(emailConfirmation)) {
-            errors.reject("email_confirmation", "Email addresses do not match");
+            errors.rejectValue("email_confirmation", "Email addresses do not match");
         }
     }
 }

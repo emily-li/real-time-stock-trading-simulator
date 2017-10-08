@@ -16,6 +16,8 @@ public class User {
     private UserRole role;
     private BigDecimal credits;
     private String email;
+    private String forename;
+    private String surname;
 
     public User() {
     }
@@ -77,5 +79,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getForename() {
+        return forename;
+    }
+
+    public void setForename(String forename) {
+        this.forename = forename;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 }

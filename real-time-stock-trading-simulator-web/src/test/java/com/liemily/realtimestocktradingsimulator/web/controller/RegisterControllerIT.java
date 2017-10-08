@@ -38,6 +38,8 @@ public class RegisterControllerIT {
     private String username;
     private String password;
     private String email;
+    private String forename;
+    private String surname;
 
     private String url;
 
@@ -87,7 +89,7 @@ public class RegisterControllerIT {
      */
     @Test
     public void testNonMatchingPasswords() {
-        registerUser(username, password, password + password, email, email);
+        registerUser(username, password, password + password, email, email, forename, surname);
         assertNull(userService.getUser(username));
     }
 
@@ -116,7 +118,7 @@ public class RegisterControllerIT {
      */
     @Test
     public void testNonMatchingEmails() {
-        registerUser(username, password, password, email, "1" + email);
+        registerUser(username, password, password, email, "1" + email, forename, surname);
         assertNull(userService.getUser(username));
     }
 
@@ -126,15 +128,37 @@ public class RegisterControllerIT {
     @Test
     public void testInvalidEmail() {
         email = "1@1.1";
-        registerUser(username, password, password, email, email);
+        registerUser(username, password, password, email, email, forename, surname);
         assertNull(userService.getUser(username));
     }
 
-    private void registerUser(String username, String password) {
-        registerUser(username, password, password, email, email);
+    /**
+     * C.Reg08 A forename must be given
+     */
+    @Test
+    public void testMissingForename() {
+        for (String forename : new String[]{"", null}) {
+            registerUser(username, password, password, email, email, forename, surname);
+            assertNull(userService.getUser(username));
+        }
     }
 
-    private void registerUser(String username, String password, String matchingPassword, String email, String matchingEmail) {
+    /**
+     * C.Reg09 A surname must be given
+     */
+    @Test
+    public void testMissingSurname() {
+        for (String surname : new String[]{"", null}) {
+            registerUser(username, password, password, email, email, forename, surname);
+            assertNull(userService.getUser(username));
+        }
+    }
+
+    private void registerUser(String username, String password) {
+        registerUser(username, password, password, email, email, "A", "B");
+    }
+
+    private void registerUser(String username, String password, String matchingPassword, String email, String matchingEmail, String forename, String surname) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -143,6 +167,8 @@ public class RegisterControllerIT {
         map.add("password_confirmation", matchingPassword);
         map.add(UserProperty.EMAIL.toString(), email);
         map.add("email_confirmation", matchingEmail);
+        map.add("forename", forename);
+        map.add("surname", surname);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         restTemplate.postForEntity(url, request, String.class);

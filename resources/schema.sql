@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS user (
     enabled         BOOLEAN         NOT NULL,
     role            VARCHAR(50)     NOT NULL,
     credits         DECIMAL(65, 2),
-    email           VARCHAR(255)
+    email           VARCHAR(255),
+    forename        VARCHAR(255),
+    surname         VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS user_stock (
