@@ -1,6 +1,7 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import com.liemily.realtimestocktradingsimulator.web.domain.ControllerError;
+import com.liemily.realtimestocktradingsimulator.web.validator.RegisterValidator;
 import com.liemily.user.domain.User;
 import com.liemily.user.exception.UserAlreadyExistsException;
 import com.liemily.user.service.UserService;
@@ -24,12 +25,16 @@ import java.lang.invoke.MethodHandles;
 @Lazy
 public class RegisterController {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
+
     private static final String REGISTER_PAGE = "register";
     private static final String REGISTER_SUCCESS_PAGE = "register-success";
-    private UserService userService;
+
+    private final RegisterValidator registerValidator;
+    private final UserService userService;
 
     @Autowired
-    public RegisterController(UserService userService) {
+    public RegisterController(RegisterValidator registerValidator, UserService userService) {
+        this.registerValidator = registerValidator;
         this.userService = userService;
     }
 
@@ -48,6 +53,11 @@ public class RegisterController {
                            @ModelAttribute("user") User user,
                            BindingResult bindingResult) {
         logger.info("Received registration request for user: " + user.getUsername());
+        registerValidator.validate(user, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return REGISTER_PAGE;
+        }
+
         try {
             userService.save(user);
             logger.info("Registered user: " + user.getUsername());

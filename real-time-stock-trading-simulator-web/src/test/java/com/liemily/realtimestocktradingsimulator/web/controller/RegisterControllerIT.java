@@ -11,7 +11,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -19,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by Emily Li on 08/10/2017.
@@ -48,6 +48,40 @@ public class RegisterControllerIT {
      */
     @Test
     public void testUserCanBeRegistered() {
+        username = username.substring(0, 15);
+        assert username.length() > 3 && username.length() < 16;
+
+        registerUser(username);
+
+        assertNotNull(userService.getUser(username));
+    }
+
+    /**
+     * C.Reg02 A username should be between 3 and 16 characters, exclusive
+     */
+    @Test
+    public void testInvalidUsernameLessThan4Characters() {
+        username = username.substring(0, 3);
+        assert username.length() <= 3;
+
+        registerUser(username);
+
+        assertNull(userService.getUser(username));
+    }
+
+    /**
+     * C.Reg02 A username should be between 3 and 16 characters, exclusive
+     */
+    @Test
+    public void testInvalidUsernameGreaterThan15Characters() {
+        assert username.length() >= 16;
+
+        registerUser(username);
+
+        assertNull(userService.getUser(username));
+    }
+
+    private void registerUser(String username) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -55,8 +89,6 @@ public class RegisterControllerIT {
         map.add("password", "pwd");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-
-        assertNotNull(userService.getUser(username));
+        restTemplate.postForEntity(url, request, String.class);
     }
 }
