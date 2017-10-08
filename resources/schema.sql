@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS user;
+
 CREATE TABLE IF NOT EXISTS company (
     symbol          VARCHAR(50)     NOT NULL    PRIMARY KEY,
     name            VARCHAR(50)     NOT NULL
@@ -15,8 +17,9 @@ CREATE TABLE IF NOT EXISTS stock_as_of_details (
     close_value     DECIMAL(65, 2)
 );
 
-CREATE TABLE IF NOT EXISTS USER (
+CREATE TABLE IF NOT EXISTS user (
     username        VARCHAR(50)     NOT NULL    PRIMARY KEY,
+    password        VARCHAR(100)    NOT NULL,
     credits         DECIMAL(65, 2)
 );
 

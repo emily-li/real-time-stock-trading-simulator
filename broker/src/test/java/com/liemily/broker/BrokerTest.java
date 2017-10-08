@@ -29,7 +29,7 @@ public class BrokerTest {
         StockService stockService = mock(StockService.class);
         when(stockService.getStock(stock.getSymbol())).thenReturn(stock);
 
-        User user = new User("username");
+        User user = new User("username", "pwd");
         user.setCredits(new BigDecimal(1));
         UserService userService = mock(UserService.class);
         when(userService.getUser(user.getUsername())).thenReturn(user);

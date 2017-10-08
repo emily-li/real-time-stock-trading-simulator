@@ -46,7 +46,7 @@ public class BrokerIT {
     @Before
     public void setup() {
         String username = UUID.randomUUID().toString();
-        user = new User(username);
+        user = new User(username, "pwd");
         user.setCredits(new BigDecimal(9));
         userService.save(user);
 

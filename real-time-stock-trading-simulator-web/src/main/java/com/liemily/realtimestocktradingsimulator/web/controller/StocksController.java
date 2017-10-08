@@ -20,4 +20,8 @@ class StocksController {
     String getStocksAttribute() {
         return STOCKS_MODEL_ATTRIBUTE;
     }
+
+    static String getStocksPage() {
+        return STOCKS_PAGE;
+    }
 }

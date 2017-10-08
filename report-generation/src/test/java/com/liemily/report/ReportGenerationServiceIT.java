@@ -80,7 +80,7 @@ public class ReportGenerationServiceIT {
         stockAsOfDetailsRepository.save(stockAsOfDetails1);
         stockAsOfDetailsRepository.save(stockAsOfDetails2);
 
-        user = new User(UUID.randomUUID().toString());
+        user = new User(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         userService.save(user);
         userStocks = new ArrayList<>();
         userStocks.add(new UserStock(user.getUsername(), company1.getSymbol(), 1));
