@@ -24,10 +24,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -207,24 +206,15 @@ public class StocksAPIControllerSortIT {
     public void testOrderStocksByName() {
         final String property = "company.name";
         for (Sort.Direction direction : Sort.Direction.values()) {
-            int names = 0;
             List<StockItem> stockItems = getOrderedBuyableStocks(direction, property);
-
-            String prevName = null;
-            for (StockItem stockItem : stockItems) {
-                String name = stockItem.getName();
-                if (name != null) {
-                    names++;
-                    if (prevName == null) {
-                        prevName = name;
-                    } else {
-                        int symbolCompare = prevName.compareTo(name) < 0 ? -1 : 1;
-                        assertTrue(symbolCompare == comparison);
-                        prevName = name;
-                    }
-                }
+            List<String> names = new ArrayList<>();
+            stockItems.forEach(stockItem -> names.add(stockItem.getName().toLowerCase()));
+            List<String> orderedNames = new ArrayList<>(names);
+            Collections.sort(orderedNames);
+            if (direction.equals(Sort.Direction.DESC)) {
+                Collections.reverse(orderedNames);
             }
-            assertTrue(names >= 2);
+            assertEquals(orderedNames, names);
         }
     }
 
