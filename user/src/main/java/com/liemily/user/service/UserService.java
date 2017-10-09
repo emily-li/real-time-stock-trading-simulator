@@ -36,15 +36,14 @@ public class UserService {
     }
 
     public User save(User user) throws UserAlreadyExistsException {
-        User savingUser = user;
-        if (savingUser.getRole() == null) {
-            savingUser.setRole(UserRole.USER);
+        if (user.getRole() == null) {
+            user.setRole(UserRole.USER);
         }
-        if (userRepository.exists(savingUser.getUsername())) {
-            logger.error("User " + savingUser.getUsername() + " already exists");
-            throw new UserAlreadyExistsException("User " + savingUser.getUsername() + " already exists");
+        if (userRepository.exists(user.getUsername())) {
+            logger.error("User " + user.getUsername() + " already exists");
+            throw new UserAlreadyExistsException("User " + user.getUsername() + " already exists");
         }
-        return userRepository.save(savingUser);
+        return userRepository.save(user);
     }
 
     public void update(User user) {

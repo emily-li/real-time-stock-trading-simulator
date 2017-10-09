@@ -36,10 +36,14 @@ import java.util.stream.Stream;
 class RealTimeStockTradingSimulatorConfig {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Autowired
     private CompanyService companyService;
-    @Autowired
     private StockGenerationService stockGenerationService;
+
+    @Autowired
+    public RealTimeStockTradingSimulatorConfig(CompanyService companyService, StockGenerationService stockGenerationService) {
+        this.companyService = companyService;
+        this.stockGenerationService = stockGenerationService;
+    }
 
     @PostConstruct
     public void populateStocks() throws IOException {
@@ -52,7 +56,7 @@ class RealTimeStockTradingSimulatorConfig {
         List<String> companyLines = new ArrayList<>();
 
         URL resource = getClass().getClassLoader().getResource("static/company.psv");
-        try (InputStream is = resource.openStream();
+        try (InputStream is = resource != null ? resource.openStream() : null;
              BufferedReader br = new BufferedReader(new InputStreamReader(is));
              Stream<String> lines = br.lines()) {
             lines.forEach(companyLines::add);
