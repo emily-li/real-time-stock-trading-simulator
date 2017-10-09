@@ -17,11 +17,13 @@ import static org.mockito.Mockito.*;
 public class RegisterControllerTest {
     private RegisterController registerController;
     private EmailService emailService;
+    private UserService userService;
 
     @Before
     public void setup() {
         emailService = mock(EmailService.class);
-        registerController = new RegisterController(mock(RegisterValidator.class), mock(UserService.class), emailService);
+        userService = mock(UserService.class);
+        registerController = new RegisterController(mock(RegisterValidator.class), userService, emailService);
     }
 
     /**
@@ -31,6 +33,7 @@ public class RegisterControllerTest {
     public void testUserNotifiedOnRegistrationSubmission() throws Exception {
         User user = new User();
         user.setEmail("email");
+        when(userService.save(user)).thenReturn(user);
         registerController.register(new ExtendedModelMap(), user, mock(BindingResult.class), null, mock(BindingResult.class), null, mock(BindingResult.class));
         verify(emailService, times(1)).emailConfirmation(anyString(), anyString());
     }

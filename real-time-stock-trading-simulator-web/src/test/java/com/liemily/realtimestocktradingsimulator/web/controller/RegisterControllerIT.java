@@ -51,7 +51,7 @@ public class RegisterControllerIT {
     public void setup() {
         String baseUrl = "http://localhost:" + port;
         url = baseUrl + "/" + RegisterController.getRegisterPage();
-        successUrl = baseUrl + "/" + RegisterController.getRegisterSuccessPage();
+        successUrl = baseUrl + "/register/success";
         username = UUID.randomUUID().toString();
         username = username.substring(0, 15);
         password = "password123";

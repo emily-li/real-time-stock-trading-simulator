@@ -28,10 +28,10 @@
         </resources>
         <testResources>
             <testResource>
-                <directory>../resources-test</directory>
+                <directory>src/test/resources</directory>
             </testResource>
             <testResource>
-                <directory>src/test/resources</directory>
+                <directory>../resources-test</directory>
             </testResource>
         </testResources>
     </build>

@@ -81,8 +81,8 @@ public class RegisterController {
         }
 
         if (bindingResultUser.hasErrors()
-                && (!(bindingResultUser.getErrorCount() == 1
-                && bindingResultUser.getFieldError("birthDate") != null))) { // Skip instances where bind has failed due to null date
+                && (bindingResultUser.getErrorCount() == 1
+                && !bindingResultUser.getFieldError("birthDate").toString().contains("for value ''"))) { // Skip instances where bind has failed due to null date
             return REGISTER_PAGE;
         }
 
