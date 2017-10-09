@@ -1,6 +1,7 @@
 package com.liemily.realtimestocktradingsimulator.web.controller;
 
 import com.liemily.realtimestocktradingsimulator.web.domain.UserProperty;
+import com.liemily.user.domain.User;
 import com.liemily.user.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,8 @@ public class RegisterControllerIT {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private RegisterController registerController;
     @Autowired
     private UserService userService;
 
@@ -194,6 +197,21 @@ public class RegisterControllerIT {
         ResponseEntity<String> response = registerUser(username, password);
         assertNotNull(userService.getUser(username));
         assertEquals(successUrl, response.getHeaders().get("Location").get(0));
+    }
+
+    /**
+     * C.Reg16 The confirmation e-mail should contain a link that activates the user account
+     */
+    @Test
+    public void testConfirmationEmail() throws Exception {
+        User user = new User(username, password);
+        user = userService.save(user);
+        String token = registerController.generateUserToken(user);
+        assert !user.isEnabled();
+
+        String response = restTemplate.getForObject(url + "/token/" + token, String.class);
+        user = userService.getUser(username);
+        assert user.isEnabled();
     }
 
     private ResponseEntity<String> registerUser(String username, String password) {

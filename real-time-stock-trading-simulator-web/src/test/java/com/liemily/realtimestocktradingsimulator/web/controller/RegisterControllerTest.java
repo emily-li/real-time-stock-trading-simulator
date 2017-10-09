@@ -32,6 +32,6 @@ public class RegisterControllerTest {
         User user = new User();
         user.setEmail("email");
         registerController.register(new ExtendedModelMap(), user, mock(BindingResult.class), null, mock(BindingResult.class), null, mock(BindingResult.class));
-        verify(emailService, times(1)).emailConfirmation(user);
+        verify(emailService, times(1)).emailConfirmation(anyString(), anyString());
     }
 }

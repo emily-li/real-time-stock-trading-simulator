@@ -34,6 +34,11 @@ CREATE TABLE IF NOT EXISTS USER (
     birth_date      DATE
 );
 
+CREATE TABLE IF NOT EXISTS user_token (
+    username        VARCHAR(255)    NOT NULL    PRIMARY KEY,
+    token           VARCHAR(255)    NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS user_stock (
   username          VARCHAR(50)     NOT NULL,
   symbol            VARCHAR(50)     NOT NULL,

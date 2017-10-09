@@ -1,7 +1,8 @@
 package com.liemily.realtimestocktradingsimulator.web.service;
 
-import com.liemily.user.domain.User;
+import com.liemily.realtimestocktradingsimulator.web.controller.RegisterController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +20,13 @@ import javax.mail.internet.MimeMessage;
 @Lazy
 public class EmailService {
     private final Session emailSession;
+    private final String webBaseUrl;
 
     @Autowired
-    public EmailService(Session emailSession) {
+    public EmailService(Session emailSession,
+                        @Value("${web.url.base}") String webBaseUrl) {
         this.emailSession = emailSession;
+        this.webBaseUrl = webBaseUrl;
     }
 
     public void email(String to, String subject, String contents) throws MessagingException {
@@ -33,7 +37,9 @@ public class EmailService {
         Transport.send(msg);
     }
 
-    public void emailConfirmation(User user) throws MessagingException {
-        email(user.getEmail(), "Real Time Stock Trading Simulator - Email Confirmation", "Please click here to confirm your e-mail address: ");
+    public void emailConfirmation(String email, String token) throws MessagingException {
+        final String subject = "Real Time Stock Trading Simulator - Email Confirmation";
+        final String contents = "Please click here to confirm your e-mail address: " + webBaseUrl + "/" + RegisterController.getRegisterPage() + "/token/" + token;
+        email(email, subject, contents);
     }
 }

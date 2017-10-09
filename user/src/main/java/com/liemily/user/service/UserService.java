@@ -2,11 +2,13 @@ package com.liemily.user.service;
 
 import com.liemily.user.domain.User;
 import com.liemily.user.domain.UserRole;
+import com.liemily.user.domain.UserToken;
+import com.liemily.user.exception.InvalidUserTokenException;
 import com.liemily.user.exception.UserAlreadyExistsException;
 import com.liemily.user.repository.UserRepository;
+import com.liemily.user.repository.UserTokenRepository;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +22,14 @@ import java.lang.invoke.MethodHandles;
 public class UserService {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
     private UserRepository userRepository;
+    private UserTokenRepository userTokenRepository;
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserTokenRepository userTokenRepository) {
         this.userRepository = userRepository;
+        this.userTokenRepository = userTokenRepository;
     }
 
-    public void save(User user) throws UserAlreadyExistsException {
+    public User save(User user) throws UserAlreadyExistsException {
         if (user.getRole() == null) {
             user.setRole(UserRole.USER);
         }
@@ -34,7 +37,7 @@ public class UserService {
             logger.error("User " + user.getUsername() + " already exists");
             throw new UserAlreadyExistsException("User " + user.getUsername() + " already exists");
         }
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public void update(User user) {
@@ -43,5 +46,20 @@ public class UserService {
 
     public User getUser(String username) {
         return userRepository.findOne(username);
+    }
+
+    public void saveUserToken(String username, String token) {
+        UserToken userToken = new UserToken(username, token);
+        userTokenRepository.save(userToken);
+    }
+
+    public User activateUserWithToken(String token) throws InvalidUserTokenException {
+        UserToken userToken = userTokenRepository.findByToken(token);
+        if (userToken == null || userToken.getUser() == null) {
+            throw new InvalidUserTokenException("Found no valid user token for token " + token);
+        }
+        User user = userToken.getUser();
+        user.setEnabled(true);
+        return userRepository.save(user);
     }
 }
