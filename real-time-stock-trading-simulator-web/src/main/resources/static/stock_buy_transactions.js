@@ -1,20 +1,25 @@
-function buyStock(username, stockSymbol, volume) {
+function buyStock(stockSymbol, volume) {
     $.ajax({
         url: `/api/v1/buy`,
-        method: "post",
+        method: `post`,
         data: {
-            username: username,
             stockSymbol: stockSymbol,
             volume: volume
         }
+    }).done((response) => {
+        showMsg(response.msg);
+        if (response.status === "true") {
+            repopulateStocks();
+        }
     });
+
 }
 
 // Transactional
 $("#buyBtn").click(() => {
     $("#stocksTBody").find("input").each((index, element) => {
         if ($(element).val()) {
-            buyStock("foo", $(element).attr("data-symbol"), $(element).val());
+            buyStock($(element).attr("data-symbol"), $(element).val());
         }
     });
 });

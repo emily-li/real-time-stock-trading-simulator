@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS stock_as_of_details (
     close_value     DECIMAL(65, 2)
 );
 
-CREATE TABLE IF NOT EXISTS USER (
-    username        VARCHAR(255)     NOT NULL    PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS user (
+    username        VARCHAR(255)    NOT NULL    PRIMARY KEY,
     password        VARCHAR(255)    NOT NULL,
     enabled         BOOLEAN         NOT NULL,
     role            VARCHAR(50)     NOT NULL,
@@ -42,13 +42,15 @@ CREATE TABLE IF NOT EXISTS user_token (
 CREATE TABLE IF NOT EXISTS user_stock (
   username          VARCHAR(50)     NOT NULL,
   symbol            VARCHAR(50)     NOT NULL,
-  volume            INT             NOT NULL
+  volume            INT             NOT NULL,
+  purchase_value    DECIMAL(65, 2)  NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS trade (
   id                BIGINT          NOT NULL    PRIMARY KEY AUTO_INCREMENT,
   stock_symbol      VARCHAR(50)     NOT NULL,
   username          VARCHAR(50)     NOT NULL,
+  value             DECIMAL(65, 2)  NOT NULL,
   volume            INT             NOT NULL,
   trade_date_time   DATETIME(6)     NOT NULL
 );

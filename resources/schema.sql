@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS user_stock;
+DROP TABLE IF EXISTS trade;
+
 CREATE TABLE IF NOT EXISTS company (
     symbol          VARCHAR(50)     NOT NULL    PRIMARY KEY,
     name            VARCHAR(50)     NOT NULL
@@ -35,13 +38,15 @@ CREATE TABLE IF NOT EXISTS user_token (
 CREATE TABLE IF NOT EXISTS user_stock (
   username          VARCHAR(50)     NOT NULL,
   symbol            VARCHAR(50)     NOT NULL,
-  volume            INT             NOT NULL
+  volume            INT             NOT NULL,
+  purchase_value    DECIMAL(65, 2)  NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS trade (
   id                BIGINT          NOT NULL    PRIMARY KEY AUTO_INCREMENT,
   stock_symbol      VARCHAR(50)     NOT NULL,
   username          VARCHAR(50)     NOT NULL,
+  value             DECIMAL(65,2)   NOT NULL,
   volume            INT             NOT NULL,
   trade_date_time   DATETIME(6)     NOT NULL
 );

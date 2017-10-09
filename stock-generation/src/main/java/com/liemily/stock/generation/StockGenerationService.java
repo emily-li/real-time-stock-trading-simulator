@@ -19,7 +19,7 @@ public class StockGenerationService {
         this.stockGenerationRandomiser = stockGenerationRandomiser;
     }
 
-    void generateStock(String stockId) throws StockGenerationException {
+    public void generateStock(String stockId) throws StockGenerationException {
         if (stockRepository.exists(stockId)) {
             throw new StockGenerationException("Stock already exists: " + stockId);
         } else {

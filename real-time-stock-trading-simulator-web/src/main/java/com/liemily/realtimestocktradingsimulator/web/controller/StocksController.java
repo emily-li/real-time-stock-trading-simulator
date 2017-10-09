@@ -16,7 +16,12 @@ class StocksController {
 
     @RequestMapping("buy")
     String getBuyableStocks() {
-        return STOCKS_PAGE;
+        return "stock_buy";
+    }
+
+    @RequestMapping("sell")
+    String getSellableStocks() {
+        return "stock_sell";
     }
 
     String getStocksAttribute() {

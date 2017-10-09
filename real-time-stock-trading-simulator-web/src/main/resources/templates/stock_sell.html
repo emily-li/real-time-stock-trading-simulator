@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <link rel="stylesheet" href="/styles.css" type="text/css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
+
+    <title>Sell Stocks</title>
+</head>
+<body>
+
+<div th:replace="fragments/nav_authenticated :: nav"></div>
+
+<div id="msgAlert" class="m-2">
+    <p id="msgBody"></p>
+</div>
+
+<div class="m-2">
+    <input id="sellBtn" type="submit" class="btn btn-outline-secondary mb-2 float-right" value="Sell"></input>
+
+    <form id="searchForm">
+        <div class="input-group">
+            <input id="searchText" type="text" class="form-control"/>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Search</button>
+                <ul class="dropdown-menu">
+                    <li id="searchSymbolLi" class="dropdown-item">Symbol</li>
+                    <li id="searchNameLi" class="dropdown-item">Name</li>
+                    <li id="searchGainsGtLi" class="dropdown-item">Gains greater than</li>
+                    <li id="searchGainsLtLi" class="dropdown-item">Gains less than</li>
+                    <li id="searchValueGtLi" class="dropdown-item">Value greater than</li>
+                    <li id="searchValueLtLi" class="dropdown-item">Value less than</li>
+                    <li id="searchVolumeGtLi" class="dropdown-item">Volume greater than</li>
+                    <li id="searchVolumeLtLi" class="dropdown-item">Volume less than</li>
+                </ul>
+            </div>
+        </div>
+    </form>
+
+    <div id="stocksBlock" class="bordered p-3">
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>Stock Symbol</th>
+                <th>Stock Name</th>
+                <th>Last Trade</th>
+                <th>Value</th>
+                <th>Volume</th>
+                <th>Gains</th>
+                <th>Open</th>
+                <th>Close</th>
+                <th>Purchase Value</th>
+            </tr>
+            </thead>
+            <tbody id="stocksTBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="btn-toolbar">
+        <div class="btn-group">
+            <button id="prevBtn" type="button" class="btn btn-secondary">Previous</button>
+            <button id="pageLabel" type="button" class="btn btn-secondary" disabled="true"></button>
+            <button id="nextBtn" type="button" class="btn btn-secondary">Next</button>
+            <button id="allBtn" type="button" class="btn btn-secondary">All</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
+        integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+        crossorigin="anonymous"></script>
+<script src="http://momentjs.com/downloads/moment.min.js"></script>
+
+<script src="/stock_utils.js"></script>
+<script src="/stock_sell_table.js"></script>
+<script src="/stock_sell_transactions.js"></script>
+</body>
+</html>

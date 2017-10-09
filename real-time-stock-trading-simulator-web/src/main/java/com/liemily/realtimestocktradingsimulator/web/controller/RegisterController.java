@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -62,7 +61,6 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    @Transactional
     public String register(Model model,
                            @ModelAttribute("user") User user,
                            BindingResult bindingResultUser,
@@ -109,7 +107,8 @@ public class RegisterController {
     public String confirm(Model model,
                           @PathVariable("token") String token) {
         try {
-            User user = userService.activateUserWithToken(token);
+            User user = userService.activateUser(token);
+            logger.info("Activated user account: " + user.getUsername());
             model.addAttribute("msg", "Successfully activated user " + user.getUsername());
         } catch (InvalidUserTokenException e) {
             model.addAttribute("msg", e.getMessage());

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -28,5 +29,18 @@ public class UserServiceIT {
             throw new AssertionError("Failed to save new user: " + user.getUsername());
         }
         userService.save(user);
+    }
+
+    @Test
+    public void testUserActivatedWithCredits() throws Exception {
+        User user = new User(UUID.randomUUID().toString(), "pwd");
+        userService.save(user);
+        String token = UUID.randomUUID().toString();
+
+        userService.saveUserToken(user.getUsername(), token);
+        userService.activateUser(token);
+
+        user = userService.getUser(user.getUsername());
+        assert user.getCredits().compareTo(new BigDecimal(0)) > 0;
     }
 }

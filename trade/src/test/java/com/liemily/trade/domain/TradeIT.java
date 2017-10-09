@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -25,10 +26,10 @@ public class TradeIT {
     @Test
     public void testTradeDateTime() {
         String username = UUID.randomUUID().toString();
-        Trade trade1 = new Trade(UUID.randomUUID().toString(), username, 1);
+        Trade trade1 = new Trade(UUID.randomUUID().toString(), username, new BigDecimal(1), 1);
         tradeRepository.save(trade1);
         Date timeAfterFirstTrade = new Date();
-        Trade trade2 = new Trade(UUID.randomUUID().toString(), username, 1);
+        Trade trade2 = new Trade(UUID.randomUUID().toString(), username, new BigDecimal(1), 1);
         tradeRepository.save(trade2);
 
         assertTrue(timeAfterFirstTrade.after(trade1.getTradeDateTime()));

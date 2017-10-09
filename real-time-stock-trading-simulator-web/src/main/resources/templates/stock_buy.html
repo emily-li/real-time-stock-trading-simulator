@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -8,28 +8,21 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
           integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
 
-    <title>Stocks</title>
+    <title>Buy Stocks</title>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-sm navbar-light bg-light bordered">
-    <a class="navbar-brand" href="/">Real Time Stock Trading Simulator</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" href="/logout" method="post">Log out</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+
+<div th:replace="fragments/nav_authenticated :: nav"></div>
+
+<div id="msgAlert" class="m-2">
+    <p id="msgBody"></p>
+</div>
 
 <div class="m-2">
-    <input id="buyBtn" type="submit" class="btn btn-outline-secondary mb-2" value="Buy"></input>
+    <input id="buyBtn" type="submit" class="btn btn-outline-secondary mb-2 float-right" value="Buy"></input>
 
-    <form id="searchForm" action="/action_page.php">
+    <form id="searchForm">
         <div class="input-group">
             <input id="searchText" type="text" class="form-control"/>
             <div class="dropdown">
@@ -88,7 +81,7 @@
 <script src="http://momentjs.com/downloads/moment.min.js"></script>
 
 <script src="/stock_utils.js"></script>
-<script src="/stock_table.js"></script>
-<script src="/stock_transactions.js"></script>
+<script src="/stock_buy_table.js"></script>
+<script src="/stock_buy_transactions.js"></script>
 </body>
 </html>

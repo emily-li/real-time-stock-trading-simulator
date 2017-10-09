@@ -68,7 +68,7 @@ public class User {
     }
 
     public BigDecimal getCredits() {
-        return credits == null ? new BigDecimal(0) : credits;
+        return credits;
     }
 
     public void setCredits(BigDecimal credits) {

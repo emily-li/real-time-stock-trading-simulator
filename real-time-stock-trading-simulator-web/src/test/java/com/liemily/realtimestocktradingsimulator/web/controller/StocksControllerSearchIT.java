@@ -71,8 +71,8 @@ public class StocksControllerSearchIT {
         stockService.save(stock1);
         stockService.save(stock2);
 
-        UserStock userStock1 = new UserStock(username, symbol, 1);
-        UserStock userStock2 = new UserStock(username, stock2.getSymbol(), 3);
+        UserStock userStock1 = new UserStock(username, symbol, new BigDecimal(1), 1);
+        UserStock userStock2 = new UserStock(username, stock2.getSymbol(), new BigDecimal(1), 3);
         userStockService.save(userStock1);
         userStockService.save(userStock2);
 

@@ -4,8 +4,6 @@ import com.liemily.broker.Broker;
 import com.liemily.broker.exception.BrokerException;
 import com.liemily.broker.exception.InsufficientCreditException;
 import com.liemily.broker.exception.InsufficientStockException;
-import com.liemily.realtimestocktradingsimulator.web.domain.ControllerError;
-import com.liemily.realtimestocktradingsimulator.web.domain.TradeProperty;
 import com.liemily.stock.domain.StockItem;
 import com.liemily.stock.domain.StockView;
 import com.liemily.stock.service.StockViewService;
@@ -20,7 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +28,9 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Emily Li on 07/10/2017.
@@ -90,24 +90,38 @@ public class StocksAPIController {
     }
 
     @RequestMapping(value = "buy", method = RequestMethod.POST)
-    void buy(Trade trade,
-             BindingResult bindingResult) {
+    Map<String, String> buy(Trade trade) {
+        final Map<String, String> response = new HashMap<>();
+        final String success = "success";
+        final String exceptionSuccess = "false";
+        response.put(success, "true");
+        response.put("msg", "Trades successful");
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        trade.setUsername(username);
         logger.info("Received order for purchase " + trade);
         try {
             broker.process(trade);
+            logger.info("Successfully processed trade");
         } catch (InsufficientStockException ise) {
             logger.info("Failed to process trade due to insufficient stock for trade: " + trade);
-            bindingResult.rejectValue(TradeProperty.VOLUME.toString(),
-                    ControllerError.TRADE_INSUFFICIENT_STOCK_ERROR.toString(),
-                    "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
+            response.put(success, exceptionSuccess);
+            response.put("msg", "There are insufficient stocks to perform the trade for stock " + trade.getStockSymbol());
         } catch (InsufficientCreditException ice) {
-            logger.info("Failed to process trade due to insufficient credits for user: " + trade.getUsername());
-            bindingResult.reject(ControllerError.TRADE_INSUFFICIENT_CREDITS_ERROR.toString(),
-                    "There are insufficient credits to perform the trade");
+            logger.info("Failed to process trade due to insufficient credits for trade: " + trade);
+            response.put(success, exceptionSuccess);
+            response.put("msg", "User has insufficient credits to perform the trade: " + trade);
         } catch (BrokerException be) {
             logger.info("Failed to process trade: " + trade);
-            bindingResult.reject(ControllerError.TRADE_BROKER_ERROR.toString());
+            response.put(success, exceptionSuccess);
+            response.put("msg", "Failed to process trade: " + trade);
         }
+        return response;
+    }
+
+    @RequestMapping("sell/all")
+    List<StockItem> getSellableStocks(Principal principal) {
+        return getSellableStocks(principal, new PageRequest(0, Integer.MAX_VALUE), null, null, null, null, null, null);
     }
 
     @RequestMapping("sell")

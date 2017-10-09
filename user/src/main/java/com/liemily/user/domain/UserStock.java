@@ -18,6 +18,7 @@ public class UserStock implements StockItem {
     @Id
     private String symbol;
     private int volume;
+    private BigDecimal purchaseValue;
 
     @ManyToOne
     @JoinColumn(name = "symbol", insertable = false, updatable = false)
@@ -27,9 +28,10 @@ public class UserStock implements StockItem {
     private UserStock() {
     }
 
-    public UserStock(String username, String symbol, int volume) {
+    public UserStock(String username, String symbol, BigDecimal purchaseValue, int volume) {
         this.username = username;
         this.symbol = symbol;
+        this.purchaseValue = purchaseValue;
         this.volume = volume;
     }
 
@@ -71,6 +73,10 @@ public class UserStock implements StockItem {
     @Override
     public int getVolume() {
         return volume;
+    }
+
+    public BigDecimal getPurchaseValue() {
+        return purchaseValue;
     }
 
     @Override

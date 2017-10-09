@@ -1,6 +1,8 @@
 package com.liemily.user.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 /**
  * Created by Emily Li on 08/10/2017.
@@ -12,9 +14,6 @@ public class UserToken {
     private String username;
     @Id
     private String token;
-    @OneToOne
-    @JoinColumn(name = "username", insertable = false, updatable = false)
-    private User user;
 
     private UserToken() {
     }
@@ -24,11 +23,11 @@ public class UserToken {
         this.token = token;
     }
 
-    public String getToken() {
-        return token;
+    public String getUsername() {
+        return username;
     }
 
-    public User getUser() {
-        return user;
+    public String getToken() {
+        return token;
     }
 }

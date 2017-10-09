@@ -9,10 +9,12 @@ import com.liemily.user.repository.UserRepository;
 import com.liemily.user.repository.UserTokenRepository;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 
 /**
  * Created by Emily Li on 01/10/2017.
@@ -23,21 +25,26 @@ public class UserService {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
     private UserRepository userRepository;
     private UserTokenRepository userTokenRepository;
+    private BigDecimal userDefaultCredits;
 
-    public UserService(UserRepository userRepository, UserTokenRepository userTokenRepository) {
+    public UserService(UserRepository userRepository,
+                       UserTokenRepository userTokenRepository,
+                       @Value("${user.credits.default}") BigDecimal userDefaultCredits) {
         this.userRepository = userRepository;
         this.userTokenRepository = userTokenRepository;
+        this.userDefaultCredits = userDefaultCredits;
     }
 
     public User save(User user) throws UserAlreadyExistsException {
-        if (user.getRole() == null) {
-            user.setRole(UserRole.USER);
+        User savingUser = user;
+        if (savingUser.getRole() == null) {
+            savingUser.setRole(UserRole.USER);
         }
-        if (userRepository.exists(user.getUsername())) {
-            logger.error("User " + user.getUsername() + " already exists");
-            throw new UserAlreadyExistsException("User " + user.getUsername() + " already exists");
+        if (userRepository.exists(savingUser.getUsername())) {
+            logger.error("User " + savingUser.getUsername() + " already exists");
+            throw new UserAlreadyExistsException("User " + savingUser.getUsername() + " already exists");
         }
-        return userRepository.save(user);
+        return userRepository.save(savingUser);
     }
 
     public void update(User user) {
@@ -53,13 +60,17 @@ public class UserService {
         userTokenRepository.save(userToken);
     }
 
-    public User activateUserWithToken(String token) throws InvalidUserTokenException {
+    public User activateUser(String token) throws InvalidUserTokenException {
         UserToken userToken = userTokenRepository.findByToken(token);
-        if (userToken == null || userToken.getUser() == null) {
-            throw new InvalidUserTokenException("Found no valid user token for token " + token);
+        if (userToken == null) {
+            throw new InvalidUserTokenException("Invalid token " + token);
         }
-        User user = userToken.getUser();
+        User user = userRepository.findOne(userToken.getUsername());
+        if (user == null) {
+            throw new InvalidUserTokenException("No valid user assigned to token " + token);
+        }
         user.setEnabled(true);
+        user.setCredits(userDefaultCredits);
         return userRepository.save(user);
     }
 }

@@ -52,7 +52,7 @@ public class BrokerIT {
 
         stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(5), 1);
         stockService.save(stock);
-        trade = new Trade(stock.getSymbol(), user.getUsername(), 1);
+        trade = new Trade(stock.getSymbol(), user.getUsername(), new BigDecimal(1), 1);
     }
 
     /**
@@ -62,7 +62,7 @@ public class BrokerIT {
     public void testBrokerVerifiesStockVolume() throws Exception {
         stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(1), 1);
         stockService.save(stock);
-        trade = new Trade(stock.getSymbol(), user.getUsername(), 2);
+        trade = new Trade(stock.getSymbol(), user.getUsername(), new BigDecimal(1), 2);
         broker.process(trade);
     }
 
@@ -73,7 +73,7 @@ public class BrokerIT {
     public void testBrokerVerifiesCredits() throws Exception {
         stock = new Stock(stock.getSymbol(), stock.getValue(), 2);
         stockService.save(stock);
-        trade = new Trade(stock.getSymbol(), user.getUsername(), 2);
+        trade = new Trade(stock.getSymbol(), user.getUsername(), new BigDecimal(1), 2);
         userService.update(user);
         broker.process(trade);
     }

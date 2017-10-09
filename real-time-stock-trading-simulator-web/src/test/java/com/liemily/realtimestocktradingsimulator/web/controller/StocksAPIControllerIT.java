@@ -89,7 +89,7 @@ public class StocksAPIControllerIT {
         Stock stock = new Stock(company.getSymbol(), new BigDecimal(2), 1);
         stockService.save(stock);
 
-        trade = new Trade(company.getSymbol(), username, 1);
+        trade = new Trade(company.getSymbol(), username, new BigDecimal(1), 1);
         tradeService.save(trade);
 
         expectedGains = new BigDecimal(2);
@@ -122,7 +122,7 @@ public class StocksAPIControllerIT {
      */
     @Test
     public void testGetSellableShares() {
-        UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
+        UserStock userStock = new UserStock(username, stockView.getSymbol(), new BigDecimal(1), 1);
         userStockService.save(userStock);
 
         Collection<StockItem> stockItems = stocksAPIController.getSellableStocks(principal, null, null, null, null, null, null, null);
@@ -183,8 +183,8 @@ public class StocksAPIControllerIT {
             String symbol = UUID.randomUUID().toString();
             stocks.add(new Stock(symbol, new BigDecimal(i * 2), i * 2));
             stocks.add(new Stock(symbol, new BigDecimal(i * 3), i * 3));
-            userStocks.add(new UserStock(username, symbol, i * 2));
-            userStocks.add(new UserStock(username, symbol, i * 3));
+            userStocks.add(new UserStock(username, symbol, new BigDecimal(1), i * 2));
+            userStocks.add(new UserStock(username, symbol, new BigDecimal(1), i * 3));
         }
         stockService.save(stocks);
         userStockService.save(userStocks);
@@ -223,7 +223,7 @@ public class StocksAPIControllerIT {
 
     @Test
     public void testUserStock() {
-        UserStock userStock = new UserStock(username, stockView.getSymbol(), 1);
+        UserStock userStock = new UserStock(username, stockView.getSymbol(), new BigDecimal(1), 1);
         userStockService.save(userStock);
         userStock = userStockService.getUserStock(username, stockView.getSymbol());
 
@@ -309,7 +309,7 @@ public class StocksAPIControllerIT {
         for (int i = 1; i <= num; i++) {
             Stock stock = new Stock(UUID.randomUUID().toString(), new BigDecimal(i), i);
             stocks.add(stock);
-            UserStock userStock = new UserStock(username, stock.getSymbol(), i);
+            UserStock userStock = new UserStock(username, stock.getSymbol(), new BigDecimal(1), i);
             userStocks.add(userStock);
         }
         stockService.save(stocks);

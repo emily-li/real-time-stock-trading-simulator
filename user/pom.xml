@@ -16,6 +16,9 @@
     <build>
         <testResources>
             <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
                 <directory>../resources-test</directory>
             </testResource>
         </testResources>

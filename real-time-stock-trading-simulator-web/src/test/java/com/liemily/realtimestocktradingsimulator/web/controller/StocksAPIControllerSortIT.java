@@ -88,13 +88,13 @@ public class StocksAPIControllerSortIT {
         stockAsOfDetailsRepository.save(smallStockAsOfDetails);
         stockAsOfDetailsRepository.save(smallerStockAsOfDetails);
 
-        UserStock smallUserStock = new UserStock(username, smallStock.getSymbol(), 1);
-        UserStock smallerUserStock = new UserStock(username, smallerStock.getSymbol(), 1);
+        UserStock smallUserStock = new UserStock(username, smallStock.getSymbol(), new BigDecimal(1), 1);
+        UserStock smallerUserStock = new UserStock(username, smallerStock.getSymbol(), new BigDecimal(1), 1);
         userStockService.save(smallUserStock);
         userStockService.save(smallerUserStock);
 
-        Trade smallTrade = new Trade(smallStock.getSymbol(), username, 1);
-        Trade smallerTrade = new Trade(smallerStock.getSymbol(), username, 1);
+        Trade smallTrade = new Trade(smallStock.getSymbol(), username, new BigDecimal(1), 1);
+        Trade smallerTrade = new Trade(smallerStock.getSymbol(), username, new BigDecimal(1), 1);
         tradeService.save(smallTrade);
         tradeService.save(smallerTrade);
     }

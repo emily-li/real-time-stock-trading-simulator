@@ -20,6 +20,50 @@ function updatePageNav(numCurrentItems) {
     updatePageLabel();
 }
 
+function createTableRow(stock) {
+    let tr = $("<tr></tr>");
+
+    let tdSymbol = $("<td></td>");
+    tdSymbol.text(stock.symbol);
+    tr.append(tdSymbol);
+
+    let tdName = $("<td></td>");
+    tdName.text(stock.name);
+    tr.append(tdName);
+
+    let tdDateTime = $("<td></td>");
+    let date = stock.lastTradeDateTime ? moment(stock.lastTradeDateTime) : '';
+    let formattedDate = date ? date.format("hh:mm:ss") : '';
+    tdDateTime.text(formattedDate);
+    tr.append(tdDateTime);
+
+    let tdValue = $("<td></td>");
+    tdValue.text(formatCurrency(stock.value));
+    tr.append(tdValue);
+
+    let tdVol = $("<td></td>");
+    tdVol.text(stock.volume);
+    tr.append(tdVol);
+
+    let tdGains = $("<td></td>");
+    tdGains.text(formatCurrency(stock.gains));
+    tr.append(tdGains);
+
+    let tdOpenValue = $("<td></td>");
+    tdOpenValue.text(formatCurrency(stock.openValue));
+    tr.append(tdOpenValue);
+
+    let tdCloseValue = $("<td></td>");
+    tdCloseValue.text(formatCurrency(stock.closeValue));
+    tr.append(tdCloseValue);
+
+    let tdPurchaseVal = $("<td></td>");
+    tdPurchaseVal.text(formatCurrency(stock.purchaseValue));
+    tr.append(tdPurchaseVal);
+
+    return tr;
+}
+
 function repopulateStocks(stocks) {
     // Clear stocksTBody
     $("#stocksTBody").html("");
@@ -34,7 +78,7 @@ function repopulateStocks(stocks) {
 }
 
 function updateStocks() {
-    let url = `/api/v1/buy?page=${page}&size=${size}`;
+    let url = `/api/v1/sell?page=${page}&size=${size}`;
     url = currSearch ? `${url}&${currSearch}` : url;
 
     $.ajax({
@@ -48,7 +92,7 @@ function updateStocks() {
 function searchStock() {
     page = 0;
     $.ajax({
-        url: `/api/v1/buy?${currSearch}`,
+        url: `/api/v1/sell?${currSearch}`,
         method: "get"
     }).done((stocks) => {
         repopulateStocks(stocks);
@@ -73,7 +117,7 @@ $("#allBtn").click(() => {
     currSearch = '';
 
     $.ajax({
-        url: `/api/v1/buy/all`,
+        url: `/api/v1/sell/all`,
         method: "get"
     }).done((stocks) => {
         repopulateStocks(stocks);
@@ -130,10 +174,4 @@ $("#searchVolumeLtLi").click(() => {
     searchStock();
 });
 
-// Init
 updateStocks();
-setInterval(() => {
-        updateStocks();
-    },
-    60000);
-/*]]>*/

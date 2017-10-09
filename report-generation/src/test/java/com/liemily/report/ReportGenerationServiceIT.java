@@ -83,8 +83,8 @@ public class ReportGenerationServiceIT {
         user = new User(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         userService.save(user);
         userStocks = new ArrayList<>();
-        userStocks.add(new UserStock(user.getUsername(), company1.getSymbol(), 1));
-        userStocks.add(new UserStock(user.getUsername(), company2.getSymbol(), 1));
+        userStocks.add(new UserStock(user.getUsername(), company1.getSymbol(), new BigDecimal(1), 1));
+        userStocks.add(new UserStock(user.getUsername(), company2.getSymbol(), new BigDecimal(1), 1));
         userStockService.save(userStocks);
 
         userStocks = userStockService.getUserStocks(user.getUsername(), null);
@@ -111,7 +111,7 @@ public class ReportGenerationServiceIT {
     private void assertOrderedByCompanyName(ReportRequest reportRequest) throws Exception {
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<? extends StockItem> stockDetails = getStocksFromXML(report.getReport());
+        List<? extends StockItem> stockDetails = getStocksFromXML(report.getReportContents());
         assertTrue(stockDetails.size() > 0);
 
         List<String> companyNames = new ArrayList<>();
@@ -131,7 +131,7 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new StockReportRequest(FileType.XML, company1.getSymbol());
         Report report = reportGenerationService.generate(reportRequest);
 
-        List<? extends StockItem> stockDetailLists = getStocksFromXML(report.getReport());
+        List<? extends StockItem> stockDetailLists = getStocksFromXML(report.getReportContents());
         for (StockItem stockItem : stockDetailLists) {
             assertNotNull(stockItem.getSymbol());
             assertNotNull(stockItem.getName());
@@ -181,7 +181,7 @@ public class ReportGenerationServiceIT {
             ReportRequest reportRequest = new StockReportRequest(FileType.XML, sort);
             Report report = reportGenerationService.generate(reportRequest);
 
-            List<? extends StockItem> stockItems = getStocksFromXML(report.getReport());
+            List<? extends StockItem> stockItems = getStocksFromXML(report.getReportContents());
             List<BigDecimal> values = new ArrayList<>();
             stockItems.forEach(stockDetails -> values.add(stockDetails.getValue()));
             List<BigDecimal> orderedValues = new ArrayList<>(values);
@@ -202,12 +202,12 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new UserStockReportRequest(FileType.XML, user.getUsername());
         Report report = reportGenerationService.generate(reportRequest);
 
-        logger.info("Generated XML stock report:\n" + report.getReport());
+        logger.info("Generated XML stock report:\n" + report.getReportContents());
 
         Collection<ReportItem> expectedReportItems = new ArrayList<>();
         userStocks.forEach(userStock -> expectedReportItems.add(new ReportItem(userStock.getSymbol(), userStock.getName(), userStock.getValue(), userStock.getVolume(), userStock.getGains())));
 
-        List<ReportItem> marshalledStocks = getStocksFromXML(report.getReport());
+        List<ReportItem> marshalledStocks = getStocksFromXML(report.getReportContents());
         assertTrue(marshalledStocks.containsAll(expectedReportItems));
     }
 
@@ -219,9 +219,9 @@ public class ReportGenerationServiceIT {
         ReportRequest reportRequest = new UserStockReportRequest(FileType.CSV, user.getUsername());
         Report report = reportGenerationService.generate(reportRequest);
 
-        logger.info("Generated CSV stock report:\n" + report.getReport());
+        logger.info("Generated CSV stock report:\n" + report.getReportContents());
 
-        String reportContents = report.getReport();
+        String reportContents = report.getReportContents();
 
         String expectedHeader = ReportItem.getCsvHeader();
         String actualHeader = reportContents.split("\n")[0];
@@ -250,7 +250,7 @@ public class ReportGenerationServiceIT {
 
     private Collection<String> getStockSymbols(Report report) throws Exception {
         Collection<String> stockSymbols = new ArrayList<>();
-        List<? extends StockItem> stockItems = getStocksFromXML(report.getReport());
+        List<? extends StockItem> stockItems = getStocksFromXML(report.getReportContents());
         stockItems.forEach(stockDetails -> stockSymbols.add(stockDetails.getSymbol()));
         return stockSymbols;
     }

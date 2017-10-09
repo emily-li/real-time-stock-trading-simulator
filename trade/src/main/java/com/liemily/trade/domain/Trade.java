@@ -3,6 +3,7 @@ package com.liemily.trade.domain;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -15,6 +16,7 @@ public class Trade {
     private int id;
     private String stockSymbol;
     private String username;
+    private BigDecimal value;
     private int volume;
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -24,9 +26,10 @@ public class Trade {
     private Trade() {
     }
 
-    public Trade(String stockSymbol, String username, int volume) {
+    public Trade(String stockSymbol, String username, BigDecimal value, int volume) {
         this.stockSymbol = stockSymbol;
         this.username = username;
+        this.value = value;
         this.volume = volume;
     }
 
@@ -59,6 +62,10 @@ public class Trade {
         this.volume = volume;
     }
 
+    public BigDecimal getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "Trade{" +
@@ -66,5 +73,9 @@ public class Trade {
                 ", username='" + username + '\'' +
                 ", volume=" + volume +
                 '}';
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
     }
 }
