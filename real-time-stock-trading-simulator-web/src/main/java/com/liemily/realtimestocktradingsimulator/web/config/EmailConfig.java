@@ -14,7 +14,6 @@ import java.util.Properties;
  * Created by Emily Li on 06/10/2017.
  */
 @Configuration
-@Lazy
 public class EmailConfig {
     @Value("${mail.smtp.host}")
     private String host;
