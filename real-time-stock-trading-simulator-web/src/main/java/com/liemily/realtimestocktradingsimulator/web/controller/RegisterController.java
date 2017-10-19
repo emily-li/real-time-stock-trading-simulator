@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,7 +34,7 @@ public class RegisterController {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final String REGISTER_PAGE = "register";
-    private static final String REGISTER_SUCCESS_PAGE = "register-success";
+    private static final String REGISTER_SUCCESS_PAGE = "register_success";
 
     private final RegisterValidator registerValidator;
     private final UserService userService;
@@ -61,6 +62,7 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
+    @Transactional
     public String register(Model model,
                            @ModelAttribute("user") User user,
                            BindingResult bindingResultUser,
@@ -91,8 +93,10 @@ public class RegisterController {
             logger.info(String.format("Confirmation email sent to %s for user %s", user.getEmail(), user.getUsername()));
             return "redirect:register/success";
         } catch (UserAlreadyExistsException uaee) {
+            logger.error("ERROR", uaee);
             bindingResultUser.rejectValue(UserProperty.USERNAME.toString(), ControllerError.REGISTRATION_USERNAME_ALREADY_EXISTS_ERROR.toString(), uaee.getMessage());
         } catch (MessagingException me) {
+            logger.error("ERROR", me);
             bindingResultUser.reject(ControllerError.REGISTRATION_EMAIL_ERROR.toString(), me.getMessage());
         }
         return REGISTER_PAGE;
